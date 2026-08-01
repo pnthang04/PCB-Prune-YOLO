@@ -31,11 +31,11 @@ Train and evaluate a YOLOv8n baseline for six-class PCB defect detection. The cu
 - Model: `yolov8n.pt` pretrained.
 - Two-GPU device setting: `0,1`.
 - Image size: 640.
-- Global batch: 32; reduce to 16 if two T4 GPUs run out of memory.
+- Global batch: 128 (64 per GPU), verified at about 7.63 GiB/GPU on two T4 GPUs; reduce to 64 if needed.
 - Maximum epochs: 100.
 - Early-stopping patience: 20.
 - Seed: 42; AMP and deterministic mode enabled.
-- Smoke mode: 5 epochs, normally invoked with global batch 8.
+- Smoke mode: 1 epoch on a configurable dataset fraction; verified with `--batch 128 --fraction 0.2`.
 
 ## Outputs
 
