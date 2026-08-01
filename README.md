@@ -1,14 +1,26 @@
 # PCB-Prune-YOLO
 
-Khung thí nghiệm tối ưu YOLOv8n cho phát hiện sáu loại lỗi PCB trong DeepPCB bằng structured pruning dựa trên DepGraph. Nền tảng phương pháp là paper **“DepGraph: Towards Any Structural Pruning” (CVPR 2023)**. Source `torch_pruning` được tích hợp trực tiếp như một module nội bộ của project; `ultralytics` vẫn được cài dưới dạng dependency.
+Dự án được xây dựng độc lập để huấn luyện, tinh gọn và đánh giá mô hình phát hiện lỗi trên bảng mạch in. Mục tiêu là giảm số lượng tham số, kích thước mô hình và độ trễ suy luận trong khi duy trì độ chính xác phù hợp.
 
 ## Quy trình
 
-`chuẩn bị dữ liệu → train baseline → đánh giá → prune → fine-tune → benchmark`
+`chuẩn bị dữ liệu → huấn luyện mô hình gốc → đánh giá → tinh gọn → tinh chỉnh → đo hiệu năng`
+
+## Cấu trúc
+
+```text
+configs/                 Cấu hình dữ liệu, huấn luyện, tinh gọn và benchmark
+data/                    Dữ liệu gốc và dữ liệu đã xử lý
+outputs/                 Mô hình, báo cáo và kết quả chạy
+scripts/                 Các lệnh thực thi quy trình
+src/pcb_prune_yolo/      Mã nguồn chính
+src/torch_pruning/       Module tinh gọn mô hình nội bộ
+tests/                   Kiểm thử
+```
 
 ## Cài đặt
 
-Yêu cầu Python 3.10+:
+Yêu cầu Python 3.10 trở lên:
 
 ```bash
 python -m venv .venv
@@ -16,19 +28,15 @@ python -m venv .venv
 python -m pip install -e ".[dev]"
 ```
 
-Không pin CUDA trong project. Hãy cài bản PyTorch phù hợp với thiết bị theo hướng dẫn của PyTorch nếu cần GPU.
+## Chuẩn bị dữ liệu
 
-## Dữ liệu DeepPCB
-
-Không commit dataset. Có thể đặt dữ liệu gốc trong `data/raw/` hoặc nơi khác. Truyền riêng thư mục ảnh và annotation (`x1,y1,x2,y2,class_id`):
+Dữ liệu không được lưu trong repository. Annotation đầu vào có định dạng `x1,y1,x2,y2,class_id`.
 
 ```bash
-python scripts/prepare_deeppcb.py --images PATH_IMAGES --labels PATH_LABELS --output data/processed --class-offset 1
+make prepare-data IMAGES=PATH_IMAGES LABELS=PATH_LABELS
 python scripts/validate_dataset.py --root data/processed --split train
 python scripts/visualize_annotations.py --root data/processed
 ```
-
-Config Ultralytics nằm ở `configs/data/deeppcb.yaml`. Nếu di chuyển dữ liệu, sửa `path` trong file này.
 
 ## Chạy thí nghiệm
 
@@ -40,22 +48,23 @@ python scripts/finetune_pruned.py --model PATH_PRUNED_MODEL
 python scripts/benchmark_model.py --model outputs/train/baseline/weights/best.pt --device cpu
 ```
 
-Mọi mặc định nằm trong `configs/`; CLI dùng để override. Ultralytics tự lưu `best.pt` và `last.pt` khi train/fine-tune. Phiên bản đầu không có knowledge distillation.
+Giá trị mặc định nằm trong `configs/`; tham số dòng lệnh dùng để ghi đè khi cần.
 
-## Diễn giải benchmark
+## Kết quả benchmark
 
-Giảm FLOPs/MACs không đảm bảo latency giảm vì kernel, memory bandwidth và phần cứng khác nhau. Luôn đo latency trên chính thiết bị triển khai, sau warm-up và đồng bộ CUDA.
+Hiệu năng cần được đo trực tiếp trên thiết bị triển khai vì số phép tính giảm không luôn đồng nghĩa với độ trễ thấp hơn.
 
 | model | pruning ratio | parameters | MACs | mAP50 | mAP50-95 | latency | FPS | model size |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| YOLOv8n baseline | 0% | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
-| YOLOv8n pruned | 20% | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
+| baseline | 0% | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
+| pruned | 20% | TBD | TBD | TBD | TBD | TBD | TBD | TBD |
 
 ## Trạng thái triển khai
 
-- Hoàn thiện skeleton: chuyển annotation, split tái lập, validate, preview, train/evaluate wrapper, latency benchmark và report JSON/CSV.
-- Dry-run DepGraph xây graph và đếm parameters; MACs hiện là `TODO`.
-- Pruning thật và lưu checkpoint pruned chủ động `raise NotImplementedError` cho đến khi xác định chính xác detection head/output layers cần bảo vệ.
-- Chưa triển khai knowledge distillation.
+- Đã có quy trình chuyển đổi, chia, kiểm tra và xem trước dữ liệu.
+- Đã có lệnh huấn luyện, đánh giá, tinh chỉnh và benchmark.
+- Chế độ kiểm tra trước khi tinh gọn đã hỗ trợ dựng đồ thị phụ thuộc và đếm tham số.
+- Tinh gọn thật và lưu mô hình sau tinh gọn chưa hoàn thiện.
+- Phần tính MACs chưa hoàn thiện.
 
-Chạy kiểm tra bằng `make test` và `make lint`. Không script nào train hoặc tải dữ liệu khi import.
+Chạy kiểm tra bằng `make test` và `make lint`. Các script không huấn luyện hoặc tải dữ liệu khi được import.
