@@ -1,3 +1,20 @@
+Metadata-Version: 2.4
+Name: pcb-prune-yolo
+Version: 0.1.0
+Summary: YOLOv8n structured pruning experiments for DeepPCB
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: torch
+Requires-Dist: ultralytics
+Requires-Dist: PyYAML
+Requires-Dist: Pillow
+Requires-Dist: numpy
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Requires-Dist: ruff; extra == "dev"
+Dynamic: license-file
+
 # PCB-Prune-YOLO
 
 Khung thí nghiệm tối ưu YOLOv8n cho phát hiện sáu loại lỗi PCB trong DeepPCB bằng structured pruning dựa trên DepGraph. Nền tảng phương pháp là paper **“DepGraph: Towards Any Structural Pruning” (CVPR 2023)**. Source `torch_pruning` được tích hợp trực tiếp như một module nội bộ của project; `ultralytics` vẫn được cài dưới dạng dependency.

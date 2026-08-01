@@ -8,13 +8,16 @@ version = "0.1.0"
 description = "YOLOv8n structured pruning experiments for DeepPCB"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["torch", "ultralytics", "torch-pruning", "PyYAML", "Pillow", "numpy"]
+dependencies = ["torch", "ultralytics", "PyYAML", "Pillow", "numpy"]
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+torch_pruning = ["LICENSE"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
@@ -26,4 +29,3 @@ target-version = "py310"
 
 [tool.ruff.format]
 quote-style = "double"
-

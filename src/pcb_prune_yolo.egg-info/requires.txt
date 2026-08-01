@@ -1,0 +1,9 @@
+torch
+ultralytics
+PyYAML
+Pillow
+numpy
+
+[dev]
+pytest
+ruff
