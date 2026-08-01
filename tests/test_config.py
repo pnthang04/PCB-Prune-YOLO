@@ -12,9 +12,12 @@ def test_load_config(tmp_path: Path) -> None:
     assert load_config(path) == {"seed": 42}
 
 
-@pytest.mark.parametrize("line", ["6 0.5 0.5 0.1 0.1", "0 1.1 0.5 0.1 0.1"])
+@pytest.mark.parametrize(
+    "line",
+    ["6 0.5 0.5 0.1 0.1", "0 1.1 0.5 0.1 0.1", "0 nan 0.5 0.1 0.1"],
+)
 def test_invalid_label(tmp_path: Path, line: str) -> None:
     path = tmp_path / "label.txt"
     path.write_text(line, encoding="utf-8")
-    assert validate_label(path)
-
+    errors, _ = validate_label(path)
+    assert errors

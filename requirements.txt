@@ -1,0 +1,5 @@
+# PyTorch is intentionally installed separately to match the server CUDA runtime.
+ultralytics==8.4.115
+opencv-python==4.13.0.92
+PyYAML==6.0.3
+pandas==2.3.3

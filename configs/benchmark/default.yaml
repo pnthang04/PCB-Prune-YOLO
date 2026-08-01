@@ -4,5 +4,4 @@ batch_size: 1
 warmup_iterations: 50
 benchmark_iterations: 200
 imgsz: 640
-device: auto
-
+device: cuda:0

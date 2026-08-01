@@ -8,10 +8,16 @@ version = "0.1.0"
 description = "YOLOv8n structured pruning experiments for DeepPCB"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["torch", "ultralytics", "PyYAML", "Pillow", "numpy"]
+dependencies = [
+    "torch",
+    "ultralytics==8.4.115",
+    "opencv-python==4.13.0.92",
+    "PyYAML==6.0.3",
+    "pandas==2.3.3",
+]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruff"]
+dev = ["pytest==9.0.3", "ruff"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -1,4 +1,4 @@
-path: ../../data/processed
+path: data/processed/deeppcb
 train: images/train
 val: images/val
 test: images/test
@@ -9,4 +9,3 @@ names:
   3: spur
   4: copper
   5: pin-hole
-

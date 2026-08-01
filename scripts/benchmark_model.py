@@ -18,9 +18,14 @@ def main() -> None:
     parser.add_argument("--config", type=Path, default=Path("configs/benchmark/default.yaml"))
     parser.add_argument("--model", type=Path)
     parser.add_argument("--device")
+    parser.add_argument("--imgsz", type=int)
+    parser.add_argument("--warmup-iterations", type=int)
+    parser.add_argument("--benchmark-iterations", type=int)
     args = parser.parse_args()
     config = load_config(args.config)
-    config.update({key: str(value) for key, value in vars(args).items() if key != "config" and value is not None})
+    config.update(
+        {key: value for key, value in vars(args).items() if key != "config" and value is not None}
+    )
     from ultralytics import YOLO
 
     checkpoint = Path(config["model"])
@@ -35,4 +40,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -7,9 +7,9 @@ def bbox_to_yolo(x1: float, y1: float, x2: float, y2: float, width: int, height:
     """Convert pixel corner coordinates to normalized YOLO coordinates."""
     if width <= 0 or height <= 0 or x2 <= x1 or y2 <= y1:
         raise ValueError("Kích thước ảnh và bounding box phải dương")
-    values = ((x1 + x2) / (2 * width), (y1 + y2) / (2 * height), (x2 - x1) / width, (y2 - y1) / height)
-    if any(value < 0 or value > 1 for value in values):
+    if x1 < 0 or y1 < 0 or x2 > width or y2 > height:
         raise ValueError("Bounding box nằm ngoài ảnh")
+    values = ((x1 + x2) / (2 * width), (y1 + y2) / (2 * height), (x2 - x1) / width, (y2 - y1) / height)
     return values
 
 
@@ -34,4 +34,3 @@ def convert_annotation(source: Path, destination: Path, image_size: tuple[int, i
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text("\n".join(lines) + ("\n" if lines else ""), encoding="utf-8")
     return counts
-

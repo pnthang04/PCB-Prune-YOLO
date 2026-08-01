@@ -11,6 +11,8 @@ runs/
 *.engine
 __pycache__/
 *.py[cod]
+*.egg-info/
+.coverage
 .venv/
 .env
 wandb/
@@ -19,4 +21,3 @@ wandb/
 .idea/
 .vscode/
 .DS_Store
-

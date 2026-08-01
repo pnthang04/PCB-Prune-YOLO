@@ -16,9 +16,12 @@ def main() -> None:
     parser.add_argument("--device", default="auto")
     parser.add_argument("--output", type=Path, default=Path("outputs/evaluation"))
     args = parser.parse_args()
-    write_report(evaluate(args.checkpoint, args.data, args.split, args.device), args.output, "metrics")
+    write_report(
+        evaluate(args.checkpoint, args.data, args.split, args.device),
+        args.output,
+        f"metrics_{args.split}",
+    )
 
 
 if __name__ == "__main__":
     main()
-

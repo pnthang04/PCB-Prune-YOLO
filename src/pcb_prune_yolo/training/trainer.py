@@ -9,6 +9,7 @@ def train(config: dict[str, Any]) -> Any:
 
     options = dict(config)
     model_name = options.pop("model")
+    if options.get("device") == "auto":
+        options["device"] = None
     model = YOLO(model_name)
     return model.train(**options)
-

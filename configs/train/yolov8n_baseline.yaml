@@ -1,12 +1,19 @@
 model: yolov8n.pt
 data: configs/data/deeppcb.yaml
 epochs: 100
+patience: 20
 imgsz: 640
-batch: 8
-workers: 4
+batch: 32
+workers: 8
 seed: 42
-device: auto
+device: 0,1
 pretrained: true
+amp: true
+deterministic: true
+optimizer: auto
+close_mosaic: 10
+val: true
+plots: true
+save: true
 project: outputs/train
 name: baseline
-
