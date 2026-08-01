@@ -1,0 +1,12 @@
+model: yolov8n.pt
+data: configs/data/deeppcb.yaml
+epochs: 100
+imgsz: 640
+batch: 8
+workers: 4
+seed: 42
+device: auto
+pretrained: true
+project: outputs/train
+name: baseline
+

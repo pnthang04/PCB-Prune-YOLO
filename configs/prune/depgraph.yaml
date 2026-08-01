@@ -1,0 +1,11 @@
+checkpoint: outputs/train/baseline/weights/best.pt
+output: outputs/pruning
+imgsz: 640
+device: auto
+pruning_ratio: 0.2
+importance: group_magnitude
+iterative_steps: 1
+round_to: 8
+global_pruning: false
+dry_run: true
+
