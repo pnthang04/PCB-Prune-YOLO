@@ -7,7 +7,7 @@ Phạm Ngọc Thắng
 ![Model](https://img.shields.io/badge/Model-YOLOv8n-55a630)
 ![Language](https://img.shields.io/badge/Language-Python-3776ab)
 
-**Quick Links:** [📦 Tải dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [⚙️ Cấu hình](#cấu-hình-baseline) | [🚀 Huấn luyện](#huấn-luyện) | [📊 Đánh giá](#đánh-giá-và-benchmark)
+**Quick Links:** [📦 Tải dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Model baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [⚙️ Cấu hình](#cấu-hình-baseline) | [🚀 Huấn luyện](#huấn-luyện) | [📊 Kết quả](#kết-quả-baseline)
 
 Hướng dẫn tự động chạy trên server: [`SERVER_RUNBOOK.md`](SERVER_RUNBOOK.md).
 
@@ -101,6 +101,31 @@ Full baseline chỉ chạy khi chủ động gọi:
 
 ```bash
 python scripts/train_baseline.py
+```
+
+## Kết quả baseline
+
+Mô hình tốt nhất được chọn trên validation tại epoch 98/100:
+
+| Precision | Recall | mAP50 | mAP50-95 |
+|---:|---:|---:|---:|
+| 0.96545 | 0.97221 | 0.98630 | 0.78524 |
+
+Đây là kết quả trên validation; test set chỉ được dùng cho báo cáo cuối. Checkpoint và lịch sử huấn luyện được phát hành công khai tại [thangkt/PCB-Prune-YOLO-Baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline).
+
+Tải checkpoint trực tiếp:
+
+```bash
+curl -L -o best.pt https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline/resolve/main/best.pt
+```
+
+Load bằng Ultralytics:
+
+```python
+from ultralytics import YOLO
+
+model = YOLO("best.pt")
+results = model.predict("pcb.jpg")
 ```
 
 ## Đánh giá và benchmark
