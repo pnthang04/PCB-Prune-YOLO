@@ -2,8 +2,20 @@ data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
-outputs/*
+outputs/**
+!outputs/**/
 !outputs/.gitkeep
+# Keep lightweight experiment evidence and reproducibility metadata in Git.
+!outputs/**/*.json
+!outputs/**/*.csv
+!outputs/**/args.yaml
+!outputs/**/used_config.yaml
+!outputs/**/results.png
+!outputs/**/Box*_curve.png
+!outputs/**/confusion_matrix*.png
+!outputs/**/labels.jpg
+!outputs/**/val_batch*_labels.jpg
+!outputs/**/val_batch*_pred.jpg
 runs/
 *.pt
 *.pth

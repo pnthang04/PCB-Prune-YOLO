@@ -1,0 +1,2 @@
+parameters,counted_parameters,macs,gmacs,flops_estimate,gflops_estimate,mean_latency_ms,median_latency_ms,p95_latency_ms,fps,model,model_size_mb,batch_size,imgsz,device,gpu_name,gpu_total_memory_mb,peak_gpu_memory_mb,python_version,torch_version,cuda_version,ultralytics_version
+2289938,2289938,2973349600,2.9733496,5946699200,5.9466992,10.062794809955449,10.048240000287478,11.3537079996604,99.3759704819448,outputs/pruning/p10/pruned.pt,9.034961700439453,1,640,cuda:0,Tesla T4,14911.6875,36.654296875,3.12.12,2.10.0+cu128,12.8,8.4.115

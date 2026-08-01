@@ -1,0 +1,91 @@
+{
+  "dry_run": false,
+  "pruning_ratio": 0.1,
+  "dependency_groups": 57,
+  "replaced_c2f": [
+    "model.2",
+    "model.4",
+    "model.6",
+    "model.8",
+    "model.12",
+    "model.15",
+    "model.18",
+    "model.21"
+  ],
+  "protected_layers": [
+    "model.22.cv2.0.2",
+    "model.22.cv2.1.2",
+    "model.22.cv2.2.2",
+    "model.22.cv3.0.2",
+    "model.22.cv3.1.2",
+    "model.22.cv3.2.2",
+    "model.22.dfl.conv"
+  ],
+  "before": {
+    "parameters": 3012018,
+    "counted_parameters": 3012018,
+    "macs": 4073266400,
+    "gmacs": 4.0732664,
+    "flops_estimate": 8146532800,
+    "gflops_estimate": 8.1465328
+  },
+  "forward_before": {
+    "class_count": 6,
+    "class_names": [
+      "open",
+      "short",
+      "mousebite",
+      "spur",
+      "copper",
+      "pin-hole"
+    ],
+    "prediction_shape": [
+      1,
+      10,
+      8400
+    ]
+  },
+  "after": {
+    "parameters": 2416871,
+    "counted_parameters": 2416871,
+    "macs": 3269461600,
+    "gmacs": 3.2694616,
+    "flops_estimate": 6538923200,
+    "gflops_estimate": 6.5389232
+  },
+  "forward_after": {
+    "class_count": 6,
+    "class_names": [
+      "open",
+      "short",
+      "mousebite",
+      "spur",
+      "copper",
+      "pin-hole"
+    ],
+    "prediction_shape": [
+      1,
+      10,
+      8400
+    ]
+  },
+  "checkpoint": "outputs/pruning_no_round/p10/pruned.pt",
+  "reload_check": {
+    "loaded": true,
+    "class_count": 6,
+    "class_names": [
+      "open",
+      "short",
+      "mousebite",
+      "spur",
+      "copper",
+      "pin-hole"
+    ],
+    "prediction_shape": [
+      1,
+      10,
+      8400
+    ],
+    "device": "cuda"
+  }
+}

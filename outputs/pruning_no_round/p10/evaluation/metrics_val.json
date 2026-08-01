@@ -1,0 +1,59 @@
+{
+  "split": "val",
+  "overall": {
+    "precision": 0.09361001317523056,
+    "recall": 0.05711880711880712,
+    "mAP50": 0.005860840493802341,
+    "mAP50-95": 0.0009232726436063019
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "class_name": "open",
+      "precision": 0.0,
+      "recall": 0.0,
+      "mAP50": 0.0,
+      "mAP50-95": 0.0
+    },
+    {
+      "class_id": 1,
+      "class_name": "short",
+      "precision": 0.5,
+      "recall": 0.005050505050505051,
+      "mAP50": 0.0025,
+      "mAP50-95": 0.00025
+    },
+    {
+      "class_id": 2,
+      "class_name": "mousebite",
+      "precision": 0.0,
+      "recall": 0.0,
+      "mAP50": 0.0,
+      "mAP50-95": 0.0
+    },
+    {
+      "class_id": 3,
+      "class_name": "spur",
+      "precision": 0.0616600790513834,
+      "recall": 0.33766233766233766,
+      "mAP50": 0.03266504296281404,
+      "mAP50-95": 0.0052896358616378114
+    },
+    {
+      "class_id": 4,
+      "class_name": "copper",
+      "precision": 0.0,
+      "recall": 0.0,
+      "mAP50": 0.0,
+      "mAP50-95": 0.0
+    },
+    {
+      "class_id": 5,
+      "class_name": "pin-hole",
+      "precision": 0.0,
+      "recall": 0.0,
+      "mAP50": 0.0,
+      "mAP50-95": 0.0
+    }
+  ]
+}

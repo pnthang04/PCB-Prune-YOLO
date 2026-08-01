@@ -1,0 +1,4 @@
+interface:
+  display_name: "PCB Prune YOLO"
+  short_description: "Develop and track the PCB pruning pipeline"
+  default_prompt: "Use $pcb-prune-yolo to continue the PCB pruning experiments safely."
