@@ -1,4 +1,14 @@
-# PCB-Prune-YOLO
+# PCB-Prune-YOLO: Efficient PCB Defect Detection
+
+[Phạm Ngọc Thắng](#pcb-prune-yolo-efficient-pcb-defect-detection)
+
+![Task](https://img.shields.io/badge/Task-Defect_Detection-c0392b)
+![Domain](https://img.shields.io/badge/Domain-PCB_Quality_Control-d35400)
+![Method](https://img.shields.io/badge/Method-Structured_Pruning-2980b9)
+![Model](https://img.shields.io/badge/Model-PCB--Prune--YOLO-55a630)
+![Language](https://img.shields.io/badge/Language-Python-3776ab)
+
+**Quick Links:** [📦 Dữ liệu](#chuẩn-bị-dữ-liệu) | [⚙️ Cấu hình](#cấu-trúc) | [🚀 Huấn luyện](#chạy-thí-nghiệm) | [📊 Kết quả](#kết-quả-benchmark) | [🧪 Kiểm thử](#trạng-thái-triển-khai)
 
 Dự án được xây dựng độc lập để huấn luyện, tinh gọn và đánh giá mô hình phát hiện lỗi trên bảng mạch in. Mục tiêu là giảm số lượng tham số, kích thước mô hình và độ trễ suy luận trong khi duy trì độ chính xác phù hợp.
 
