@@ -1,10 +1,10 @@
 checkpoint: outputs/train/baseline/weights/best.pt
-output: outputs/pruning
+output: outputs/pruning_no_round
 imgsz: 640
 device: auto
 pruning_ratio: 0.1
 importance: group_magnitude
 iterative_steps: 1
-round_to: 8
+round_to: 0
 global_pruning: false
-dry_run: true
+dry_run: false
