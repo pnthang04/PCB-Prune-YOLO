@@ -10,7 +10,7 @@ validate-data:
 preview-data:
 	$(PYTHON) scripts/visualize_annotations.py
 train-smoke:
-	$(PYTHON) scripts/train_baseline.py --smoke
+	$(PYTHON) scripts/train_baseline.py --smoke --batch 128 --fraction 0.2
 train:
 	$(PYTHON) scripts/train_baseline.py
 evaluate:

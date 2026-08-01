@@ -91,12 +91,12 @@ Nếu validate lỗi, dừng lại; không train trên dữ liệu lỗi.
 ## 5. Smoke train
 
 ```bash
-python scripts/train_baseline.py --smoke --batch 8
+python scripts/train_baseline.py --smoke --batch 128 --fraction 0.2
 ```
 
-Smoke train phải chạy đúng 5 epoch trên `device=0,1`. Kết quả nằm trong `outputs/train/smoke`.
+Smoke train chạy 1 epoch trên 20% tập train, tương đương khoảng hai step, trên `device=0,1`.
 
-Nếu CUDA out of memory, thử lại với batch 4. Không thay đổi ảnh 640 px trong smoke test trừ khi cần chẩn đoán.
+Nếu CUDA out of memory, thử lại với batch 64. Không thay đổi ảnh 640 px trong smoke test trừ khi cần chẩn đoán.
 
 ## 6. Train baseline
 
@@ -108,7 +108,7 @@ Cấu hình mặc định:
 
 - Model pretrained: `yolov8n.pt`
 - Device: `0,1`
-- Batch tổng: 32, tương đương 16 ảnh/GPU
+- Batch tổng: 128, tương đương 64 ảnh/GPU
 - Image size: 640
 - Epoch tối đa: 100
 - Early stopping patience: 20
@@ -119,7 +119,7 @@ Cấu hình mặc định:
 Nếu CUDA out of memory:
 
 ```bash
-python scripts/train_baseline.py --batch 16
+python scripts/train_baseline.py --batch 64
 ```
 
 Checkpoint cần dùng cho các bước sau:

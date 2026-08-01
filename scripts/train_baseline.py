@@ -20,11 +20,16 @@ def main() -> None:
         ("device", str),
         ("workers", int),
         ("seed", int),
+        ("fraction", float),
         ("project", str),
         ("name", str),
     ):
         parser.add_argument(f"--{name}", type=kind)
-    parser.add_argument("--smoke", action="store_true", help="Run a 5-epoch pipeline check")
+    parser.add_argument(
+        "--smoke",
+        action="store_true",
+        help="Run a short 1-epoch DDP pipeline check on 10%% of the training set",
+    )
     args = parser.parse_args()
     config = load_config(args.config)
     config.update(
@@ -35,7 +40,17 @@ def main() -> None:
         }
     )
     if args.smoke:
-        config.update({"epochs": 5, "patience": 5, "name": "smoke"})
+        config.update(
+            {
+                "epochs": 1,
+                "patience": 1,
+                "fraction": args.fraction if args.fraction is not None else 0.1,
+                "val": False,
+                "plots": False,
+                "save": False,
+                "name": "smoke",
+            }
+        )
     train(config)
 
 

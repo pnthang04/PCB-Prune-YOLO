@@ -87,14 +87,14 @@ Các lớp sau khi chuyển đổi:
 
 Cấu hình dữ liệu nằm tại `configs/data/deeppcb.yaml`; cấu hình huấn luyện nằm tại `configs/train/yolov8n_baseline.yaml`.
 
-Profile mặc định dành cho 2×T4: ảnh 640 px, batch tổng 32 (16 ảnh/GPU), 100 epoch, early stopping patience 20, AMP, seed 42, deterministic mode và `device: 0,1`. Có thể ghi đè từng giá trị bằng CLI; nếu thiếu VRAM, giảm `--batch` xuống 16 hoặc 8.
+Profile mặc định dành cho 2×T4: ảnh 640 px, batch tổng 128 (64 ảnh/GPU), 100 epoch, early stopping patience 20, AMP, seed 42, deterministic mode và `device: 0,1`. Batch này dùng khoảng 7.63 GiB/GPU trong smoke test thực tế trên hai T4 14.56 GiB; nếu thiếu VRAM, giảm `--batch` xuống 64.
 
 ## Huấn luyện
 
-Smoke test chạy đúng 5 epoch:
+Smoke test chạy 1 epoch trên 20% tập train để kiểm tra nhanh pipeline DDP với khoảng hai training step:
 
 ```bash
-python scripts/train_baseline.py --smoke --batch 8
+python scripts/train_baseline.py --smoke --batch 128 --fraction 0.2
 ```
 
 Full baseline chỉ chạy khi chủ động gọi:
@@ -140,8 +140,8 @@ python scripts/validate_dataset.py
 # 4. Tạo 20 ảnh preview
 python scripts/visualize_annotations.py --count 20
 
-# 5. Smoke train 5 epoch trên 2 GPU
-python scripts/train_baseline.py --smoke --batch 8
+# 5. Smoke train ngắn trên 2 GPU
+python scripts/train_baseline.py --smoke --batch 128 --fraction 0.2
 
 # 6. Train baseline đầy đủ trên 2 GPU
 python scripts/train_baseline.py
