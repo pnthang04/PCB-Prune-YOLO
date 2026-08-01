@@ -24,7 +24,7 @@ def main() -> None:
         ("name", str),
     ):
         parser.add_argument(f"--{name}", type=kind)
-    parser.add_argument("--smoke", action="store_true", help="Chạy 5 epoch để kiểm tra pipeline")
+    parser.add_argument("--smoke", action="store_true", help="Run a 5-epoch pipeline check")
     args = parser.parse_args()
     config = load_config(args.config)
     config.update(

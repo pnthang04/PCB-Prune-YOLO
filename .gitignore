@@ -9,6 +9,7 @@ runs/
 *.pth
 *.onnx
 *.engine
+deeppcb_processed.zip
 __pycache__/
 *.py[cod]
 *.egg-info/

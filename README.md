@@ -7,7 +7,9 @@ Phạm Ngọc Thắng
 ![Model](https://img.shields.io/badge/Model-YOLOv8n-55a630)
 ![Language](https://img.shields.io/badge/Language-Python-3776ab)
 
-**Quick Links:** [📦 Dữ liệu](#chuẩn-bị-dữ-liệu) | [⚙️ Cấu hình](#cấu-hình-baseline) | [🚀 Huấn luyện](#huấn-luyện) | [📊 Đánh giá](#đánh-giá-và-benchmark)
+**Quick Links:** [📦 Tải dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [⚙️ Cấu hình](#cấu-hình-baseline) | [🚀 Huấn luyện](#huấn-luyện) | [📊 Đánh giá](#đánh-giá-và-benchmark)
+
+Hướng dẫn tự động chạy trên server: [`SERVER_RUNBOOK.md`](SERVER_RUNBOOK.md).
 
 Baseline phát hiện sáu loại lỗi PCB. Phạm vi hiện tại chỉ gồm chuẩn bị dữ liệu, kiểm tra dữ liệu, huấn luyện, đánh giá và benchmark mô hình gốc.
 
@@ -53,6 +55,16 @@ python scripts/check_environment.py --require-gpus 2
 ## Chuẩn bị dữ liệu
 
 Dataset gốc phải nằm tại `data/raw/DeepPCB`. Script chỉ dùng ảnh kiểm tra có hậu tố `_test.jpg`; ảnh template không được đưa vào dữ liệu huấn luyện. Split test chính thức được giữ nguyên. Một nghìn ảnh thuộc split train gốc được chia train/val theo tỷ lệ 80/20 với seed 42.
+
+Nếu chạy trên server, tải trực tiếp dữ liệu đã xử lý từ [PCB-Prune-YOLO-DeepPCB](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB):
+
+```bash
+curl -L -o deeppcb_processed.zip https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB/resolve/main/deeppcb_processed.zip
+mkdir -p data/processed
+unzip deeppcb_processed.zip -d data/processed
+```
+
+Sau khi giải nén, dữ liệu phải nằm tại `data/processed/deeppcb`; không cần chạy lại bước chuyển đổi.
 
 ```bash
 python scripts/prepare_deeppcb.py
