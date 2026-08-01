@@ -24,8 +24,16 @@
 - P10 pruning with and without channel rounding.
 - P10 save, new-process load, CUDA inference, pre-fine-tune validation, and benchmark.
 - Dedicated single-GPU fine-tune path that preserves the changed architecture.
+- Paper/official-code review for group-level sparse learning and a custom safe
+  optimizer-boundary hook using vendored `GroupNormPruner`.
+- One-epoch sparse hook smoke test with nonzero regularizer gradient, stable
+  validation, and new-process CUDA inference.
 
 ## Not completed
+
+- Run the proposed 30-epoch group-level sparse training on the full train split.
+- Prune P10 from the validation-selected sparse checkpoint and compare it with
+  the preserved direct-P10 ablation.
 
 - Fine-tune P10 for 30–50 epochs.
 - Confirm P10 accuracy recovery and benchmark the best fine-tuned checkpoint.

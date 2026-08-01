@@ -1,5 +1,13 @@
 # PCB-Prune-YOLO project memory
 
+Group-level sparse training is now implemented using vendored Torch-Pruning 1.6.0.
+The hook runs after backward/unscale and before optimizer step, preserves YOLO's
+detection loss, and logs group norms plus direct evidence that the regularizer
+changes gradients. The accepted one-epoch smoke run is under
+`outputs/sparse/depgraph_sparse_smoke_final`; full sparse training and sparse P10
+pruning have not been run yet. See `docs/DEPGRAPH_SPARSE.md` for provenance and
+commands.
+
 Last verified: 2026-08-01
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:

@@ -131,6 +131,27 @@ class YOLODepGraphPruner:
             self.meta_pruner.step()
         return self.model
 
+    def create_sparse_pruner(self, reg: float, alpha: int = 4) -> Any:
+        """Create the vendored DepGraph group-sparsity pruner without pruning yet."""
+        import torch_pruning as tp
+
+        self.meta_pruner = tp.pruner.GroupNormPruner(
+            self.model,
+            self.example_input,
+            importance=create_importance(self.importance_name),
+            reg=reg,
+            alpha=alpha,
+            pruning_ratio=self.pruning_ratio,
+            iterative_steps=self.iterative_steps,
+            ignored_layers=[module for _, module in self.protected_modules],
+            round_to=self.round_to,
+            global_pruning=self.global_pruning,
+        )
+        self.group_count = len(self.meta_pruner._groups)
+        if self.group_count == 0:
+            raise RuntimeError("GroupNormPruner không tìm thấy pruning group an toàn")
+        return self.meta_pruner
+
     def save_pruned_model(self, path: Path) -> None:
         """Save the complete changed architecture in an Ultralytics checkpoint."""
         path.parent.mkdir(parents=True, exist_ok=True)

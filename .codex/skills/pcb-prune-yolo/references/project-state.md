@@ -108,3 +108,25 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
 - P10 pre-fine-tune validation, complexity, benchmark, and save/load inference: complete.
 - P10 fine-tune: not run.
 - P20/P30: not run.
+
+## Group-level sparse training
+
+Implemented `GroupNormPruner` sparse-gradient training from the unpruned baseline.
+The custom trainer unscales AMP gradients, calls the vendored TP 1.6.0
+`regularize(model, alpha=2**4)`, then clips and steps. It refreshes groups each
+epoch and protects the same six Detect output convolutions plus DFL.
+
+Accepted smoke artifact: `outputs/sparse/depgraph_sparse_smoke_final/`.
+
+- 1 epoch, 10% of train (80 images), full 200-image validation, batch 32, GPU 0.
+- Train losses: box 0.94178, cls 0.65621, DFL 0.89616.
+- Validation: precision 0.96472, recall 0.97079, mAP50 0.98624,
+  mAP50-95 0.78532.
+- 59 dependency groups and 4,864 channel/group-norm values regularized; zero
+  degenerate groups skipped; near-zero fraction at threshold 0.001 was 0.
+- Regularizer gradient delta L2 was 0.0397833, nonzero, with no newly introduced
+  non-finite gradient values.
+- New-process CUDA load and inference succeeded with six classes and output
+  `[1, 10, 8400]`.
+
+This is only a hook smoke test, not a completed sparse-training or P10 result.

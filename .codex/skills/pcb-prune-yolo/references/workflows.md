@@ -42,6 +42,17 @@ The benchmark includes warm-up, CUDA synchronization, params, MACs, estimated FL
 
 ## DepGraph
 
+Sparse-train from the unpruned baseline before the main P10 experiment:
+
+```bash
+python scripts/train_sparse.py --config configs/prune/depgraph_sparse.yaml
+```
+
+For a short hook check, add `--smoke --epochs 2 --fraction 0.1 --batch 32`.
+The sparse trainer is currently single-GPU because its in-memory DepGraph object
+is not reconstructed by Ultralytics DDP. It logs group norms and regularizer
+gradient evidence to `sparse_metrics.json` and `results.csv`.
+
 Dry-run a ratio without deleting channels:
 
 ```bash
@@ -50,6 +61,9 @@ python scripts/prune_model.py \
   --pruning-ratio 0.10 \
   --dry-run
 ```
+
+For the paper-path P10, point `--checkpoint` to the validation-selected sparse
+checkpoint, use `--output outputs/pruning_sparse`, and set `--round-to 0`.
 
 Prune with channels rounded for CUDA alignment:
 
