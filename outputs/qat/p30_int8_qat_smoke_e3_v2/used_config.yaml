@@ -1,0 +1,61 @@
+checkpoint: outputs/finetune_direct/p30_adamw_exact/weights/best.pt
+data: configs/data/deeppcb.yaml
+project: outputs/qat
+name: p30_int8_qat_smoke_e3_v2
+epochs: 3
+patience: 0
+imgsz: 640
+batch: 32
+workers: 8
+seed: 42
+device: '0'
+amp: false
+deterministic: true
+optimizer: AdamW
+lr0: 0.0001
+lrf: 0.01
+weight_decay: 0.0005
+momentum: 0.9
+val: true
+plots: true
+save: true
+quantization:
+  backend: nvidia-modelopt
+  preset: INT8_DEFAULT_CFG
+  calibration_algorithm: max
+  calibration_images: 64
+  calibration_seed: 42
+  weight_bits: 8
+  weight_granularity: per_channel
+  weight_symmetric: true
+  activation_bits: 8
+  activation_granularity: per_tensor
+  activation_symmetric: true
+  activation_scale: static_amax_then_learned_by_qat
+  quantized_modules:
+  - Conv2d
+  excluded_modules:
+  - model.22.cv2.0.2
+  - model.22.cv2.1.2
+  - model.22.cv2.2.2
+  - model.22.cv3.0.2
+  - model.22.cv3.1.2
+  - model.22.cv3.2.2
+  - model.22.dfl
+  output_shape:
+  - 1
+  - 10
+  - 8400
+provenance:
+  explicit_qdq: OFFICIAL_DOC_TENSORRT_EXPLICIT_QUANTIZATION
+  modelopt_int8_preset: OFFICIAL_CODE_NVIDIA_MODELOPT_CNN_DEFAULT
+  weight_per_channel: OFFICIAL_DOC_TENSORRT_RECOMMENDATION
+  activation_per_tensor: OFFICIAL_DOC_TENSORRT_REQUIREMENT
+  excluded_detect_outputs: PROJECT_ADAPTATION_PRESERVE_DETECT_SEMANTICS
+  excluded_dfl: PROJECT_ADAPTATION_PRESERVE_DFL_NUMERICS
+  epochs: PROJECT_ADAPTATION_SMOKE_ONLY
+  batch: PROJECT_ADAPTATION_T4_MEMORY
+  optimizer: PROJECT_ADAPTATION_MATCH_DIRECT_FINETUNE_FAMILY
+  lr0: PROJECT_ADAPTATION_LOWER_THAN_P30_FINETUNE
+  amp: PROJECT_ADAPTATION_DISABLE_MIXED_PRECISION_DURING_QAT_SMOKE
+  calibration_images: PROJECT_ADAPTATION_TRAIN_ONLY_SMOKE_CALIBRATION

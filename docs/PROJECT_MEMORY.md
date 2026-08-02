@@ -106,6 +106,15 @@ default. P30 INT8 PTQ used 500 deterministic training images only and produced
 latency worsened. Do not deploy this PTQ engine. The next controlled gate is
 P30 QAT with explicit Q/DQ and no distillation initially; it has not run.
 
+P30 explicit-Q/DQ QAT smoke is now complete using NVIDIA ModelOpt 0.45.0. Three
+epochs restored validation mAP50-95 from PTQ's 0.61119 to 0.72462, but the
+strongly-typed TensorRT engine is still 4.20% slower forward and 8.68% slower
+E2E than P30 FP16. ONNX retains 133 Q/DQ pairs. Full-FP32 convolutions fall
+from 13 to 7, yet total conv/reformat/kernel-launch counts rise and INT8-output
+coverage is only 38/68 versus PTQ's 35/61. Decision: `FIX_GRAPH_FIRST`; do not
+run full QAT or distillation until Q/DQ placement and Conv-BN/SiLU fusion are
+fixed and full-engine latency passes.
+
 Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:

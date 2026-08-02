@@ -73,10 +73,10 @@
 
 ## Not completed
 
-- Run a controlled P30 QAT experiment only after designing an explicit-Q/DQ
-  path that reduces the 26/61 FP32 convolution fallback. Keep architecture
-  fixed and do not add distillation unless plain QAT cannot recover within the
-  configured validation accuracy gate.
+- Fix the P30 explicit-Q/DQ graph before any full QAT: fuse Conv-BN, reduce
+  Q/DQ and reformat boundaries around SiLU/residual/concat, then require a
+  full-engine forward win over FP16. The completed 3-epoch QAT smoke recovered
+  accuracy but failed coverage and latency gates; distillation remains stopped.
 
 - Fix C2f conversion/export fusion and include full-engine reformat/pointwise
   overhead in the HALP cost/grouping adaptation. Re-run the M05 TensorRT

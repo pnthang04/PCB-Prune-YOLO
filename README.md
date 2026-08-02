@@ -262,6 +262,14 @@ lần lượt 5.03% và 5.68% trong cùng runtime. Engine này không được c
 khai và chưa chạy QAT/distillation. Báo cáo, protocol và quyết định tiếp theo ở
 [`docs/TENSORRT_LATENCY_OPTIMIZATION.md`](docs/TENSORRT_LATENCY_OPTIMIZATION.md).
 
+Smoke QAT explicit-Q/DQ 3 epoch sau đó phục hồi validation mAP50-95 lên
+0.72462, tốt hơn PTQ 11.34 điểm nhưng vẫn thấp hơn FP16 3.15 điểm. ONNX giữ 133
+cặp Q/DQ; full-FP32 convolution giảm 13 → 7, nhưng tổng TensorRT convolution
+tăng 61 → 68, reformat tăng 72 → 77 và kernel launch tăng. QAT engine vẫn chậm
+hơn P30 FP16 4.20% forward và 8.68% E2E, nên không chạy QAT dài hoặc
+distillation. Gate hiện tại là `FIX_GRAPH_FIRST`; xem
+[`docs/P30_INT8_QAT_SMOKE_REPORT.md`](docs/P30_INT8_QAT_SMOKE_REPORT.md).
+
 ## HALP: latency-aware pruning
 
 Giai đoạn 1 và dry-run Stage 2 của adaptation HALP đã hoàn tất; đây chưa phải mô

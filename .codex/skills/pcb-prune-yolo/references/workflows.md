@@ -271,3 +271,11 @@ refuses overwrites. Always audit TensorRT layer formats and validate on `val`
 before latency claims. The current implicit PTQ result fails the accuracy gate;
 do not reuse its cache for a changed graph and do not run distillation before a
 plain explicit-Q/DQ QAT control.
+
+The completed QAT smoke uses `configs/qat/p30_int8_qat.yaml` and
+`scripts/train_qat.py`. Its checkpoint must be restored with
+`modelopt.torch.opt.restore(base_model, checkpoint)`; ordinary `YOLO(checkpoint)`
+is invalid. Export with `scripts/export_qat_tensorrt.py`, which emits a strongly
+typed explicit-Q/DQ engine with detailed inspector data. Current decision is
+`FIX_GRAPH_FIRST`; do not extend epochs until a modified graph beats P30 FP16
+forward latency under the same 50/200 runtime protocol.

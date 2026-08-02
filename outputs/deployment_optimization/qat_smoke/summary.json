@@ -1,0 +1,105 @@
+{
+  "rows": [
+    {
+      "model": "P30 FP16 graph off",
+      "precision": 0.9630053238239128,
+      "recall": 0.92858358993507,
+      "mAP50": 0.9770030959914364,
+      "mAP50-95": 0.7561045923770547,
+      "forward_mean_ms": 1.8134338999880129,
+      "forward_median_ms": 1.4946230003261007,
+      "forward_p95_ms": 3.156430893432116,
+      "e2e_mean_ms": 8.263969039835501,
+      "e2e_median_ms": 8.031735000258777,
+      "e2e_p95_ms": 10.690692695061443,
+      "fps": 121.00722971971656,
+      "engine_size_mb": 5.482402801513672
+    },
+    {
+      "model": "P30 FP16 CUDA Graph",
+      "precision": 0.9630053238239128,
+      "recall": 0.92858358993507,
+      "mAP50": 0.9770030959914364,
+      "mAP50-95": 0.7561045923770547,
+      "forward_mean_ms": 1.7169820348499343,
+      "forward_median_ms": 1.4892534964019433,
+      "forward_p95_ms": 2.733714355053962,
+      "e2e_mean_ms": 8.276779495099618,
+      "e2e_median_ms": 8.092669002508046,
+      "e2e_p95_ms": 10.348510349649587,
+      "fps": 120.81993975942743,
+      "engine_size_mb": 5.482402801513672
+    },
+    {
+      "model": "P30 INT8 PTQ graph off",
+      "precision": 0.9439337102207302,
+      "recall": 0.9208328000844466,
+      "mAP50": 0.9697811627117479,
+      "mAP50-95": 0.6111853039875624,
+      "forward_mean_ms": 1.9046657249418786,
+      "forward_median_ms": 1.7075545001716819,
+      "forward_p95_ms": 3.493080047701369,
+      "e2e_mean_ms": 8.733734589841333,
+      "e2e_median_ms": 8.699837500898866,
+      "e2e_p95_ms": 11.307774097804213,
+      "fps": 114.49855611174087,
+      "engine_size_mb": 5.859698295593262
+    },
+    {
+      "model": "P30 INT8 QAT smoke graph off",
+      "precision": 0.9634320098922625,
+      "recall": 0.9214879396073913,
+      "mAP50": 0.969830899702581,
+      "mAP50-95": 0.7246209975555863,
+      "forward_mean_ms": 1.8896449499879964,
+      "forward_median_ms": 1.7343880026601255,
+      "forward_p95_ms": 2.1639667473209556,
+      "e2e_mean_ms": 8.981689079919306,
+      "e2e_median_ms": 8.842746501613874,
+      "e2e_p95_ms": 11.17792975201155,
+      "fps": 111.33763272163773,
+      "engine_size_mb": 5.1861162185668945
+    },
+    {
+      "model": "P30 INT8 QAT smoke CUDA Graph",
+      "precision": 0.9634320098922625,
+      "recall": 0.9214879396073913,
+      "mAP50": 0.969830899702581,
+      "mAP50-95": 0.7246209975555863,
+      "forward_mean_ms": 1.762104824956623,
+      "forward_median_ms": 1.7533434984216,
+      "forward_p95_ms": 1.800956045917701,
+      "e2e_mean_ms": 8.961638859946106,
+      "e2e_median_ms": 8.65326900020591,
+      "e2e_p95_ms": 11.933506406057859,
+      "fps": 111.58673269790899,
+      "engine_size_mb": 5.1861162185668945
+    }
+  ],
+  "coverage": {
+    "ptq": {
+      "int8_output_convolutions": 35,
+      "total_convolutions": 61,
+      "int8_fraction": 0.5737704918032787,
+      "full_fp32_convolutions": 13,
+      "mixed_int8_fp32_output_convolutions": 13
+    },
+    "qat_smoke": {
+      "int8_output_convolutions": 38,
+      "total_convolutions": 68,
+      "int8_fraction": 0.5588235294117647,
+      "full_fp32_convolutions": 7,
+      "mixed_int8_fp32_output_convolutions": 23,
+      "onnx_qdq_pairs": 133
+    }
+  },
+  "deltas": {
+    "qat_vs_fp16_forward_percent": 4.20258218402596,
+    "qat_vs_fp16_e2e_percent": 8.684931376486515,
+    "qat_vs_ptq_map5095_points": 11.343569356802385,
+    "qat_vs_fp16_map5095_points": -3.1483594821468452,
+    "qat_graph_vs_fp16_graph_forward_percent": 2.6280292507913305
+  },
+  "decision": "FIX_GRAPH_FIRST",
+  "test_used": false
+}

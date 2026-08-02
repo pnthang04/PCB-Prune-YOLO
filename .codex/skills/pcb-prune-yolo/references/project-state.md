@@ -114,6 +114,11 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
 - P30 INT8 PTQ calibration from 500 train-only images, engine layer audit,
   validation and latency benchmark: complete. mAP50-95 is 0.61119 versus
   0.75610 FP16, so the PTQ engine is rejected and QAT remains pending.
+- P30 ModelOpt explicit-Q/DQ QAT smoke (3 epochs) is complete. Validation
+  mAP50-95 recovered to 0.72462, but forward/E2E remain 4.20%/8.68% slower than
+  P30 FP16. Q/DQ count is 133 pairs; coverage is 38/68 INT8-output convs versus
+  PTQ 35/61, with more reformats and kernel launches. Decision: FIX_GRAPH_FIRST;
+  full QAT and distillation are stopped.
 - TensorRT FP16 export/validation/benchmark for baseline and direct P10/P20/P30:
   complete.
 

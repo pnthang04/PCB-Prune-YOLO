@@ -1,0 +1,3 @@
+# TensorRT QAT/export path validated in docs/P30_INT8_QAT_SMOKE_REPORT.md.
+nvidia-modelopt==0.45.0
+onnx==1.20.1
