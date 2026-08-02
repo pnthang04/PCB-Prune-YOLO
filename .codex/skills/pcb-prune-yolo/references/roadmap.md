@@ -37,6 +37,10 @@
 - Completed the matched direct-P10 control with explicit AdamW settings. It
   reached validation mAP50-95 0.77736 versus 0.76318 for sparse P10 at seed 42;
   save/load inference, JSON/CSV evaluation, and benchmark passed.
+- Completed direct P20 pruning, pre-fine-tune validation/benchmark, matched
+  50-epoch fine-tune, post-fine-tune validation/benchmark, and new-process CUDA
+  reload. P20 reached validation mAP50-95 0.76710 with 36.46% fewer params and
+  36.85% fewer MACs, but latency remained worse than baseline.
 
 ## Not completed
 
@@ -44,7 +48,6 @@
   the first `reg=1e-4` run retained baseline accuracy but produced no near-zero
   groups and its P10 result was worse than direct pruning.
 
-- Run P20 pre-fine-tune validation, fine-tune, and benchmark.
 - Run P30 pre-fine-tune validation, fine-tune, and benchmark.
 - Decide whether `round_to=8` or no rounding is the standard policy. Current validation favors no rounding before fine-tuning, but both are extremely weak.
 - Implement safe multi-GPU DDP fine-tuning for changed model objects.
@@ -67,8 +70,7 @@
 
 ## Next decision gate
 
-Run direct P20 with the same no-round local group-magnitude pruning and the
-same explicit AdamW fine-tune configuration as matched direct P10. Record
-pre-fine-tune validation, save/load inference, post-fine-tune validation, and
-batch-1 T4 benchmark before starting P30. Keep sparse P10 as an ablation because
-it was 1.42 mAP50-95 points below direct P10 at seed 42.
+Run direct P30 with the same no-round local group-magnitude pruning and explicit
+AdamW fine-tune configuration as P10/P20. Record pre-fine-tune validation,
+save/load inference, post-fine-tune validation, and batch-1 T4 benchmark before
+selecting the final model on validation.

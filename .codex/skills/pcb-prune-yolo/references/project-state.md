@@ -218,3 +218,28 @@ P10 as an ablation.
 Public direct-P10 checkpoint and model card:
 `https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct`. Anonymous ranged
 download returned HTTP 206 and the Hub API reports `private=false`.
+
+## Direct P20
+
+Pruned checkpoint: `outputs/pruning_direct/p20/pruned.pt`.
+
+- Local group-magnitude pruning, ratio 0.20, one step, no rounding; 59 groups.
+- Params 1,913,971 (-36.46%); MACs 2.5722G (-36.85%).
+- Seven fixed-width Detect outputs protected; forward `[1,10,8400]` and
+  new-process CUDA reload passed.
+- Before fine-tune validation precision, recall, mAP50, and mAP50-95 were 0.
+- Before fine-tune latency 10.802 ms and FPS 92.57.
+
+Fine-tuned checkpoint:
+`outputs/finetune_direct/p20_adamw_exact/weights/best.pt`.
+
+- Completed all 50 epochs with the matched direct-P10 AdamW configuration.
+- Validation precision 0.96214, recall 0.96186, mAP50 0.98184, mAP50-95
+  0.76710.
+- Mean latency 11.717 ms, FPS 85.35, size 3.897 MiB, peak memory 34.14 MiB.
+- New-process CUDA load and output `[1,10,8400]` passed.
+- Versus baseline: mAP50-95 -1.81 points, params -36.46%, MACs -36.85%, but
+  latency +41.35%. Versus direct P10: mAP50-95 -1.03 points.
+- Reports: `outputs/pruning_direct/p20/`,
+  `outputs/finetune_direct/p20_adamw_exact/`, and
+  `outputs/experiments/direct_p20_summary.{json,csv}`.

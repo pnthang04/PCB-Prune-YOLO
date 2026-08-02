@@ -39,6 +39,14 @@ The direct checkpoint is public at
 `https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct`; anonymous ranged
 download and `private=false` were verified.
 
+Direct P20 used the same no-round local group-magnitude pruning and explicit
+AdamW fine-tune as direct P10. It reduces params/MACs by 36.46%/36.85%.
+Validation was zero before fine-tuning, then recovered after all 50 epochs to
+precision 0.96214, recall 0.96186, mAP50 0.98184, and mAP50-95 0.76710. This is
+1.03 points below direct P10 and 1.81 points below baseline. T4 latency is
+11.717 ms (85.35 FPS), so MAC reduction still does not produce acceleration.
+Save/load CUDA inference passed. Next gate is direct P30.
+
 Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:

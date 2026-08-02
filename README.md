@@ -175,6 +175,8 @@ Kết quả validation trước fine-tune:
 | P10 sparse reg=5e-4, trước FT | Yes | 2,415,613 | 3.2328G | 0.002427 | 0.000351 | 10.127 ms | 98.75 |
 | P10 sparse reg=5e-4, sau FT | Yes | 2,415,613 | 3.2328G | 0.98124 | 0.76318 | 9.719 ms | 102.89 |
 | P10 direct, sau FT khớp cấu hình | No | 2,416,871 | 3.2695G | 0.98273 | 0.77736 | 10.433 ms | 95.85 |
+| P20 direct, trước FT | No | 1,913,971 | 2.5722G | 0.00000 | 0.00000 | 10.802 ms | 92.57 |
+| P20 direct, sau FT | No | 1,913,971 | 2.5722G | 0.98184 | 0.76710 | 11.717 ms | 85.35 |
 
 Lần sparse training đầu tiên dùng `reg=1e-4`, dừng sớm ở epoch 20 và có
 validation mAP50-95 tốt nhất 0.78752 tại epoch 10. Tuy regularizer gradient khác
@@ -198,6 +200,11 @@ P20/P30 sẽ dùng direct pruning để tạo đường accuracy–compression.
 
 Checkpoint direct P10 được phát hành public tại
 [thangkt/PCB-Prune-YOLO-P10-Direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct).
+
+Direct P20 giảm 36.46% tham số và 36.85% MACs so với baseline. Trước fine-tune,
+validation collapse về 0; sau đủ 50 epoch cùng cấu hình P10, mAP50-95 phục hồi
+lên 0.76710. P20 thấp hơn P10 direct 1.03 điểm mAP50-95 và thấp hơn baseline
+1.81 điểm, đồng thời latency T4 vẫn tăng lên 11.717 ms nên chưa có speedup thực tế.
 
 Checkpoint P10 fine-tuned và model card được phát hành public tại
 [thangkt/PCB-Prune-YOLO-P10-DepGraph](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph).
