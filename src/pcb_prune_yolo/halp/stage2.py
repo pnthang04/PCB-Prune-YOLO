@@ -104,6 +104,8 @@ def write_stage2_outputs(report: dict[str, Any], output: Path) -> None:
             "selected_latency_ms",
             "status",
         ]
-        writer = csv.DictWriter(handle, fieldnames=fields, extrasaction="ignore")
+        writer = csv.DictWriter(
+            handle, fieldnames=fields, extrasaction="ignore", lineterminator="\n"
+        )
         writer.writeheader()
         writer.writerows(rows)
