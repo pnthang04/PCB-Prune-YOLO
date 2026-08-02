@@ -191,3 +191,32 @@ The benchmark measures pure engine forward and excludes preprocessing/NMS;
 validation reports record those pipeline stages separately. Do not use test or
 INT8 for this experiment. Build and run engines only against the same TensorRT,
 CUDA, GPU, and Ultralytics versions.
+
+## HALP Stage 1 LUT
+
+Read `docs/HALP_ADAPTATION_PLAN.md` before changing the sampling or cliff
+definition. Generate the full static T4 FP16 backbone LUT with:
+
+```bash
+python scripts/profile_halp_lut.py \
+  --checkpoint outputs/train/baseline/weights/best.pt \
+  --output outputs/halp/lut --device cuda:0 --imgsz 640 \
+  --warmup 50 --iterations 200 --workspace-gib 1
+```
+
+The script refuses to overwrite existing outputs. Use `--resume` after an
+interruption; completed `(layer,Cin,Cout)` records are skipped. Use
+`--max-signatures 1 --warmup 5 --iterations 10` only for a smoke test, never as
+the reported LUT. The dense-input output sweep uses increments of eight solely
+as a candidate grid adaptation. Proposed group sizes come from measured cliff
+spacing and can differ by layer.
+
+Stage 1 must not invoke knapsack, pruning, fine-tuning, or test evaluation.
+Stage 2 must use exact LUT pairs or explicitly profile/refine missing pairs; it
+must not silently collapse the surface to output-channel-only latency.
+
+For a clean server recovery, follow `docs/RESUME_HALP.md`. It restores the
+baseline from the public Hugging Face repository, installs pinned TensorRT via
+`requirements-tensorrt.txt`, optionally checks out official HALP at the reviewed
+commit, validates the committed LUT, and lists the context files in reading
+order.

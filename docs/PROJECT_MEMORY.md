@@ -68,6 +68,16 @@ accuracy candidate. All engines passed new-process inference with
 - `https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct`
 - `https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16`
 
+HALP Stage 1 is complete, but HALP pruning is not. The official NeurIPS 2022
+paper/supplement and `NVlabs/HALP` commit
+`dfee297d55d1638b968359e7ffff878be846ec02` were reviewed and classified in
+`docs/HALP_ADAPTATION_PLAN.md`. A TensorRT 10.16.1.11 FP16 LUT was measured on
+Tesla T4 for 27 YOLOv8n backbone conv names (19 unique signatures): 598/598
+configurations succeeded using 50 warm-ups and 200 timed iterations. Analysis
+found 56 cliffs, 98 plateaus, and layer-specific candidate steps from 8 through
+64 channels. Artifacts are under `outputs/halp/lut/`. Taylor saliency, DepGraph
+group costs, augmented knapsack, pruning, and fine-tuning remain unimplemented.
+
 Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:

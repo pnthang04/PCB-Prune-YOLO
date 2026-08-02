@@ -34,3 +34,4 @@ wandb/
 .idea/
 .vscode/
 .DS_Store
+/references/HALP/

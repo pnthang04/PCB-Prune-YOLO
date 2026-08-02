@@ -1,0 +1,3 @@
+# Install PyTorch separately for the server CUDA runtime first.
+-r requirements.txt
+tensorrt-cu12==10.16.1.11

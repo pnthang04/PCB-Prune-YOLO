@@ -1,0 +1,27 @@
+{
+  "gpu_name": "Tesla T4",
+  "gpu_compute_capability": [
+    7,
+    5
+  ],
+  "gpu_total_memory_mib": 14911.6875,
+  "python_version": "3.12.12",
+  "torch_version": "2.10.0+cu128",
+  "cuda_version": "12.8",
+  "tensorrt_version": "10.16.1.11",
+  "ultralytics_version": "8.4.115",
+  "precision": "fp16",
+  "batch_size": 1,
+  "dynamic_shapes": false,
+  "checkpoint": "outputs/train/baseline/weights/best.pt",
+  "model_input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "warmup_iterations": 50,
+  "benchmark_iterations": 200,
+  "sampling": "dense native-Cin Cout sweep by 8 plus sparse 4x4 Cin-Cout calibration grid",
+  "halp_commit": "dfee297d55d1638b968359e7ffff878be846ec02"
+}
