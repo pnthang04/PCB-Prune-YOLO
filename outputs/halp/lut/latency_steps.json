@@ -1,0 +1,2362 @@
+[
+  {
+    "layer_name": "model.0.conv",
+    "native_input_channels": 3,
+    "native_output_channels": 16,
+    "noise_floor_ms": 0.0012584000080823898,
+    "cliff_threshold_ms": 0.05169599689543247,
+    "cliff_count": 0,
+    "plateau_count": 0,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.034463997930288315,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.1.conv",
+    "native_input_channels": 16,
+    "native_output_channels": 32,
+    "noise_floor_ms": 0.0007782399654388428,
+    "cliff_threshold_ms": 0.01041598990559578,
+    "cliff_count": 0,
+    "plateau_count": 0,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.006943993270397186,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.007392004132270813,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0022399984300136566,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.2.cv1.conv",
+    "native_input_channels": 32,
+    "native_output_channels": 32,
+    "noise_floor_ms": 0.0005119999870657921,
+    "cliff_threshold_ms": 0.007151998579502106,
+    "cliff_count": 1,
+    "plateau_count": 0,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004767999053001404,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.007615998387336731,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.003903999924659729,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.2.m.0.cv1.conv",
+    "native_input_channels": 16,
+    "native_output_channels": 16,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.001,
+    "cliff_count": 0,
+    "plateau_count": 1,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0001440010964870453,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.2.m.0.cv2.conv",
+    "native_input_channels": 16,
+    "native_output_channels": 16,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.001,
+    "cliff_count": 0,
+    "plateau_count": 1,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0001440010964870453,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.2.cv2.conv",
+    "native_input_channels": 48,
+    "native_output_channels": 32,
+    "noise_floor_ms": 0.0007153600081801414,
+    "cliff_threshold_ms": 0.013068001717329025,
+    "cliff_count": 1,
+    "plateau_count": 0,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.013856001198291779,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.003568001091480255,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0016640014946460724,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.3.conv",
+    "native_input_channels": 32,
+    "native_output_channels": 64,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.003264002501964569,
+    "cliff_count": 3,
+    "plateau_count": 0,
+    "proposed_group_size": 8,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0010560005903244019,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0008959993720054626,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0021760016679763794,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.005327999591827393,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004783999174833298,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004095999523997307,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0015680007636547089,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.4.cv1.conv",
+    "native_input_channels": 64,
+    "native_output_channels": 64,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.002376001328229904,
+    "cliff_count": 2,
+    "plateau_count": 1,
+    "proposed_group_size": 16,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0015840008854866028,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0002560000866651535,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0028159990906715393,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.003712000325322151,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004480000585317612,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0008320007473230362,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0006399992853403091,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.4.m.0.cv1.conv",
+    "native_input_channels": 32,
+    "native_output_channels": 32,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0031199986115098,
+    "cliff_count": 1,
+    "plateau_count": 1,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004912000149488449,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0020799990743398666,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0004800017923116684,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.4.m.0.cv2.conv",
+    "native_input_channels": 32,
+    "native_output_channels": 32,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0031199986115098,
+    "cliff_count": 1,
+    "plateau_count": 1,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004912000149488449,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0020799990743398666,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0004800017923116684,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.4.m.1.cv1.conv",
+    "native_input_channels": 32,
+    "native_output_channels": 32,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0031199986115098,
+    "cliff_count": 1,
+    "plateau_count": 1,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004912000149488449,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0020799990743398666,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0004800017923116684,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.4.m.1.cv2.conv",
+    "native_input_channels": 32,
+    "native_output_channels": 32,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0031199986115098,
+    "cliff_count": 1,
+    "plateau_count": 1,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004912000149488449,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0020799990743398666,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0004800017923116684,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.4.cv2.conv",
+    "native_input_channels": 128,
+    "native_output_channels": 64,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.002903999760746956,
+    "cliff_count": 2,
+    "plateau_count": 0,
+    "proposed_group_size": 8,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0019359998404979706,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0013919994235038757,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.001216001808643341,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0020479969680309296,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.003776002675294876,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004591998644173145,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0015839999541640282,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.5.conv",
+    "native_input_channels": 64,
+    "native_output_channels": 128,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.001775999553501606,
+    "cliff_count": 4,
+    "plateau_count": 4,
+    "proposed_group_size": 16,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0031359978020191193,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004095997661352158,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.003871999680995941,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.006144002079963684,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0021760016679763794,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.002416001632809639,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00039999932050704956,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0006240000948309898,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0020319996401667595,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0007360000163316727,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.001183999702334404,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00030400045216083527,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0013120006769895554,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0003679990768432617,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00019199959933757782,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.6.cv1.conv",
+    "native_input_channels": 128,
+    "native_output_channels": 128,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.003504001535475254,
+    "cliff_count": 2,
+    "plateau_count": 2,
+    "proposed_group_size": 48,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0033920006826519966,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.000815998762845993,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0032160021364688873,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0030080024152994156,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0003359988331794739,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.005872000008821487,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0016479995101690292,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0016639996320009232,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0006559994071722031,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0031840000301599503,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0019199997186660767,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0060159992426633835,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0012159999459981918,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0009599998593330383,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.6.m.0.cv1.conv",
+    "native_input_channels": 64,
+    "native_output_channels": 64,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.002160000381991267,
+    "cliff_count": 1,
+    "plateau_count": 3,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00022399984300136566,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0017760004848241806,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0030399998649954796,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0013920003548264503,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00046399980783462524,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0014880001544952393,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00020799972116947174,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.6.m.0.cv2.conv",
+    "native_input_channels": 64,
+    "native_output_channels": 64,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.002160000381991267,
+    "cliff_count": 1,
+    "plateau_count": 3,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00022399984300136566,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0017760004848241806,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0030399998649954796,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0013920003548264503,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00046399980783462524,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0014880001544952393,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00020799972116947174,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.6.m.1.cv1.conv",
+    "native_input_channels": 64,
+    "native_output_channels": 64,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.002160000381991267,
+    "cliff_count": 1,
+    "plateau_count": 3,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00022399984300136566,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0017760004848241806,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0030399998649954796,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0013920003548264503,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00046399980783462524,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0014880001544952393,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00020799972116947174,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.6.m.1.cv2.conv",
+    "native_input_channels": 64,
+    "native_output_channels": 64,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.002160000381991267,
+    "cliff_count": 1,
+    "plateau_count": 3,
+    "proposed_group_size": null,
+    "status": "insufficient_cliffs",
+    "transitions": [
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00022399984300136566,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0017760004848241806,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0030399998649954796,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0013920003548264503,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00046399980783462524,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0014880001544952393,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00020799972116947174,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.6.cv2.conv",
+    "native_input_channels": 256,
+    "native_output_channels": 128,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0018720002844929695,
+    "cliff_count": 3,
+    "plateau_count": 2,
+    "proposed_group_size": 24,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0025919992476701736,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.009840000420808792,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.009775999933481216,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.009056001901626587,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0008959993720054626,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.015008000656962395,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0010560005903244019,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": 9.59988683462143e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00038400106132030487,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.004656000062823296,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004879999905824661,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0014399997889995575,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0005440004169940948,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0005440004169940948,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0015999991446733475,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.7.conv",
+    "native_input_channels": 128,
+    "native_output_channels": 256,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0011879978701472282,
+    "cliff_count": 6,
+    "plateau_count": 14,
+    "proposed_group_size": 40,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 256,
+        "to_output_channels": 248,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0019680000841617584,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 248,
+        "to_output_channels": 240,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0018879994750022888,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 240,
+        "to_output_channels": 232,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00020800158381462097,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 232,
+        "to_output_channels": 224,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00047999992966651917,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 224,
+        "to_output_channels": 216,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.001024000346660614,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 216,
+        "to_output_channels": 208,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.003151997923851013,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 208,
+        "to_output_channels": 200,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0025759972631931305,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 200,
+        "to_output_channels": 192,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0006560012698173523,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 192,
+        "to_output_channels": 184,
+        "channel_reduction": 8,
+        "latency_drop_ms": -6.400048732757568e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 184,
+        "to_output_channels": 176,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00038399919867515564,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 176,
+        "to_output_channels": 168,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00031999871134757996,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 168,
+        "to_output_channels": 160,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0007839985191822052,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 160,
+        "to_output_channels": 152,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0012800013646483421,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 152,
+        "to_output_channels": 144,
+        "channel_reduction": 8,
+        "latency_drop_ms": -1.5999190509319305e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 144,
+        "to_output_channels": 136,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00019199959933757782,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 136,
+        "to_output_channels": 128,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0005440004169940948,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0017920006066560745,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0014399997889995575,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0007999986410140991,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0012480001896619797,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0005599996075034142,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0005599996075034142,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00028800033032894135,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00038399919867515564,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0009599998593330383,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00012800097465515137,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00011199899017810822,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0004319995641708374,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0019519999623298645,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 6.400048732757568e-05,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.8.cv1.conv",
+    "native_input_channels": 256,
+    "native_output_channels": 256,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0010440009646117687,
+    "cliff_count": 5,
+    "plateau_count": 13,
+    "proposed_group_size": 32,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 256,
+        "to_output_channels": 248,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0012000007554888725,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 248,
+        "to_output_channels": 240,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0006880015134811401,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 240,
+        "to_output_channels": 232,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0013599991798400879,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 232,
+        "to_output_channels": 224,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00011200085282325745,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 224,
+        "to_output_channels": 216,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00017600134015083313,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 216,
+        "to_output_channels": 208,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0019840002059936523,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 208,
+        "to_output_channels": 200,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0017600003629922867,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 200,
+        "to_output_channels": 192,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00031999964267015457,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 192,
+        "to_output_channels": 184,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0005279993638396263,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 184,
+        "to_output_channels": 176,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0009279996156692505,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 176,
+        "to_output_channels": 168,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0004960000514984131,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 168,
+        "to_output_channels": 160,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0035200007259845734,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 160,
+        "to_output_channels": 152,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0010560005903244019,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 152,
+        "to_output_channels": 144,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0005440004169940948,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 144,
+        "to_output_channels": 136,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0016319993883371353,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 136,
+        "to_output_channels": 128,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00020799972116947174,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00020799972116947174,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0006399992853403091,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.002383999526500702,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.001024000346660614,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0010560005903244019,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00028800033032894135,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": -6.400048732757568e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 8.00006091594696e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0002560000866651535,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00036800093948841095,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.001183999702334404,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0006879996508359909,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0007039997726678848,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0002560000866651535,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.8.m.0.cv1.conv",
+    "native_input_channels": 128,
+    "native_output_channels": 128,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0010919999331235886,
+    "cliff_count": 3,
+    "plateau_count": 8,
+    "proposed_group_size": 16,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0019519999623298645,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0010399995371699333,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0017439993098378181,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0004319995641708374,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0003200005739927292,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0011039990931749344,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0003519989550113678,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0002560000866651535,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0009279996156692505,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00019199959933757782,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00019199959933757782,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0005280002951622009,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00012800097465515137,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00011200085282325745,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.002560000866651535,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.8.m.0.cv2.conv",
+    "native_input_channels": 128,
+    "native_output_channels": 128,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0010919999331235886,
+    "cliff_count": 3,
+    "plateau_count": 8,
+    "proposed_group_size": 16,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0019519999623298645,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0010399995371699333,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0017439993098378181,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0004319995641708374,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0003200005739927292,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0011039990931749344,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0003519989550113678,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0002560000866651535,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0009279996156692505,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00019199959933757782,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00019199959933757782,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0005280002951622009,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00012800097465515137,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00011200085282325745,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.002560000866651535,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.8.cv2.conv",
+    "native_input_channels": 384,
+    "native_output_channels": 256,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.001776000950485468,
+    "cliff_count": 4,
+    "plateau_count": 9,
+    "proposed_group_size": 64,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 256,
+        "to_output_channels": 248,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0016319993883371353,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 248,
+        "to_output_channels": 240,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0008000005036592484,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 240,
+        "to_output_channels": 232,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00116799958050251,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 232,
+        "to_output_channels": 224,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0003679990768432617,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 224,
+        "to_output_channels": 216,
+        "channel_reduction": 8,
+        "latency_drop_ms": -7.999874651432037e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 216,
+        "to_output_channels": 208,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0022560004144906998,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 208,
+        "to_output_channels": 200,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0036960002034902573,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 200,
+        "to_output_channels": 192,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0016000010073184967,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 192,
+        "to_output_channels": 184,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0020000003278255463,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 184,
+        "to_output_channels": 176,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0012800004333257675,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 176,
+        "to_output_channels": 168,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.000864000990986824,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 168,
+        "to_output_channels": 160,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0013600010424852371,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 160,
+        "to_output_channels": 152,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0011840006336569786,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 152,
+        "to_output_channels": 144,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00046400073915719986,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 144,
+        "to_output_channels": 136,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00012799911201000214,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 136,
+        "to_output_channels": 128,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0025439998134970665,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0023840004578232765,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0005280002951622009,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0006240000948309898,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0014240005984902382,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00011200085282325745,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0014399997889995575,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.001711999997496605,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0038239993155002594,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0019840002059936523,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00022399984300136566,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.001343999058008194,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.001711999997496605,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0001759994775056839,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00038400106132030487,
+        "classification": "plateau"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.9.cv1.conv",
+    "native_input_channels": 256,
+    "native_output_channels": 128,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.0034320009872317314,
+    "cliff_count": 4,
+    "plateau_count": 4,
+    "proposed_group_size": 24,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.004335999488830566,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0015040002763271332,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0001919977366924286,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.012256002053618431,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0004479996860027313,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0007840003818273544,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.013359999284148216,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.014511998742818832,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0033119991421699524,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0036960002034902573,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00039999932050704956,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0012320000678300858,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.000880001112818718,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00035200081765651703,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0005920007824897766,
+        "classification": "slope_or_noise"
+      }
+    ]
+  },
+  {
+    "layer_name": "model.9.cv2.conv",
+    "native_input_channels": 512,
+    "native_output_channels": 256,
+    "noise_floor_ms": 0.0005,
+    "cliff_threshold_ms": 0.001127998810261488,
+    "cliff_count": 5,
+    "plateau_count": 15,
+    "proposed_group_size": 40,
+    "status": "resolved",
+    "transitions": [
+      {
+        "from_output_channels": 256,
+        "to_output_channels": 248,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0013119988143444061,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 248,
+        "to_output_channels": 240,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0022399984300136566,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 240,
+        "to_output_channels": 232,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00019199959933757782,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 232,
+        "to_output_channels": 224,
+        "channel_reduction": 8,
+        "latency_drop_ms": -6.400048732757568e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 224,
+        "to_output_channels": 216,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0004800017923116684,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 216,
+        "to_output_channels": 208,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.002432001754641533,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 208,
+        "to_output_channels": 200,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0021760016679763794,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 200,
+        "to_output_channels": 192,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00022399984300136566,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 192,
+        "to_output_channels": 184,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00031999871134757996,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 184,
+        "to_output_channels": 176,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00038399919867515564,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 176,
+        "to_output_channels": 168,
+        "channel_reduction": 8,
+        "latency_drop_ms": -9.600073099136353e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 168,
+        "to_output_channels": 160,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.00022399984300136566,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 160,
+        "to_output_channels": 152,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0016320012509822845,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 152,
+        "to_output_channels": 144,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0005440004169940948,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 144,
+        "to_output_channels": 136,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0002720002084970474,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 136,
+        "to_output_channels": 128,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0013600010424852371,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 128,
+        "to_output_channels": 120,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0009279996156692505,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 120,
+        "to_output_channels": 112,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0009279996156692505,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 112,
+        "to_output_channels": 104,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.002048000693321228,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 104,
+        "to_output_channels": 96,
+        "channel_reduction": 8,
+        "latency_drop_ms": -1.600012183189392e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 96,
+        "to_output_channels": 88,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0010720007121562958,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 88,
+        "to_output_channels": 80,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0010560005903244019,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 80,
+        "to_output_channels": 72,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0017440002411603928,
+        "classification": "cliff"
+      },
+      {
+        "from_output_channels": 72,
+        "to_output_channels": 64,
+        "channel_reduction": 8,
+        "latency_drop_ms": -0.0017440002411603928,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 64,
+        "to_output_channels": 56,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 56,
+        "to_output_channels": 48,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0009920001029968262,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 48,
+        "to_output_channels": 40,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00030399952083826065,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 40,
+        "to_output_channels": 32,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.000751999206840992,
+        "classification": "slope_or_noise"
+      },
+      {
+        "from_output_channels": 32,
+        "to_output_channels": 24,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.00012800097465515137,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 24,
+        "to_output_channels": 16,
+        "channel_reduction": 8,
+        "latency_drop_ms": 3.200024366378784e-05,
+        "classification": "plateau"
+      },
+      {
+        "from_output_channels": 16,
+        "to_output_channels": 8,
+        "channel_reduction": 8,
+        "latency_drop_ms": 0.0002560000866651535,
+        "classification": "plateau"
+      }
+    ]
+  }
+]

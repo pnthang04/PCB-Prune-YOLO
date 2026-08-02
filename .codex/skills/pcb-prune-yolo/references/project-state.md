@@ -306,3 +306,35 @@ All three repositories were created public. P20/P30 contain the validation-best
 PyTorch checkpoint, model card, training args, validation metrics, and benchmark.
 The TensorRT repository contains all four engines plus exact export, validation,
 benchmark, and comparison JSON/CSV.
+
+## HALP Stage 1 latency LUT
+
+Reviewed the 26-page official HALP paper/supplement and official `NVlabs/HALP`
+repository at commit `dfee297d55d1638b968359e7ffff878be846ec02`. The NVIDIA
+license restricts official code/derivatives to non-commercial research or
+evaluation, so the project uses it as a reference and implements independent
+AGPL-compatible adaptation code. Full provenance and PAPER/OFFICIAL
+CODE/ADAPTATION/TODO classification are in `docs/HALP_ADAPTATION_PLAN.md`.
+
+Measured TensorRT FP16 LUT on Tesla T4:
+
+- Baseline checkpoint, static batch 1, full-model input `[1,3,640,640]`.
+- 27 leaf Conv2d names in backbone `model.0`–`model.9`; 19 unique signatures.
+- 37 convolution names in neck/Detect/DFL excluded and recorded.
+- 598 two-dimensional sampled `Cin×Cout` records; 598 success, zero failure.
+- Each entry: 50 warm-ups, 200 synchronized iterations, reused buffers, build
+  and image I/O excluded, exact TensorRT tactic recorded.
+- Dense native configurations repeated; maximum median relative error 13.90%,
+  under the declared 20% tolerance.
+- 56 latency cliffs and 98 plateaus. Resolved group steps span 8, 16, 24, 32,
+  40, 48, and 64 channels; 14 layers remain unresolved due to insufficient
+  distinct cliffs.
+- Strong operator-level latency potential: stem/downsample and selected fusion
+  convs (`model.0`, `model.1`, `model.3`, `model.4.cv2`, `model.9.cv1`).
+- Little/no extreme-sweep benefit: `model.2.m.0.cv1/cv2`, `model.8.cv1`, and
+  `model.8.cv2`.
+
+Artifacts: `outputs/halp/lut/t4_fp16_backbone.{json,csv}`,
+`environment.json`, and `latency_steps.{json,csv}`. This is a LUT only; Taylor
+saliency, latency-aware DepGraph grouping, augmented knapsack, iterative pruning,
+fine-tuning, and test evaluation are not implemented.

@@ -248,6 +248,21 @@ TensorRT mAP50-95 giảm từ 0.78716 xuống 0.75610 và recall giảm từ 0.9
 [P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) và
 [P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct).
 
+## HALP: latency-aware pruning
+
+Giai đoạn 1 của adaptation HALP đã hoàn tất; đây chưa phải mô hình HALP đã
+prune. Baseline backbone có 27 convolution thuộc 19 TensorRT operator signature.
+LUT T4 FP16 chứa 598 cấu hình `Cin×Cout`, warm-up 50 và đo 200 lần; toàn bộ 598
+cấu hình thành công. Phân tích tìm được 56 latency cliff và 98 plateau. Group
+step đo được thay đổi theo layer (8, 16, 24, 32, 40, 48 hoặc 64), không mặc định
+mọi layer theo 8.
+
+Thiết kế, provenance paper/code, khác biệt SSD–YOLOv8 và giới hạn adaptation nằm
+trong [`docs/HALP_ADAPTATION_PLAN.md`](docs/HALP_ADAPTATION_PLAN.md). LUT và
+staircase report nằm ở `outputs/halp/lut/`. Giai đoạn tiếp theo mới thực hiện
+Taylor saliency → DepGraph latency-aware grouping → augmented knapsack; chưa có
+pruning, fine-tune hoặc test-set evaluation trong giai đoạn hiện tại.
+
 Checkpoint P10 fine-tuned và model card được phát hành public tại
 [thangkt/PCB-Prune-YOLO-P10-DepGraph](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph).
 Vì structured pruning thay đổi kiến trúc, hãy clone và cài project trước khi

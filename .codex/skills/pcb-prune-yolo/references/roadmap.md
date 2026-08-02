@@ -51,8 +51,17 @@
   faster than TensorRT baseline in this run (about 1.05x).
 - Published public P20/P30 validation-best checkpoints and all four TensorRT
   FP16 engines with model cards and measured reports on Hugging Face.
+- Reviewed HALP paper/supplement and official code, documented the YOLOv8n +
+  DepGraph adaptation, and completed Stage 1 TensorRT FP16 T4 LUT profiling:
+  27 backbone conv names, 19 unique signatures, 598/598 successful sampled 2D
+  configurations, 56 cliffs, and 98 plateaus.
 
 ## Not completed
+
+- HALP Stage 2: accumulate Taylor saliency on YOLO detection loss, map DepGraph
+  dependency groups to exact two-dimensional LUT costs, form latency-aware
+  groups, and implement/test the augmented knapsack. No HALP pruning or
+  fine-tuning has been run.
 
 - Tune sparse learning on validation until group norms show measurable sparsity;
   the first `reg=1e-4` run retained baseline accuracy but produced no near-zero
