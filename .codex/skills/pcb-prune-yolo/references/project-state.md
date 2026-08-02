@@ -400,9 +400,13 @@ arbitrary cutoff). A `dis` sweep (3.0 and 10.0) found the default 6.0 already
 near-optimal: 0.711/0.712/0.709 mAP50-95 respectively, within noise — no
 further distillation-weight tuning planned. TensorRT FP16 engines were
 rebuilt for the 100-epoch checkpoints (same architecture as before):
-standard FT 1.422 ms (703.22 FPS), KD 1.497 ms (668.12 FPS), both still ahead
-of a same-session baseline (1.716 ms); the small standard/KD gap here is
-measurement noise, not an architecture difference. Both passed new-process
+standard FT 1.422 ms (703.22 FPS), KD 1.497 ms (668.12 FPS) from a single
+sample each. Repeated sampling (4 measurements, no rebuild) found ~5%
+run-to-run noise on this shared cloud GPU even for an unmodified engine: KD
+averaged 1.494 ms (σ 0.052), baseline averaged 1.702 ms (σ 0.011) — so the
+reliable KD speedup is **~1.14x (≈14%)**, not the ~1.21x a single sample
+suggested. Always average several repeated measurements on an unmodified
+engine before quoting a deployment speedup. Both passed new-process
 load/inference.
 
 **Comparison to P30 improved substantially.** At 50 epochs, KD trailed P30

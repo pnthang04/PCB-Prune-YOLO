@@ -156,12 +156,17 @@ enough training. A `dis` sweep (3.0/10.0 vs the default 6.0) confirmed 6.0
 is already near-optimal (0.711/0.712/0.709 — within noise). Versus P30
 (0.75030 mAP50-95, -51.77%/-51.83% params/MACs), the 100-epoch KD checkpoint
 is now only 3.83 points behind (down from 9.03 at 50 epochs) while keeping
-much stronger compression (-70.00%/-72.47%) and a ~1.3x TensorRT speed
-advantage — a substantially more competitive trade-off than before. TensorRT
-engines rebuilt for the 100-epoch checkpoints confirm the same architecture
-latency (1.422/1.497 ms vs a same-session baseline of 1.716 ms). The
-100-epoch checkpoints supersede the 50-epoch ones and were re-published to
-the same two Hugging Face repositories. Test split was not used.
+much stronger compression (-70.00%/-72.47%). TensorRT engines rebuilt for the
+100-epoch checkpoints initially measured 1.422/1.497 ms vs a same-session
+baseline of 1.716 ms (single sample each). A follow-up repeated-sampling
+check (4 measurements each, no rebuild) found ~5% run-to-run latency noise
+even on an unmodified engine: KD averaged 1.494 ms (σ 0.052), baseline
+averaged 1.702 ms (σ 0.011). The reliable KD speedup is therefore **~1.14x
+(≈14%)**, not the ~1.21x a single sample suggested; do not quote a
+single-measurement ratio as the deployment speedup again — always average
+several repeated measurements on an unmodified engine first. The 100-epoch
+checkpoints supersede the 50-epoch ones and were re-published to the same two
+Hugging Face repositories. Test split was not used.
 
 TensorRT FP16 engines were subsequently rebuilt for both fine-tuned
 checkpoints, plus a fresh baseline engine in the same session (absolute

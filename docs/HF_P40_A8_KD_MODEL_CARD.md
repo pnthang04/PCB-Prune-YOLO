@@ -52,10 +52,13 @@ The DeepPCB test split was not used for model selection.
 | 903,466 | 1.1212G | 1.960 MiB | 8.018 ms | 124.72 |
 
 Input size is 640. Latency uses 50 warm-up and 200 synchronized CUDA
-iterations. Fine-tuning does not change channel counts, so a same-session
-rebuilt TensorRT FP16 engine for this checkpoint measured 1.497 ms forward
-(50 warm-up / 200 iterations, batch 1), still clearly ahead of a same-session
-baseline TensorRT engine (1.716 ms); TensorRT engines are not included in
+iterations; PyTorch batch-1 latency on a shared cloud GPU varies roughly ±5%
+between runs of the identical checkpoint, so treat single-sample figures as
+approximate. Fine-tuning does not change channel counts, so a same-session
+rebuilt TensorRT FP16 engine for this checkpoint measured 1.497 ms on first
+measurement; averaging 4 repeated measurements of the same unmodified engine
+gives 1.494 ms versus a same-session baseline average of 1.702 ms — about
+**1.14x (≈14%) faster than baseline**, TensorRT engines are not included in
 this repository.
 
 ## Training configuration

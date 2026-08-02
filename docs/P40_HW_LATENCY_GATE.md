@@ -156,13 +156,20 @@ not published.
 
 TensorRT FP16 engines were rebuilt for the 100-epoch checkpoints (same
 architecture, so latency is expected to match the 50-epoch measurement):
-standard FT 1.422 ms (703.22 FPS), KD 1.497 ms (668.12 FPS) — both still well
-ahead of the same-session baseline (1.716 ms); the small KD/standard gap here
-is measurement noise/tactic selection, not an architecture difference (both
-checkpoints have identical 903,466 params / 1.1212G MACs). Both engines passed
-new-process load/inference. The 100-epoch checkpoints supersede the 50-epoch
-ones as the current best P40-A8 candidates and were re-published to the same
-two Hugging Face repositories (`PCB-Prune-YOLO-P40-A8-Direct`,
+standard FT 1.422 ms (703.22 FPS), KD 1.497 ms (668.12 FPS) from a single
+measurement each — both still ahead of the same-session baseline (1.716 ms).
+A follow-up check re-measured the same KD engine (no rebuild) and the same
+baseline engine three more times each: KD averaged 1.494 ms (σ 0.052 over 4
+samples including the first), baseline averaged 1.702 ms (σ 0.011 over 4
+samples). This confirms ~5% run-to-run latency noise on this shared cloud GPU
+even with an identical, unmodified engine — not an architecture difference
+(both P40-A8 checkpoints share 903,466 params / 1.1212G MACs). The reliable
+KD speedup is therefore **~1.14x (≈14%)**, not the ~1.21x a single sample
+suggested. Standard FT's ratio was not re-verified with repeated sampling.
+Both engines passed new-process load/inference. The 100-epoch checkpoints
+supersede the 50-epoch ones as the current best P40-A8 candidates and were
+re-published to the same two Hugging Face repositories
+(`PCB-Prune-YOLO-P40-A8-Direct`,
 `PCB-Prune-YOLO-P40-A8-KD`). Test split was not used at any point.
 
 ### TensorRT re-measurement after fine-tuning

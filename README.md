@@ -318,16 +318,19 @@ kèm model card, args, validation và benchmark; đã xác minh tải ẩn danh.
 Engine TensorRT FP16 được build lại cho checkpoint 100-epoch (cùng phiên đo
 với baseline để so sánh công bằng, 50 warm-up/200 lần đo, batch 1):
 
-| Model | Params | MACs | TensorRT latency | FPS | So với baseline |
+| Model | Params | MACs | TensorRT latency (1 lần đo) | TensorRT latency (TB 4 lần) | So với baseline (TB) |
 |---|---:|---:|---:|---:|---:|
-| Baseline | 3,012,018 | 4.0733G | 1.716 ms | 582.75 | 1.00x |
-| P40-A8 chuẩn (100 epoch) | 903,466 | 1.1212G | 1.422 ms | 703.22 | 1.21x |
-| P40-A8 KD (100 epoch) | 903,466 | 1.1212G | 1.497 ms | 668.12 | 1.15x |
+| Baseline | 3,012,018 | 4.0733G | 1.716 ms | 1.702 ms (σ 0.011) | 1.00x |
+| P40-A8 chuẩn (100 epoch) | 903,466 | 1.1212G | 1.422 ms | — (chưa đo lặp lại) | — |
+| P40-A8 KD (100 epoch) | 903,466 | 1.1212G | 1.497 ms | 1.494 ms (σ 0.052) | **1.14x** |
 
-Cả hai vẫn nhanh hơn baseline TensorRT rõ rệt (kiến trúc không đổi qua
-fine-tune nên latency gần như y hệt bản 50 epoch trước đó; chênh lệch nhỏ
-giữa hai lần đo là nhiễu đo đạc/tactic selection, không phải khác biệt kiến
-trúc), đã qua verify save → process mới load → inference. Chi tiết ở
+Đo lặp lại nhiều lần (cùng engine, không build lại) cho thấy latency dao động
+tự nhiên ~5% do môi trường GPU cloud dùng chung, không do khác biệt kiến trúc
+(chuẩn và KD dùng chung 903,466 params/1.1212G MACs). Vì vậy nên dùng trung
+bình nhiều lần đo thay vì một lần đo đơn lẻ: **P40-A8 KD nhanh hơn baseline
+khoảng 14%**, không phải 20-21% như ước tính ban đầu từ một mẫu đo. Cả hai
+vẫn nhanh hơn baseline rõ rệt, đã qua verify save → process mới load →
+inference. Chi tiết ở
 [`docs/P40_HW_LATENCY_GATE.md`](docs/P40_HW_LATENCY_GATE.md).
 
 ## HALP: latency-aware pruning
