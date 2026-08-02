@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "status": "dry_run_only",
+  "checkpoint": "outputs/train/baseline/weights/best.pt",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "saliency": {
+    "method": "abs(gamma*dL_dgamma + beta*dL_dbeta)",
+    "batches": 8
+  },
+  "scope": "backbone roots model.0-model.9; Detect/DFL fixed outputs protected",
+  "protected_layers": [
+    "model.22.cv2.0.2",
+    "model.22.cv2.1.2",
+    "model.22.cv2.2.2",
+    "model.22.cv3.0.2",
+    "model.22.cv3.1.2",
+    "model.22.cv3.2.2",
+    "model.22.dfl.conv"
+  ],
+  "c2f_lut_mapping": "converted cv0/cv1 branches map to the original C2f cv1 operator surface",
+  "cost_model": "paper-style current-state root Cout cost; downstream Cin is recomputed after each future milestone",
+  "target_reduction": 0.05,
+  "eligible_dense_latency_ms": 0.4477582400012761,
+  "latency_budget_ms": 0.4253703280012123,
+  "selected_latency_ms": 0.41947376043535767,
+  "kept_importance": 49.40028381347656,
+  "missing_exact_lut_pairs": [],
+  "groups": [
+    {
+      "root_name": "model.9.cv2.conv",
+      "channels": 256,
+      "group_size": 40,
+      "importance_mean": 0.014917521737515926,
+      "selected_keep_channels": 216,
+      "selected_latency_ms": 0.02938624002970755,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.9.cv1.conv",
+      "channels": 128,
+      "group_size": 24,
+      "importance_mean": 0.021117325872182846,
+      "selected_keep_channels": 80,
+      "selected_latency_ms": 0.02812368016690016,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.8.cv2.conv",
+      "channels": 256,
+      "group_size": 64,
+      "importance_mean": 0.013404006138443947,
+      "selected_keep_channels": 256,
+      "selected_latency_ms": 0.028623360209167004,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.8.m.0.cv2.conv",
+      "channels": 128,
+      "group_size": 16,
+      "importance_mean": 0.029643118381500244,
+      "selected_keep_channels": 128,
+      "selected_latency_ms": 0.031602239916101095,
+      "status": "eligible",
+      "dependency_bn_terms": 2
+    },
+    {
+      "root_name": "model.8.m.0.cv1.conv",
+      "channels": 128,
+      "group_size": 16,
+      "importance_mean": 0.013819267973303795,
+      "selected_keep_channels": 112,
+      "selected_latency_ms": 0.03071904002688825,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.7.conv",
+      "channels": 256,
+      "group_size": 40,
+      "importance_mean": 0.012567602097988129,
+      "selected_keep_channels": 136,
+      "selected_latency_ms": 0.031532639991492036,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.6.cv2.conv",
+      "channels": 128,
+      "group_size": 24,
+      "importance_mean": 0.04051589593291283,
+      "selected_keep_channels": 128,
+      "selected_latency_ms": 0.03115743993781507,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.6.m.1.cv2.conv",
+      "channels": 64,
+      "group_size": null,
+      "importance_mean": 0.10311698913574219,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 3
+    },
+    {
+      "root_name": "model.6.m.1.cv1.conv",
+      "channels": 64,
+      "group_size": null,
+      "importance_mean": 0.028104208409786224,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.6.m.0.cv1.conv",
+      "channels": 64,
+      "group_size": null,
+      "importance_mean": 0.03217010945081711,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.5.conv",
+      "channels": 128,
+      "group_size": 16,
+      "importance_mean": 0.040151599794626236,
+      "selected_keep_channels": 128,
+      "selected_latency_ms": 0.034983519967645406,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.4.cv2.conv",
+      "channels": 64,
+      "group_size": 8,
+      "importance_mean": 0.13110630214214325,
+      "selected_keep_channels": 56,
+      "selected_latency_ms": 0.04486831983551383,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.4.m.1.cv2.conv",
+      "channels": 32,
+      "group_size": null,
+      "importance_mean": 0.3606659173965454,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 3
+    },
+    {
+      "root_name": "model.4.m.1.cv1.conv",
+      "channels": 32,
+      "group_size": null,
+      "importance_mean": 0.09073115140199661,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.4.m.0.cv1.conv",
+      "channels": 32,
+      "group_size": null,
+      "importance_mean": 0.11232251673936844,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.3.conv",
+      "channels": 64,
+      "group_size": 8,
+      "importance_mean": 0.11692087352275848,
+      "selected_keep_channels": 64,
+      "selected_latency_ms": 0.04788160018622875,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.2.cv2.conv",
+      "channels": 32,
+      "group_size": null,
+      "importance_mean": 0.19847238063812256,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.2.m.0.cv2.conv",
+      "channels": 16,
+      "group_size": null,
+      "importance_mean": 0.333217054605484,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 2
+    },
+    {
+      "root_name": "model.2.m.0.cv1.conv",
+      "channels": 16,
+      "group_size": null,
+      "importance_mean": 0.09978564083576202,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.1.conv",
+      "channels": 32,
+      "group_size": null,
+      "importance_mean": 0.1761631816625595,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.0.conv",
+      "channels": 16,
+      "group_size": null,
+      "importance_mean": 0.1298171579837799,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.2.cv0.conv",
+      "channels": 16,
+      "group_size": null,
+      "importance_mean": 0.15248100459575653,
+      "selected_keep_channels": null,
+      "selected_latency_ms": null,
+      "status": "protected_no_latency_cliff",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.4.cv0.conv",
+      "channels": 32,
+      "group_size": 16,
+      "importance_mean": 0.09090235829353333,
+      "selected_keep_channels": 32,
+      "selected_latency_ms": 0.029996000053361057,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.6.cv0.conv",
+      "channels": 64,
+      "group_size": 48,
+      "importance_mean": 0.03325826674699783,
+      "selected_keep_channels": 64,
+      "selected_latency_ms": 0.024003360075876116,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    },
+    {
+      "root_name": "model.8.cv0.conv",
+      "channels": 128,
+      "group_size": 32,
+      "importance_mean": 0.008419700898230076,
+      "selected_keep_channels": 128,
+      "selected_latency_ms": 0.026596320038661362,
+      "status": "eligible",
+      "dependency_bn_terms": 1
+    }
+  ],
+  "forward_validation": {
+    "class_count": 6,
+    "class_names": [
+      "open",
+      "short",
+      "mousebite",
+      "spur",
+      "copper",
+      "pin-hole"
+    ],
+    "prediction_shape": [
+      1,
+      10,
+      8400
+    ]
+  },
+  "model_mutated": false
+}

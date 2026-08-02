@@ -55,12 +55,18 @@
   DepGraph adaptation, and completed Stage 1 TensorRT FP16 T4 LUT profiling:
   27 backbone conv names, 19 unique signatures, 598/598 successful sampled 2D
   configurations, 56 cliffs, and 98 plateaus.
+- Implemented HALP Stage 2 dry-run: averaged BN Taylor saliency over 8 train
+  minibatches, enumerated 25 backbone DepGraph roots, formed measured
+  latency-step prefixes for 13 eligible roots, protected 12 roots without a
+  reliable cliff, and solved the 5% augmented-knapsack milestone with zero
+  missing exact LUT pairs. The model was not mutated and output stayed
+  `[1,10,8400]`.
 
 ## Not completed
 
-- HALP Stage 2: accumulate Taylor saliency on YOLO detection loss, map DepGraph
-  dependency groups to exact two-dimensional LUT costs, form latency-aware
-  groups, and implement/test the augmented knapsack. No HALP pruning or
+- HALP Stage 3: apply one small structural milestone, rebuild DepGraph and
+  recompute downstream input widths/costs, then verify save → new-process load
+  → inference before any iterative schedule or fine-tuning. No HALP pruning or
   fine-tuning has been run.
 
 - Tune sparse learning on validation until group norms show measurable sparsity;

@@ -75,8 +75,13 @@ paper/supplement and `NVlabs/HALP` commit
 Tesla T4 for 27 YOLOv8n backbone conv names (19 unique signatures): 598/598
 configurations succeeded using 50 warm-ups and 200 timed iterations. Analysis
 found 56 cliffs, 98 plateaus, and layer-specific candidate steps from 8 through
-64 channels. Artifacts are under `outputs/halp/lut/`. Taylor saliency, DepGraph
-group costs, augmented knapsack, pruning, and fine-tuning remain unimplemented.
+64 channels. Stage 2 then averaged true detection-loss BN Taylor saliency over
+8 train minibatches and ran a non-mutating 5% augmented-knapsack dry-run: 13 of
+25 backbone roots were eligible, 12 were protected for lack of a reliable
+cliff, no exact LUT pair was missing, and output remained `[1,10,8400]`.
+Artifacts are under `outputs/halp/lut/` and `outputs/halp/stage2/`. Structural
+HALP pruning, iterative cost recomputation, save/load verification, and
+fine-tuning remain unimplemented.
 
 Last verified: 2026-08-02
 

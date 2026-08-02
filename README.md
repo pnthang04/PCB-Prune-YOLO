@@ -250,8 +250,9 @@ TensorRT mAP50-95 giảm từ 0.78716 xuống 0.75610 và recall giảm từ 0.9
 
 ## HALP: latency-aware pruning
 
-Giai đoạn 1 của adaptation HALP đã hoàn tất; đây chưa phải mô hình HALP đã
-prune. Baseline backbone có 27 convolution thuộc 19 TensorRT operator signature.
+Giai đoạn 1 và dry-run Stage 2 của adaptation HALP đã hoàn tất; đây chưa phải mô
+hình HALP đã prune. Baseline backbone có 27 convolution thuộc 19 TensorRT
+operator signature.
 LUT T4 FP16 chứa 598 cấu hình `Cin×Cout`, warm-up 50 và đo 200 lần; toàn bộ 598
 cấu hình thành công. Phân tích tìm được 56 latency cliff và 98 plateau. Group
 step đo được thay đổi theo layer (8, 16, 24, 32, 40, 48 hoặc 64), không mặc định
@@ -259,9 +260,24 @@ mọi layer theo 8.
 
 Thiết kế, provenance paper/code, khác biệt SSD–YOLOv8 và giới hạn adaptation nằm
 trong [`docs/HALP_ADAPTATION_PLAN.md`](docs/HALP_ADAPTATION_PLAN.md). LUT và
-staircase report nằm ở `outputs/halp/lut/`. Giai đoạn tiếp theo mới thực hiện
-Taylor saliency → DepGraph latency-aware grouping → augmented knapsack; chưa có
-pruning, fine-tune hoặc test-set evaluation trong giai đoạn hiện tại.
+staircase report nằm ở `outputs/halp/lut/`.
+
+Stage 2 thu Taylor saliency trên 8 train minibatch bằng
+`|γ·∂L/∂γ + β·∂L/∂β|`, dựng dependency graph nhưng chỉ cho phép root
+`model.0`–`model.9`, tạo prefix group theo cliff đo được và giải augmented
+knapsack cho milestone giảm 5% latency. Dry-run tìm 25 backbone root: 13 root
+eligible, 12 root được giữ nguyên vì chưa có latency cliff đáng tin cậy, không
+thiếu cặp LUT chính xác, không sửa trọng số/kênh, và forward vẫn là
+`[1,10,8400]` với 6 lớp. Báo cáo nằm ở `outputs/halp/stage2/`; chạy lại bằng:
+
+```bash
+python scripts/run_halp_stage2.py --saliency-batches 8 --batch 8
+```
+
+Cost hiện tại bám bước đầu của paper: dùng latency của output convolution tại
+trạng thái hiện tại; `Cin` downstream sẽ phải được tính lại ở mỗi milestone
+structural-pruning sau này. Vì vậy chưa có pruning, fine-tune hay test-set
+evaluation trong Stage 2 này.
 
 Để tiếp tục trên server mới từ một clone sạch, làm theo
 [`docs/RESUME_HALP.md`](docs/RESUME_HALP.md); tài liệu này pin TensorRT, tải lại

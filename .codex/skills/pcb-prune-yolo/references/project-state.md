@@ -316,6 +316,24 @@ evaluation, so the project uses it as a reference and implements independent
 AGPL-compatible adaptation code. Full provenance and PAPER/OFFICIAL
 CODE/ADAPTATION/TODO classification are in `docs/HALP_ADAPTATION_PLAN.md`.
 
+## HALP Stage 2 dry-run
+
+`scripts/run_halp_stage2.py` starts from the unpruned baseline and performs no
+optimizer step or structural pruning. The verified run used 8 train minibatches
+at batch 8, accumulated the official BN Taylor term, enumerated backbone-only
+DepGraph roots, and solved a 5% prefix-constrained latency milestone.
+
+- Artifacts: `outputs/halp/stage2/dry_run.json` and `groups.csv`.
+- 25 backbone roots; 13 eligible and 12 protected for missing latency cliffs.
+- No exact LUT pair was missing.
+- Eligible dense latency: 0.447758 ms; budget: 0.425370 ms; selected: 0.419474 ms.
+- Detect/DFL fixed outputs remained protected; 6-class output was `[1,10,8400]`.
+- C2f `cv0` and `cv1` branches map to the original Stage 1 `cv1` operator
+  surface. Structural Stage 3 must rebuild costs after every milestone so
+  downstream `Cin` changes are never silently approximated.
+
+No HALP-pruned checkpoint or fine-tuned HALP model exists yet.
+
 Measured TensorRT FP16 LUT on Tesla T4:
 
 - Baseline checkpoint, static batch 1, full-model input `[1,3,640,640]`.
