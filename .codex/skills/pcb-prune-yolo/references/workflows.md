@@ -214,3 +214,9 @@ spacing and can differ by layer.
 Stage 1 must not invoke knapsack, pruning, fine-tuning, or test evaluation.
 Stage 2 must use exact LUT pairs or explicitly profile/refine missing pairs; it
 must not silently collapse the surface to output-channel-only latency.
+
+For a clean server recovery, follow `docs/RESUME_HALP.md`. It restores the
+baseline from the public Hugging Face repository, installs pinned TensorRT via
+`requirements-tensorrt.txt`, optionally checks out official HALP at the reviewed
+commit, validates the committed LUT, and lists the context files in reading
+order.

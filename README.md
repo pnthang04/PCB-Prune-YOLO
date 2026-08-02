@@ -263,6 +263,11 @@ staircase report nằm ở `outputs/halp/lut/`. Giai đoạn tiếp theo mới t
 Taylor saliency → DepGraph latency-aware grouping → augmented knapsack; chưa có
 pruning, fine-tune hoặc test-set evaluation trong giai đoạn hiện tại.
 
+Để tiếp tục trên server mới từ một clone sạch, làm theo
+[`docs/RESUME_HALP.md`](docs/RESUME_HALP.md); tài liệu này pin TensorRT, tải lại
+baseline đúng đường dẫn, phục hồi official HALP đúng commit và chỉ rõ thứ tự đọc
+ngữ cảnh trước Stage 2.
+
 Checkpoint P10 fine-tuned và model card được phát hành public tại
 [thangkt/PCB-Prune-YOLO-P10-DepGraph](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph).
 Vì structured pruning thay đổi kiến trúc, hãy clone và cài project trước khi
