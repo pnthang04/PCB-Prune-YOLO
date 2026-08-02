@@ -248,6 +248,20 @@ TensorRT mAP50-95 giảm từ 0.78716 xuống 0.75610 và recall giảm từ 0.9
 [P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) và
 [P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct).
 
+### Profile latency và INT8 PTQ
+
+Profile mới trên cùng T4 cho thấy P30 giảm TensorRT GPU-compute nhưng có nhiều
+kernel launch hơn baseline (3,571 so với 2,616), nên giảm MACs chưa chuyển đều
+thành giảm latency. Runtime reuse đã được triển khai; CUDA Graph giảm forward
+mean P30 5.32% nhưng E2E mean không cải thiện (`-0.16%`), vì vậy chưa bật mặc
+định.
+
+P30 INT8 PTQ calibrate bằng 500 ảnh **chỉ từ train** đạt validation mAP50-95
+0.61119, giảm 14.49 điểm phần trăm so với P30 FP16; forward và E2E cũng chậm hơn
+lần lượt 5.03% và 5.68% trong cùng runtime. Engine này không được chọn triển
+khai và chưa chạy QAT/distillation. Báo cáo, protocol và quyết định tiếp theo ở
+[`docs/TENSORRT_LATENCY_OPTIMIZATION.md`](docs/TENSORRT_LATENCY_OPTIMIZATION.md).
+
 ## HALP: latency-aware pruning
 
 Giai đoạn 1 và dry-run Stage 2 của adaptation HALP đã hoàn tất; đây chưa phải mô

@@ -1,0 +1,16 @@
+{
+  "engine": "outputs/tensorrt_fp16/baseline/model.engine",
+  "measurement_scope": "preprocess_H2D_TensorRT_forward_NMS_excludes_disk_io",
+  "preloaded_images": 200,
+  "warmup_iterations": 50,
+  "benchmark_iterations": 200,
+  "mean_latency_ms": 4.537730995070888,
+  "median_latency_ms": 4.428722997545265,
+  "p95_latency_ms": 5.339577603444923,
+  "fps": 220.3744561073035,
+  "peak_gpu_memory_mb": 10.8681640625,
+  "engine_size_mb": 7.476772308349609,
+  "execution_context_reused": true,
+  "disk_io_timed": false,
+  "device": "Tesla T4"
+}

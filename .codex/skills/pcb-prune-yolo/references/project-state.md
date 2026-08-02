@@ -109,6 +109,11 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
 - P10 pre-fine-tune validation, complexity, benchmark, and save/load inference: complete.
 - P10 direct and sparse fine-tunes: complete.
 - P20/P30 direct prune, fine-tune, validation, and benchmark: complete.
+- Baseline/P30 FP16 `trtexec` + Nsight profile and reusable-buffer/CUDA-Graph
+  runtime ablation: complete. CUDA Graph helps P30 forward mean but not E2E.
+- P30 INT8 PTQ calibration from 500 train-only images, engine layer audit,
+  validation and latency benchmark: complete. mAP50-95 is 0.61119 versus
+  0.75610 FP16, so the PTQ engine is rejected and QAT remains pending.
 - TensorRT FP16 export/validation/benchmark for baseline and direct P10/P20/P30:
   complete.
 

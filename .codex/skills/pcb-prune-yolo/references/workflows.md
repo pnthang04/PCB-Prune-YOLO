@@ -244,3 +244,30 @@ original engine and extract a separate diagnostic plan. Use TensorRT 10.16.1.11
 iterations. The current serialized engines do not retain detailed tactic IDs;
 do not invent them from layer timing. Isolated operator tactics remain recorded
 in the HALP LUT and must be labeled as operator-level evidence only.
+
+## Direct P30 deployment optimization
+
+This workflow is independent of HALP and must remain validation-only. Benchmark
+a metadata-wrapped Ultralytics engine with reused context, buffers and stream:
+
+```bash
+python scripts/benchmark_tensorrt_runtime.py \
+  --engine outputs/tensorrt_fp16/p30_direct/model.engine \
+  --output outputs/deployment_optimization/runtime/p30_direct/UNIQUE_NAME \
+  --warmup 50 --iterations 200 [--cuda-graph]
+```
+
+Export a new P30 PTQ engine without touching the checkpoint or FP16 engine:
+
+```bash
+python scripts/export_tensorrt_int8.py \
+  --checkpoint outputs/finetune_direct/p30_adamw_exact/weights/best.pt \
+  --name UNIQUE_NAME --data configs/data/deeppcb.yaml \
+  --calibration-count 500 --calibration-seed 42
+```
+
+The export script selects only `images/train`, records the exact manifest and
+refuses overwrites. Always audit TensorRT layer formats and validate on `val`
+before latency claims. The current implicit PTQ result fails the accuracy gate;
+do not reuse its cache for a changed graph and do not run distillation before a
+plain explicit-Q/DQ QAT control.

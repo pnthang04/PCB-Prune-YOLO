@@ -73,6 +73,11 @@
 
 ## Not completed
 
+- Run a controlled P30 QAT experiment only after designing an explicit-Q/DQ
+  path that reduces the 26/61 FP32 convolution fallback. Keep architecture
+  fixed and do not add distillation unless plain QAT cannot recover within the
+  configured validation accuracy gate.
+
 - Fix C2f conversion/export fusion and include full-engine reformat/pointwise
   overhead in the HALP cost/grouping adaptation. Re-run the M05 TensorRT
   forward gate before training or another milestone.

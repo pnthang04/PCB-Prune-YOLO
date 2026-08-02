@@ -1,0 +1,2 @@
+engine,cuda_graph,forward_mean_latency_ms,forward_median_latency_ms,forward_p95_latency_ms,forward_fps,e2e_mean_latency_ms,e2e_median_latency_ms,e2e_p95_latency_ms,e2e_fps,peak_gpu_memory_mb,engine_size_mb
+outputs/deployment_optimization/int8_ptq/p30_direct/model.engine,True,1.96284185461991,1.7224904986505862,2.5304052978754044,509.4653945993233,8.625244650065724,8.565154999814695,11.27114444716426,115.93874035704947,5.33935546875,5.859698295593262

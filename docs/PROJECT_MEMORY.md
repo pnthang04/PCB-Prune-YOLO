@@ -96,6 +96,16 @@ despite slightly lower convolution time. E2E including NMS is faster, but the
 large accuracy/recall loss makes it content-dependent. Do not continue pruning
 or final fine-tuning until C2f fusion and the full-engine cost model are fixed.
 
+The independent direct-P30 deployment optimization branch profiled baseline
+and P30 FP16 without touching HALP or test. P30 has lower `trtexec` GPU compute
+but 3,571 kernel launches versus baseline's 2,616. A reusable context/stream,
+pinned-buffer and async-H2D runtime is implemented. CUDA Graph improves P30
+forward mean by 5.32% but changes E2E by -0.16%, so it is not enabled by
+default. P30 INT8 PTQ used 500 deterministic training images only and produced
+35/61 INT8 convolutions; validation mAP50-95 fell from 0.75610 to 0.61119 and
+latency worsened. Do not deploy this PTQ engine. The next controlled gate is
+P30 QAT with explicit Q/DQ and no distillation initially; it has not run.
+
 Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:

@@ -1,0 +1,10 @@
+path: /kaggle/PCB-Prune-YOLO/data/processed/deeppcb
+train: /kaggle/PCB-Prune-YOLO/outputs/deployment_optimization/int8_ptq/p30_direct/calibration_images.txt
+val: /kaggle/PCB-Prune-YOLO/outputs/deployment_optimization/int8_ptq/p30_direct/calibration_images.txt
+names:
+  0: open
+  1: short
+  2: mousebite
+  3: spur
+  4: copper
+  5: pin-hole
