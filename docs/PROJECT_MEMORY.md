@@ -89,6 +89,13 @@ checkpoint has 2.691M params and 3.918G MACs, but before fine-tuning validation
 mAP50-95 is 0.67681 and PyTorch latency is 10.115 ms, worse than baseline.
 Fine-tuning and full TensorRT measurement are the next gate; test was not used.
 
+The TensorRT gate failed for architecture speed: forward-only M05 is 1.838 ms
+versus 1.780 ms baseline, and `trtexec` per-layer is also slightly slower. M05
+adds seven engine layers, six reformat nodes, and doubles pointwise layer count
+despite slightly lower convolution time. E2E including NMS is faster, but the
+large accuracy/recall loss makes it content-dependent. Do not continue pruning
+or final fine-tuning until C2f fusion and the full-engine cost model are fixed.
+
 Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:

@@ -66,12 +66,16 @@
   exact LUT pairs, and passed save/new-process-load/inference. M05 has 10.67%
   fewer params and 3.81% fewer MACs, but pre-fine-tune mAP50-95 is 0.67681 and
   PyTorch latency is slower at 10.115 ms.
+- Completed the matched TensorRT FP16 gate. M05 forward-only is 1.838 ms versus
+  1.780 ms baseline (0.968x); `trtexec` per-layer is also slightly slower.
+  Although E2E including NMS is 1.076x faster, severe accuracy/recall loss makes
+  it content-dependent rather than accepted architecture acceleration.
 
 ## Not completed
 
-- Fine-tune HALP M05 with the matched low-LR AdamW configuration, validate and
-  benchmark it, then export/measure its full TensorRT FP16 engine. Do not move
-  to later iterative milestones unless this gate is acceptable.
+- Fix C2f conversion/export fusion and include full-engine reformat/pointwise
+  overhead in the HALP cost/grouping adaptation. Re-run the M05 TensorRT
+  forward gate before training or another milestone.
 
 - Tune sparse learning on validation until group norms show measurable sparsity;
   the first `reg=1e-4` run retained baseline accuracy but produced no near-zero

@@ -220,3 +220,27 @@ baseline from the public Hugging Face repository, installs pinned TensorRT via
 `requirements-tensorrt.txt`, optionally checks out official HALP at the reviewed
 commit, validates the committed LUT, and lists the context files in reading
 order.
+
+## HALP Stage 3 TensorRT gate
+
+Use unique output names and the same export settings for baseline and a HALP
+candidate. Forward-only uses `benchmark_model.py`; E2E without disk I/O uses
+preloaded validation images:
+
+```bash
+python scripts/benchmark_tensorrt_e2e.py \
+  --engine MODEL.engine --output UNIQUE_OUTPUT \
+  --warmup 50 --iterations 200
+```
+
+The E2E result includes preprocessing, H2D, engine execution, NMS, and result
+construction. It is content-dependent: never treat an E2E gain as architecture
+speedup when forward-only does not improve or accuracy/recall changes strongly.
+
+Ultralytics prefixes `.engine` files with a length-prefixed JSON metadata
+header. `trtexec --loadEngine` needs the raw plan after that header; retain the
+original engine and extract a separate diagnostic plan. Use TensorRT 10.16.1.11
+`--dumpProfile --separateProfileRun --profilingVerbosity=detailed` with 200
+iterations. The current serialized engines do not retain detailed tactic IDs;
+do not invent them from layer timing. Isolated operator tactics remain recorded
+in the HALP LUT and must be labeled as operator-level evidence only.

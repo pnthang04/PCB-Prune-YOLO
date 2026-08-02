@@ -353,6 +353,18 @@ This is a structurally valid intermediate checkpoint, not a successful final
 HALP model. Fine-tuning and full TensorRT engine measurement remain TODO. Test
 was not used.
 
+Matched TensorRT FP16 gate under `outputs/halp/tensorrt_m05_comparison/`:
+
+- Baseline forward 1.7797 ms, M05 1.8385 ms: M05 speedup 0.968x (slower).
+- `trtexec` per-layer total 1.6741 vs 1.6768 ms: no acceleration.
+- E2E excluding disk but including preprocess/H2D/NMS: 4.9587 vs 4.6080 ms,
+  yet M05 loses 0.12971 mAP50-95 and 0.07235 recall, so the NMS/content effect
+  is not accepted as architecture speedup.
+- Engine layers 159 → 166, reformats 28 → 34, pointwise nodes 14 → 30;
+  pointwise time 0.1087 → 0.2405 ms.
+- Decision: stop further milestones and final fine-tuning. Fix C2f export fusion
+  and account for full-engine graph overhead in cost/grouping first.
+
 Measured TensorRT FP16 LUT on Tesla T4:
 
 - Baseline checkpoint, static batch 1, full-model input `[1,3,640,640]`.

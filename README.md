@@ -288,6 +288,14 @@ Checkpoint giảm 10.67% params và 3.81% MACs; save → process mới load → 
 PyTorch tăng lên 10.115 ms (98.86 FPS), nên đây mới là checkpoint kỹ thuật, chưa
 phải mô hình HALP tốt. Báo cáo nằm ở `outputs/halp/stage3_m05/`; chưa chạy test.
 
+TensorRT gate công bằng cho thấy M05 **không tăng tốc full-engine forward**:
+baseline 1.780 ms so với M05 1.838 ms (`0.968x`). `trtexec` per-layer cũng gần
+như hòa nhưng M05 chậm hơn (`0.998x`). E2E gồm preprocess/H2D/NMS nhanh hơn
+`1.076x`, nhưng đi cùng giảm 0.12971 mAP50-95 và 0.07235 recall nên có thể do
+NMS xử lý ít candidate hơn; không được xem là tăng tốc kiến trúc. Chi tiết
+PAPER/OFFICIAL CODE/ADAPTATION và bottleneck nằm trong
+[`docs/HALP_STAGE3_TENSORRT_REPORT.md`](docs/HALP_STAGE3_TENSORRT_REPORT.md).
+
 Để tiếp tục trên server mới từ một clone sạch, làm theo
 [`docs/RESUME_HALP.md`](docs/RESUME_HALP.md); tài liệu này pin TensorRT, tải lại
 baseline đúng đường dẫn, phục hồi official HALP đúng commit và chỉ rõ thứ tự đọc
