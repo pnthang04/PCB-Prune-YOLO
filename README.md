@@ -279,6 +279,15 @@ trạng thái hiện tại; `Cin` downstream sẽ phải được tính lại �
 structural-pruning sau này. Vì vậy chưa có pruning, fine-tune hay test-set
 evaluation trong Stage 2 này.
 
+Stage 3 đã áp dụng structural milestone 5% đầu tiên sau khi sửa Taylor group
+aggregation đúng official HALP: cộng các term có dấu trong dependency group rồi
+mới lấy trị tuyệt đối. Tám cặp `Cin×Cout` phát sinh được đo bổ sung trên cùng T4
+với 50 warm-up và 200 lần đo; audit sau prune dùng LUT chính xác, không nội suy.
+Checkpoint giảm 10.67% params và 3.81% MACs; save → process mới load → inference
+đạt. Tuy nhiên trước fine-tune, validation mAP50-95 chỉ còn 0.67681 và latency
+PyTorch tăng lên 10.115 ms (98.86 FPS), nên đây mới là checkpoint kỹ thuật, chưa
+phải mô hình HALP tốt. Báo cáo nằm ở `outputs/halp/stage3_m05/`; chưa chạy test.
+
 Để tiếp tục trên server mới từ một clone sạch, làm theo
 [`docs/RESUME_HALP.md`](docs/RESUME_HALP.md); tài liệu này pin TensorRT, tải lại
 baseline đúng đường dẫn, phục hồi official HALP đúng commit và chỉ rõ thứ tự đọc

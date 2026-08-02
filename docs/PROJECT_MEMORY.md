@@ -79,9 +79,15 @@ found 56 cliffs, 98 plateaus, and layer-specific candidate steps from 8 through
 8 train minibatches and ran a non-mutating 5% augmented-knapsack dry-run: 13 of
 25 backbone roots were eligible, 12 were protected for lack of a reliable
 cliff, no exact LUT pair was missing, and output remained `[1,10,8400]`.
-Artifacts are under `outputs/halp/lut/` and `outputs/halp/stage2/`. Structural
-HALP pruning, iterative cost recomputation, save/load verification, and
-fine-tuning remain unimplemented.
+Artifacts are under `outputs/halp/lut/` and `outputs/halp/stage2/`. At the end
+of Stage 2, structural pruning and save/load verification had not yet run.
+
+HALP Stage 3 applied the first structural 5% milestone after correcting signed
+Taylor aggregation against the official implementation. Eight missing exact
+LUT pairs were measured on T4; save/new-process-load/inference passed. The
+checkpoint has 2.691M params and 3.918G MACs, but before fine-tuning validation
+mAP50-95 is 0.67681 and PyTorch latency is 10.115 ms, worse than baseline.
+Fine-tuning and full TensorRT measurement are the next gate; test was not used.
 
 Last verified: 2026-08-02
 

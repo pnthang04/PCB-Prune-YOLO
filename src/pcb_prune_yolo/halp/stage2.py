@@ -21,10 +21,10 @@ def original_lut_name(name: str) -> str:
 
 
 def taylor_bn_term(module: torch.nn.BatchNorm2d) -> torch.Tensor:
-    """Return HALP's first-order BN Taylor term for one minibatch."""
+    """Return the signed BN Taylor term; dependency sums are absolutized later."""
     if module.weight.grad is None or module.bias.grad is None:
         raise RuntimeError("BatchNorm gradients are unavailable")
-    return (module.weight * module.weight.grad + module.bias * module.bias.grad).abs().detach()
+    return (module.weight * module.weight.grad + module.bias * module.bias.grad).detach()
 
 
 def exact_lut_index(payload: dict[str, Any]) -> dict[tuple[str, int, int], float]:
@@ -45,6 +45,39 @@ def latency_group_sizes(payload: dict[str, Any]) -> dict[str, int]:
         for row in payload.get("latency_steps", [])
         if row.get("proposed_group_size")
     }
+
+
+def audit_backbone_lut(
+    model: torch.nn.Module, payload: dict[str, Any], backbone_end: int = 9
+) -> dict[str, Any]:
+    """Require exact post-pruning Cin-Cout LUT pairs for every backbone conv."""
+    index = exact_lut_index(payload)
+    missing = []
+    records = []
+    total = 0.0
+    for name, module in model.named_modules():
+        if not isinstance(module, torch.nn.Conv2d):
+            continue
+        parts = name.split(".")
+        if len(parts) < 2 or not parts[1].isdigit() or int(parts[1]) > backbone_end:
+            continue
+        lut_name = original_lut_name(name)
+        key = (lut_name, module.in_channels, module.out_channels)
+        latency = index.get(key)
+        row = {
+            "model_layer": name,
+            "lut_layer": lut_name,
+            "input_channels": module.in_channels,
+            "output_channels": module.out_channels,
+            "mean_latency_ms": latency,
+        }
+        records.append(row)
+        if latency is None:
+            missing.append(row)
+        else:
+            total += latency
+    return {"exact": not missing, "total_latency_ms": total if not missing else None,
+            "missing_pairs": missing, "records": records}
 
 
 @dataclass(frozen=True)

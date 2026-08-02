@@ -326,13 +326,32 @@ DepGraph roots, and solved a 5% prefix-constrained latency milestone.
 - Artifacts: `outputs/halp/stage2/dry_run.json` and `groups.csv`.
 - 25 backbone roots; 13 eligible and 12 protected for missing latency cliffs.
 - No exact LUT pair was missing.
-- Eligible dense latency: 0.447758 ms; budget: 0.425370 ms; selected: 0.419474 ms.
+- Eligible dense latency: 0.447758 ms; budget: 0.425370 ms; selected: 0.419882 ms.
 - Detect/DFL fixed outputs remained protected; 6-class output was `[1,10,8400]`.
 - C2f `cv0` and `cv1` branches map to the original Stage 1 `cv1` operator
   surface. Structural Stage 3 must rebuild costs after every milestone so
   downstream `Cin` changes are never silently approximated.
 
-No HALP-pruned checkpoint or fine-tuned HALP model exists yet.
+## HALP Stage 3 M05
+
+The official Taylor detail was corrected before pruning: sum signed
+`gamma*dL/dgamma + beta*dL/dbeta` terms across a dependency group, then take
+the absolute value. Seven roots were structurally pruned. Eight newly required
+2D LUT pairs were profiled on the same T4/TensorRT setup; the final audit is
+exact with no interpolation.
+
+- Checkpoint: `outputs/halp/stage3_m05/pruned.pt` (ignored by Git).
+- Reports: `outputs/halp/stage3_m05/{report,summary}.json`, validation and
+  benchmark JSON/CSV; refined LUT under `outputs/halp/lut_stage3/`.
+- Params 2,690,674 (-10.67%); MACs 3.9181G (-3.81%).
+- Pre-fine-tune validation: P 0.94135, R 0.90165, mAP50 0.96418,
+  mAP50-95 0.67681.
+- PyTorch latency 10.115 ms; FPS 98.86; slower than baseline.
+- New-process load and output `[1,10,8400]` passed.
+
+This is a structurally valid intermediate checkpoint, not a successful final
+HALP model. Fine-tuning and full TensorRT engine measurement remain TODO. Test
+was not used.
 
 Measured TensorRT FP16 LUT on Tesla T4:
 

@@ -113,6 +113,8 @@ def main() -> None:
             dependency_bn_terms += 1
         if dependency_bn_terms == 0:
             score = None
+        else:
+            score = score.abs()
         lut_name = original_lut_name(root_name)
         group_size = steps.get(lut_name)
         row = {
@@ -154,6 +156,22 @@ def main() -> None:
     for row_index, option in zip(choice_rows, selected):
         groups_report[row_index]["selected_keep_channels"] = option.keep_channels
         groups_report[row_index]["selected_latency_ms"] = option.latency_ms
+        root_name = groups_report[row_index]["root_name"]
+        root = dict(model.named_modules())[root_name]
+        group = next(g for g in all_groups if g[0].dep.target.module is root)
+        score = torch.zeros(root.out_channels)
+        for item in group:
+            target = item.dep.target.module
+            term = totals.get(module_names.get(target, ""))
+            if not isinstance(target, torch.nn.BatchNorm2d) or term is None:
+                continue
+            for root_idx, target_idx in zip(item.root_idxs, item.idxs):
+                if root_idx < root.out_channels and target_idx < term.numel():
+                    score[root_idx] += term[target_idx]
+        prune_count = root.out_channels - option.keep_channels
+        groups_report[row_index]["pruned_indices"] = (
+            torch.argsort(score.abs())[:prune_count].tolist() if prune_count else []
+        )
     model.eval()
     report = {
         "schema_version": 1,

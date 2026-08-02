@@ -61,13 +61,17 @@
   reliable cliff, and solved the 5% augmented-knapsack milestone with zero
   missing exact LUT pairs. The model was not mutated and output stayed
   `[1,10,8400]`.
+- Corrected Taylor dependency aggregation against official HALP, applied the
+  first 5% structural milestone across seven roots, measured eight missing
+  exact LUT pairs, and passed save/new-process-load/inference. M05 has 10.67%
+  fewer params and 3.81% fewer MACs, but pre-fine-tune mAP50-95 is 0.67681 and
+  PyTorch latency is slower at 10.115 ms.
 
 ## Not completed
 
-- HALP Stage 3: apply one small structural milestone, rebuild DepGraph and
-  recompute downstream input widths/costs, then verify save → new-process load
-  → inference before any iterative schedule or fine-tuning. No HALP pruning or
-  fine-tuning has been run.
+- Fine-tune HALP M05 with the matched low-LR AdamW configuration, validate and
+  benchmark it, then export/measure its full TensorRT FP16 engine. Do not move
+  to later iterative milestones unless this gate is acceptable.
 
 - Tune sparse learning on validation until group norms show measurable sparsity;
   the first `reg=1e-4` run retained baseline accuracy but produced no near-zero

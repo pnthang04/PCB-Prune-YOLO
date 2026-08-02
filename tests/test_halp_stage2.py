@@ -2,6 +2,7 @@ import torch
 
 from pcb_prune_yolo.halp.stage2 import (
     PrefixOption,
+    audit_backbone_lut,
     multiple_choice_knapsack,
     original_lut_name,
     taylor_bn_term,
@@ -21,7 +22,7 @@ def test_taylor_bn_term():
     with torch.no_grad():
         bn.weight.copy_(torch.tensor([0.5, 2.0]))
         bn.bias.copy_(torch.tensor([1.0, -1.0]))
-    assert torch.equal(taylor_bn_term(bn), torch.tensor([4.0, 6.0]))
+    assert torch.equal(taylor_bn_term(bn), torch.tensor([4.0, -6.0]))
 
 
 def test_multiple_choice_knapsack_enforces_one_prefix_per_layer():
@@ -32,3 +33,14 @@ def test_multiple_choice_knapsack_enforces_one_prefix_per_layer():
     selected, value = multiple_choice_knapsack(layers, budget_ms=1.5)
     assert [option.keep_channels for option in selected] == [8, 4]
     assert value == 14.0
+
+
+def test_audit_backbone_lut_requires_exact_pair():
+    model = torch.nn.Module()
+    model.model = torch.nn.ModuleList([torch.nn.Conv2d(3, 8, 3)])
+    payload = {"records": [{"layer_name": "model.0", "input_channels": 3,
+                            "output_channels": 8, "mean_latency_ms": 0.1,
+                            "status": "success"}]}
+    assert audit_backbone_lut(model, payload)["exact"]
+    model.model[0] = torch.nn.Conv2d(3, 4, 3)
+    assert not audit_backbone_lut(model, payload)["exact"]
