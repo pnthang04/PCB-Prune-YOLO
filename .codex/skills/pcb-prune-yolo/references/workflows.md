@@ -192,6 +192,16 @@ validation reports record those pipeline stages separately. Do not use test or
 INT8 for this experiment. Build and run engines only against the same TensorRT,
 CUDA, GPU, and Ultralytics versions.
 
+Absolute PyTorch/TensorRT latency can still drift roughly 10-20% between
+different cloud T4 instances/sessions even with identical declared GPU name,
+memory, and pinned software versions (observed when re-measuring baseline
+PyTorch latency across sessions: 8.289 ms historically vs ~7.3-7.4 ms in a
+later session, stable to <1% within each session). Never compare a new
+measurement against a historical absolute number from a different
+session/instance; always rebuild/rebenchmark the reference model
+(baseline, or whichever model you are comparing against) in the same session
+before quoting a speedup ratio.
+
 ## HALP Stage 1 LUT
 
 Read `docs/HALP_ADAPTATION_PLAN.md` before changing the sampling or cliff
@@ -297,5 +307,51 @@ changes. Use `scripts/export_tensorrt.py`, `benchmark_tensorrt_runtime.py` and
 `profile_tensorrt_engine.py` with unique output directories. The gate is
 forward-only graph-off latency; do not use pre-FT E2E because collapsed
 confidence changes NMS work. A8 passed the latency gate but has zero pre-FT
-validation. Do not launch its fair FT/KD branches until the missing KD settings
-are explicitly recorded; both branches must start from the same `pruned.pt`.
+validation.
+
+`outputs/` is gitignored, so a rebuilt server/session must reconstruct the
+pruned checkpoint before fine-tuning it; this is deterministic since
+group-magnitude pruning depends only on baseline weights:
+
+```bash
+mkdir -p outputs/train/baseline/weights
+curl -L -o outputs/train/baseline/weights/best.pt \
+  https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline/resolve/main/best.pt
+curl -L -o deeppcb_processed.zip \
+  https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB/resolve/main/deeppcb_processed.zip
+mkdir -p data/processed && unzip -q deeppcb_processed.zip -d data/processed
+
+python scripts/prune_model.py --config configs/prune/p40_hw_a8.yaml \
+  --output outputs/pruning_hw/p40_a8_restore --no-dry-run
+```
+
+A8's fair FT/KD branches are complete. Ultralytics 8.4.115 ships native
+knowledge distillation (`distill_model` teacher path, `dis` loss weight,
+default 6.0) implemented in `ultralytics/nn/distill_model.py` as a
+score-weighted feature-L2 loss at the Detect head's input layers — this
+supplies the previously missing teacher/loss/weight specification without a
+custom design. `scripts/finetune_pruned.py` now accepts optional
+`--distill-model`/`--dis` passthrough (no effect when omitted). Run both
+branches from the identical restored `pruned.pt`, with every other
+hyperparameter matched, one GPU each:
+
+```bash
+python scripts/finetune_pruned.py \
+  --model outputs/pruning_hw/p40_a8_restore/p40/pruned.pt \
+  --epochs 50 --optimizer AdamW --lr0 0.001 --lrf 0.01 \
+  --momentum 0.9 --weight-decay 0.0005 --batch 64 --device 0 --patience 10 \
+  --project outputs/finetune_direct --name p40_a8_adamw_exact
+
+python scripts/finetune_pruned.py \
+  --model outputs/pruning_hw/p40_a8_restore/p40/pruned.pt \
+  --distill-model outputs/train/baseline/weights/best.pt \
+  --epochs 50 --optimizer AdamW --lr0 0.001 --lrf 0.01 \
+  --momentum 0.9 --weight-decay 0.0005 --batch 64 --device 1 --patience 10 \
+  --project outputs/finetune_direct --name p40_a8_kd_baseline_teacher
+```
+
+KD beat standard FT by 2.7 mAP50-95 percentage points at seed 42 (0.660 vs
+0.634); see `references/project-state.md` for the full comparison. Fine-tuning
+does not change channel counts, so the pre-FT TensorRT forward measurement
+(1.3540 ms) still describes this architecture; TensorRT was not rebuilt for
+this comparison. Test split was not used.

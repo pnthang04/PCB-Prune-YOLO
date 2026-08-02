@@ -24,29 +24,43 @@ def main() -> None:
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("--project", default="outputs/finetune")
     parser.add_argument("--name", default="pruned")
-    args = parser.parse_args()
-    train_pruned(
-        {
-            "model": str(args.model),
-            "data": str(args.data),
-            "epochs": args.epochs,
-            "optimizer": args.optimizer,
-            "lr0": args.lr0,
-            "lrf": args.lrf,
-            "weight_decay": args.weight_decay,
-            "momentum": args.momentum,
-            "device": args.device,
-            "batch": args.batch,
-            "imgsz": args.imgsz,
-            "patience": args.patience,
-            "workers": args.workers,
-            "seed": 42,
-            "amp": True,
-            "deterministic": True,
-            "project": args.project,
-            "name": args.name,
-        }
+    parser.add_argument(
+        "--distill-model",
+        type=Path,
+        default=None,
+        help="Teacher checkpoint for Ultralytics' native knowledge distillation",
     )
+    parser.add_argument(
+        "--dis",
+        type=float,
+        default=6.0,
+        help="Distillation loss weight (Ultralytics default), used only with --distill-model",
+    )
+    args = parser.parse_args()
+    config = {
+        "model": str(args.model),
+        "data": str(args.data),
+        "epochs": args.epochs,
+        "optimizer": args.optimizer,
+        "lr0": args.lr0,
+        "lrf": args.lrf,
+        "weight_decay": args.weight_decay,
+        "momentum": args.momentum,
+        "device": args.device,
+        "batch": args.batch,
+        "imgsz": args.imgsz,
+        "patience": args.patience,
+        "workers": args.workers,
+        "seed": 42,
+        "amp": True,
+        "deterministic": True,
+        "project": args.project,
+        "name": args.name,
+    }
+    if args.distill_model is not None:
+        config["distill_model"] = str(args.distill_model)
+        config["dis"] = args.dis
+    train_pruned(config)
 
 
 if __name__ == "__main__":

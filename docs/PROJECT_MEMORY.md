@@ -115,15 +115,42 @@ coverage is only 38/68 versus PTQ's 35/61. Decision: `FIX_GRAPH_FIRST`; do not
 run full QAT or distillation until Q/DQ placement and Conv-BN/SiLU fusion are
 fixed and full-engine latency passes.
 
-Last verified: 2026-08-02
+Last verified: 2026-08-02 (P40-A8 fine-tune/KD update)
 
 The independent P40-HW latency gate created three FP16 candidates from the
 same baseline without touching HALP/QAT/INT8/test. A8/A16/BLOCK have
 0.903M/0.800M/1.132M parameters. Under a fresh matched 50/200 graph-off run,
 their forward means are 1.3540/1.4903/1.5590 ms versus 1.7575 ms for P30.
 A8 is selected provisionally (1.298x P30 speedup), but its validation metrics
-are all zero before fine-tuning. Training is stopped pending the missing KD
-specification from the truncated request. See `docs/P40_HW_LATENCY_GATE.md`.
+are all zero before fine-tuning. See `docs/P40_HW_LATENCY_GATE.md`.
+
+P40-A8's pre-FT checkpoint is gitignored and did not survive the session
+break; it was rebuilt deterministically from baseline via the same
+`configs/prune/p40_hw_a8.yaml` and matched the original report exactly.
+Ultralytics 8.4.115 ships native knowledge distillation (`distill_model`/`dis`,
+score-weighted feature L2 loss), which supplied the previously missing
+teacher/loss/weight specification without a custom design. A standard-FT
+branch and a KD branch (teacher = baseline) were fine-tuned from the identical
+checkpoint with every other hyperparameter matched (AdamW, lr0 0.001, lrf
+0.01, momentum 0.9, weight decay 0.0005, batch 64, patience 10, seed 42, 50
+epochs, no early stop). KD reached validation mAP50-95 0.660 versus 0.634 for
+standard FT (+2.7 points), and also won precision, recall and mAP50; both
+passed save/new-process-load/inference and batch-1 benchmark with identical
+architecture (903,466 params, 1.1212G MACs). Both remain well below P30
+direct's 0.75030 at a much more aggressive compression point (-70% MACs vs
+P30's -51.83%), so P40-A8 KD is a faster/smaller but less accurate alternative
+to P30, not a replacement. Test split was not used.
+
+TensorRT FP16 engines were subsequently rebuilt for both fine-tuned
+checkpoints, plus a fresh baseline engine in the same session (absolute
+PyTorch/TensorRT latency numbers can drift ~10-20% across different cloud T4
+instances even with identical declared specs, so same-session rebuilds are
+required for a trustworthy relative comparison; do not mix historical and
+new-session absolute numbers). Result: baseline 1.716 ms, P40-A8 standard FT
+1.423 ms (1.206x), P40-A8 KD 1.417 ms (1.211x). Both fine-tuned engines passed
+new-process load/inference. This confirms fine-tuning preserves the
+architecture-level TensorRT speedup measured pre-FT. See
+`docs/P40_HW_LATENCY_GATE.md` and `outputs/tensorrt_recheck/`.
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:
 

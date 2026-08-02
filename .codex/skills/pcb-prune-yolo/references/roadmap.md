@@ -74,13 +74,28 @@
   A16 and BLOCK all beat matched P30 forward latency; A8 is selected at 1.3540
   ms versus 1.7575 ms P30 with 0.903M params and 1.1212G MACs. Its pre-FT
   validation is zero, so no long training or KD was launched.
+- Restored the gitignored P40-A8 pre-FT checkpoint deterministically from the
+  public baseline checkpoint, and ran matched 50-epoch standard-FT and KD
+  fine-tunes from it. KD used Ultralytics 8.4.115's native `distill_model`/`dis`
+  (teacher = baseline) rather than a custom design, resolving the earlier
+  missing-specification blocker. KD reached validation mAP50-95 0.660 versus
+  0.634 for standard FT (+2.7 points) with every other hyperparameter matched;
+  both passed save/new-process-load/inference and batch-1 benchmark. Test was
+  not used.
+- Rebuilt TensorRT FP16 engines for both fine-tuned P40-A8 checkpoints plus a
+  fresh same-session baseline engine (needed because absolute latency drifts
+  ~10-20% across different cloud T4 instances even with identical declared
+  specs). Confirmed both fine-tuned engines beat the same-session baseline by
+  ~1.21x (1.716 ms to 1.417-1.423 ms), matching the pre-FT architecture-level
+  expectation. Both passed new-process load/inference.
 
 ## Not completed
 
-- Complete the truncated P40-HW training specification (teacher checkpoint,
-  distillation outputs/loss, temperature, weights, epochs and early stopping),
-  then run standard FT and KD from the exact same A8 pre-FT checkpoint. Rebuild
-  and benchmark FP16 engines after training before accepting deployment speed.
+- Decide whether P40-A8 KD is added to the README accuracy-compression table
+  as a fourth, more aggressive operating point alongside P10/P20/P30.
+- Publish the P40-A8 KD checkpoint (and engine) to Hugging Face if it is
+  accepted as an operating point, following the same public-repository and
+  anonymous-download verification used for P10/P20/P30.
 
 - Fix the P30 explicit-Q/DQ graph before any full QAT: fuse Conv-BN, reduce
   Q/DQ and reformat boundaries around SiLU/residual/concat, then require a

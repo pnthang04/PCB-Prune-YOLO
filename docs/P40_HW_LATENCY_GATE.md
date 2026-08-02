@@ -61,3 +61,80 @@ the exact same A8 checkpoint and keep the TensorRT forward gate after training.
 Machine-readable evidence is in `outputs/pruning_hw/comparison.{json,csv}` and
 the per-model prune, runtime, `trtexec`, Engine Inspector and Nsight reports are
 under `outputs/pruning_hw/`.
+
+## Fine-tuning and knowledge distillation
+
+Date: 2026-08-02. `outputs/` is gitignored, so the A8 pre-FT checkpoint above
+did not survive between sessions. It was rebuilt from the same immutable
+`configs/prune/p40_hw_a8.yaml` against a freshly downloaded copy of the public
+baseline checkpoint (`outputs/pruning_hw/p40_a8_restore/p40/pruned.pt`); the
+reconstruction matched the original report exactly (903,466 params,
+1,121,237,600 MACs, `[1,10,8400]`, pre-FT validation zero for every metric),
+confirming group-magnitude pruning is deterministic given the same baseline
+weights and config.
+
+The earlier blocker — a distillation request that ended before specifying a
+teacher, loss, weights, epochs or stopping rule — is resolved without
+inventing a custom design: Ultralytics 8.4.115 (the version this project pins)
+ships native knowledge distillation. `distill_model` takes a teacher
+checkpoint path and `dis` (default 6.0) weights a score-weighted L2 feature
+loss computed between teacher and student at the Detect head's input layers
+(`ultralytics/nn/distill_model.py`), on top of the normal detection loss.
+`scripts/finetune_pruned.py` gained optional `--distill-model`/`--dis`
+passthrough flags (no effect when omitted).
+
+Two branches were fine-tuned from the identical restored `pruned.pt`, on
+separate GPUs, with every other hyperparameter matched exactly to the
+project's established P10/P20/P30 recipe (AdamW, lr0 0.001, lrf 0.01,
+momentum 0.9, weight decay 0.0005, batch 64, imgsz 640, patience 10, seed 42,
+50 epochs; neither triggered early stopping):
+
+| Branch | Precision | Recall | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|
+| Standard FT | 0.867 | 0.805 | 0.893 | 0.634 |
+| KD (teacher = baseline `best.pt`) | 0.895 | 0.828 | 0.913 | 0.660 |
+
+KD wins on every aggregate metric (+0.026 mAP50-95, +2.0 mAP50 points) under a
+single-variable comparison, and wins on mAP50-95 for five of six classes
+individually. Both checkpoints passed new-process CUDA load/inference and
+batch-1 PyTorch benchmark with identical architecture (903,466 params,
+1.1212G MACs, ~1.96 MiB), since fine-tuning does not change channel counts.
+TensorRT engines were not rebuilt for this comparison; the pre-FT forward-only
+measurement (1.3540 ms, 1.298x faster than P30) describes this architecture
+and is expected to still hold, pending re-measurement.
+
+Both P40-A8 branches remain well below P30 direct's validation mAP50-95
+(0.75030) at a substantially more aggressive compression point (-70% MACs
+versus P30's -51.83%). P40-A8 with KD is therefore the strongest fast/light
+candidate found so far, but a faster-and-smaller-but-less-accurate alternative
+to P30, not a replacement for it. Test split was not used.
+
+Reports: `outputs/finetune_direct/p40_a8_adamw_exact/{evaluation_val,benchmark}`
+and `outputs/finetune_direct/p40_a8_kd_baseline_teacher/{evaluation_val,benchmark}`.
+
+### TensorRT re-measurement after fine-tuning
+
+Date: 2026-08-02. TensorRT 10.16.1.11 was reinstalled and fresh FP16 engines
+were exported directly from both fine-tuned checkpoints, alongside a rebuilt
+baseline engine in the same session for a same-instance comparison (a prior
+question about latency drift confirmed T4 cloud instances can differ ~10%
+run-to-run at the absolute level, so relative comparisons must be measured
+together). Protocol: static `[1,3,640,640]`, FP16, batch 1, no NMS, 50
+warm-ups, 200 synchronized iterations, `scripts/benchmark_model.py`.
+
+| Model | Params | MACs | TensorRT mean latency | FPS | Speedup vs baseline |
+|---|---:|---:|---:|---:|---:|
+| Baseline (rebuilt) | 3,012,018 | 4.0733G | 1.716 ms | 582.75 | 1.00x |
+| P40-A8 standard FT | 903,466 | 1.1212G | 1.423 ms | 702.91 | 1.206x |
+| P40-A8 KD | 903,466 | 1.1212G | 1.417 ms | 705.96 | 1.211x |
+
+Both fine-tuned engines passed new-process load and `[1,10,8400]` inference.
+This confirms the expectation stated above: fine-tuning changes weights only,
+so the architecture-level TensorRT speedup over baseline (previously measured
+pre-FT at 1.3540 ms vs a then-baseline of 1.6193 ms, i.e. ~1.19x) holds after
+training, and if anything measured slightly better in this session (~1.21x).
+Absolute millisecond values differ slightly from the original P40-HW gate
+because they come from a different GPU instance/session, not from an
+architecture or setup change — see the baseline-vs-baseline check that
+motivated rebuilding all three engines together. Artifacts under
+`outputs/tensorrt_recheck/`.

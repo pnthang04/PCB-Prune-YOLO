@@ -282,6 +282,36 @@ vậy chưa train dài hoặc distill. Chi tiết và artifact nằm tại
 [`docs/P40_HW_LATENCY_GATE.md`](docs/P40_HW_LATENCY_GATE.md) và
 `outputs/pruning_hw/comparison.{json,csv}`.
 
+Ultralytics 8.4.115 (bản pin của project) có sẵn knowledge distillation
+(`distill_model`/`dis`, score-weighted feature L2 loss ở đầu vào Detect head),
+nên P40-A8 được fine-tune 50 epoch bằng hai nhánh cùng cấu hình AdamW
+(`lr0=0.001`, `lrf=0.01`, momentum 0.9, weight decay 0.0005, batch 64,
+patience 10, seed 42), chỉ khác việc có distillation hay không:
+
+| Nhánh | Precision | Recall | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|
+| Fine-tune chuẩn | 0.867 | 0.805 | 0.893 | 0.634 |
+| KD, teacher = baseline | 0.895 | 0.828 | 0.913 | 0.660 |
+
+KD tốt hơn fine-tune chuẩn trên mọi chỉ số (+2.7 điểm mAP50-95) trong so sánh
+công bằng, cùng kiến trúc 903,466 params/1.1212G MACs. Cả hai vẫn thấp hơn
+nhiều so với P30 (mAP50-95 0.75030) do P40-A8 nén mạnh hơn hẳn (−70% MACs so
+với −51.83% của P30), nên đây là ứng viên nhanh/nhẹ nhất hiện có, không phải
+thay thế P30 về accuracy. Test set chưa được dùng.
+
+Engine TensorRT FP16 được build lại cho cả hai checkpoint đã fine-tune (cùng
+phiên đo với baseline để so sánh công bằng, 50 warm-up/200 lần đo, batch 1):
+
+| Model | Params | MACs | TensorRT latency | FPS | So với baseline |
+|---|---:|---:|---:|---:|---:|
+| Baseline | 3,012,018 | 4.0733G | 1.716 ms | 582.75 | 1.00x |
+| P40-A8 chuẩn | 903,466 | 1.1212G | 1.423 ms | 702.91 | 1.21x |
+| P40-A8 KD | 903,466 | 1.1212G | 1.417 ms | 705.96 | 1.21x |
+
+Cả hai đều nhanh hơn baseline TensorRT khoảng 21%, đã qua verify save →
+process mới load → inference. Chi tiết ở
+[`docs/P40_HW_LATENCY_GATE.md`](docs/P40_HW_LATENCY_GATE.md).
+
 ## HALP: latency-aware pruning
 
 Giai đoạn 1 và dry-run Stage 2 của adaptation HALP đã hoàn tất; đây chưa phải mô

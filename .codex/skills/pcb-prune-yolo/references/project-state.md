@@ -123,8 +123,11 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
   from baseline at target ratio 0.40. All save/load/CUDA/TRT invariants pass.
   A8 is fastest at 1.3540 ms versus a matched P30 rerun at 1.7575 ms (1.298x),
   with 903,466 params and 1.1212G MACs. A8 pre-fine-tune validation is zero for
-  all metrics/classes. Training is stopped before long FT/KD because the supplied
-  request ends before specifying the distillation experiment.
+  all metrics/classes.
+- P40-A8 standard fine-tune and a matched knowledge-distillation fine-tune
+  (Ultralytics native `distill_model`/`dis`, teacher = baseline) are both
+  complete; see "P40-A8: fine-tuning and knowledge distillation" below. KD
+  beats standard FT by 2.7 mAP50-95 points under identical hyperparameters.
 - TensorRT FP16 export/validation/benchmark for baseline and direct P10/P20/P30:
   complete.
 
@@ -322,6 +325,73 @@ All three repositories were created public. P20/P30 contain the validation-best
 PyTorch checkpoint, model card, training args, validation metrics, and benchmark.
 The TensorRT repository contains all four engines plus exact export, validation,
 benchmark, and comparison JSON/CSV.
+
+## P40-A8: fine-tuning and knowledge distillation
+
+`outputs/pruning_hw/p40_a8_v2/p40/pruned.pt` was gitignored and lost between
+sessions. It was rebuilt byte-for-byte from `configs/prune/p40_hw_a8.yaml`
+against the restored baseline (`outputs/pruning_hw/p40_a8_restore/p40/pruned.pt`):
+params 903,466 and MACs 1,121,237,600 match the original report exactly, and
+pre-fine-tune validation again collapsed to zero for every metric/class,
+confirming the reconstruction is deterministic (group-magnitude pruning
+depends only on baseline weights, not RNG state). Restoring the environment
+also required downloading the baseline checkpoint and processed dataset from
+the public Hugging Face repositories, since `outputs/` and `data/processed/`
+are both gitignored.
+
+Ultralytics 8.4.115 (the project's pinned version) ships **native knowledge
+distillation** via `distill_model` (teacher checkpoint path) and `dis`
+(distillation loss weight, framework default 6.0): `ultralytics/nn/distill_model.py`
+wraps a frozen teacher and the trainable student, auto-detects the Detect
+head's input feature layers, and computes a score-weighted L2 feature loss
+between teacher and student (with a small Conv-ReLU-Conv projector aligning
+channel widths) alongside the normal detection loss. This resolves the
+previously recorded blocker ("missing teacher/loss/weight from a truncated
+request") without inventing a custom distillation design. `scripts/finetune_pruned.py`
+gained optional `--distill-model`/`--dis` passthrough flags (default `None`,
+no effect on existing calls) so `train_pruned()` forwards them straight into
+Ultralytics' trainer overrides.
+
+Two branches were fine-tuned from the identical restored `pruned.pt`, with
+every other hyperparameter matched exactly (AdamW, lr0 0.001, lrf 0.01,
+momentum 0.9, weight decay 0.0005, batch 64, imgsz 640, patience 10, seed 42,
+50 epochs, one T4 each, no early stop triggered on either):
+
+| Branch | Precision | Recall | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|
+| Standard FT (`outputs/finetune_direct/p40_a8_adamw_exact`) | 0.867 | 0.805 | 0.893 | 0.634 |
+| KD, teacher=baseline (`outputs/finetune_direct/p40_a8_kd_baseline_teacher`) | 0.895 | 0.828 | 0.913 | 0.660 |
+
+KD wins on precision, recall, mAP50 and mAP50-95 (+0.026 mAP50-95, +2.0 mAP50
+points) under a fair, single-difference comparison. Both checkpoints passed
+new-process CUDA load/inference (`[1,10,8400]`, 6 classes) and batch-1
+PyTorch benchmark: identical architecture (903,466 params, 1.1212G MACs,
+~1.96 MiB) since fine-tuning does not change channel counts. Both accuracy
+figures remain well below P30 direct (mAP50-95 0.75030) at a much more
+aggressive compression point (-70% MACs vs P30's -51.83%), so P40-A8 (even
+with KD) is a faster-but-less-accurate alternative to P30, not a strict
+improvement. Test split was not touched.
+
+TensorRT FP16 engines were rebuilt for both fine-tuned checkpoints, plus a
+fresh baseline engine in the same session (a same-instance rebuild is
+required because absolute PyTorch/TensorRT latency drifts noticeably, roughly
+10-20%, across different cloud T4 instances even with identical declared
+GPU/software specs — confirmed by re-measuring baseline PyTorch latency
+across sessions). Same-session, 50 warm-up/200 iteration, batch-1 FP16
+results:
+
+| Model | TensorRT latency | FPS | Speedup vs baseline |
+|---|---:|---:|---:|
+| Baseline (rebuilt) | 1.716 ms | 582.75 | 1.00x |
+| P40-A8 standard FT | 1.423 ms | 702.91 | 1.206x |
+| P40-A8 KD | 1.417 ms | 705.96 | 1.211x |
+
+Both fine-tuned engines passed new-process load/inference. This confirms
+fine-tuning (weights only, no channel-count change) preserves the
+architecture-level TensorRT speedup measured before fine-tuning. Reports:
+`outputs/finetune_direct/p40_a8_adamw_exact/{evaluation_val,benchmark}`,
+`outputs/finetune_direct/p40_a8_kd_baseline_teacher/{evaluation_val,benchmark}`,
+and `outputs/tensorrt_recheck/`.
 
 ## HALP Stage 1 latency LUT
 
