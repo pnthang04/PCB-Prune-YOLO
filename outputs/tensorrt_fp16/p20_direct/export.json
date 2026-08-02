@@ -1,0 +1,39 @@
+{
+  "name": "p20_direct",
+  "source_checkpoint": "outputs/finetune_direct/p20_adamw_exact/weights/best.pt",
+  "engine": "outputs/tensorrt_fp16/p20_direct/model.engine",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_shape_before_export": [
+    1,
+    10,
+    8400
+  ],
+  "class_count": 6,
+  "class_names": [
+    "open",
+    "short",
+    "mousebite",
+    "spur",
+    "copper",
+    "pin-hole"
+  ],
+  "precision": "fp16",
+  "dynamic": false,
+  "batch_size": 1,
+  "parameters": 1913971,
+  "counted_parameters": 1913971,
+  "macs": 2572161600,
+  "gmacs": 2.5721616,
+  "flops_estimate": 5144323200,
+  "gflops_estimate": 5.1443232,
+  "gpu_name": "Tesla T4",
+  "torch_version": "2.10.0+cu128",
+  "cuda_version": "12.8",
+  "tensorrt_version": "10.16.1.11",
+  "ultralytics_version": "8.4.115"
+}

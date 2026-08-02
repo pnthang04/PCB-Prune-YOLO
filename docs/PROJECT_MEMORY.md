@@ -14,7 +14,61 @@ fine-tuning, worse than direct P10. Its save/load and benchmark checks passed;
 do not fine-tune it until sparse regularization is tuned to create measurable
 group sparsity.
 
-Last verified: 2026-08-01
+A second sparse run used `reg=5e-4` for all 30 epochs. Its best unpruned
+validation mAP50-95 was 0.78938, but mean/median group norm changed by only
+-0.0042%/-0.0181% and near-zero fraction stayed zero. P10 again collapsed before
+fine-tuning, then recovered to mAP50-95 0.76318 after fine-tuning (best epoch 27,
+stopped epoch 37). It reduces params by 19.80% and MACs by 20.63%, but remains
+17.25% slower than baseline on T4 batch 1.
+
+The fine-tuned P10 checkpoint is public at
+`https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph`, together with its
+model card, sparse config, validation metrics, benchmark, and summary. Anonymous
+access was verified. Treat it as the current P10 candidate, not the final model
+before P20/P30 comparison.
+
+The matched direct-P10 control was then fine-tuned for all 50 epochs with
+explicit AdamW, lr0 0.001, lrf 0.01, momentum 0.9, weight decay 0.0005, batch
+64, patience 10, and seed 42. It reached validation mAP50 0.98273 and mAP50-95
+0.77736, versus 0.98124/0.76318 for sparse P10. Direct is therefore +1.42
+mAP50-95 percentage points at this seed. Save/load CUDA inference passed; its
+benchmark is 2,416,871 params, 3.2695 GMACs, 10.433 ms, and 95.85 FPS. Continue
+the P20/P30 accuracy-compression curve with direct pruning and retain sparse P10
+as an ablation. Reports are in `outputs/experiments/direct_vs_sparse_p10/`.
+The direct checkpoint is public at
+`https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct`; anonymous ranged
+download and `private=false` were verified.
+
+Direct P20 used the same no-round local group-magnitude pruning and explicit
+AdamW fine-tune as direct P10. It reduces params/MACs by 36.46%/36.85%.
+Validation was zero before fine-tuning, then recovered after all 50 epochs to
+precision 0.96214, recall 0.96186, mAP50 0.98184, and mAP50-95 0.76710. This is
+1.03 points below direct P10 and 1.81 points below baseline. T4 latency is
+11.717 ms (85.35 FPS), so MAC reduction still does not produce acceleration.
+Save/load CUDA inference passed. Next gate is direct P30.
+
+Direct P30 completed the same pipeline and all 50 fine-tune epochs. It reduces
+params/MACs by 51.77%/51.83% and reaches validation precision 0.95324, recall
+0.94374, mAP50 0.97788, and mAP50-95 0.75030. This is 3.49 points below
+baseline, 2.71 below direct P10, and 1.68 below P20. T4 latency is 9.863 ms
+(101.39 FPS), still 18.99% slower than baseline despite the model shrinking to
+3.014 MiB. Save/load CUDA inference passed. P30 is the strongest compression
+point, while P20 remains the more balanced accuracy-compression candidate.
+
+TensorRT FP16 deployment evaluation is complete for baseline and direct
+P10/P20/P30 on the same Tesla T4, TensorRT 10.16.1.11, CUDA 12.8, static batch
+1 `[1,3,640,640]`. Pure-forward means are 1.837, 2.023, 1.933, and 1.754 ms;
+validation mAP50-95 values are 0.78716, 0.77842, 0.76931, and 0.75610. P30 is
+the only pruned engine faster than TensorRT baseline in this measurement
+(1.05x), making it the compression/speed deployment candidate rather than the
+accuracy candidate. All engines passed new-process inference with
+`[1,10,8400]`. Public artifacts:
+
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16`
+
+Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:
 
@@ -44,7 +98,10 @@ P10 `round_to=8` reduces params to 2,289,938 and MACs to 2.9733G. Save, new-proc
 
 ## Next gate
 
-Fine-tune the no-round P10 candidate for up to 50 epochs with learning rate 0.001, batch 64, image size 640, seed 42, AMP, and validation-based early stopping. Verify the pruned dimensions are preserved and meaningful validation accuracy recovers before starting P20/P30.
+Select the final operating point on validation: P10 for best pruned accuracy,
+P20 for balanced compression, or P30 for maximum compression and measured
+TensorRT speed. Only the selected checkpoint should then receive final test-set
+evaluation.
 
 ## Verification
 
@@ -53,4 +110,5 @@ Fine-tune the no-round P10 candidate for up to 50 epochs with learning rate 0.00
 - Compileall and Ruff: passed.
 - Baseline test/benchmark: complete.
 - P10 dry-run, pruning, validation, benchmark, and save/load inference: complete.
-- P10 fine-tune and P20/P30: not run.
+- P10/P20/P30 direct fine-tuning: complete.
+- TensorRT FP16 export, validation, and benchmark for all four models: complete.

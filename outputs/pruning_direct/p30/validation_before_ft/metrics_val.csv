@@ -1,0 +1,8 @@
+scope,precision,recall,mAP50,mAP50-95,class_id,class_name
+overall,0.0,0.0,0.0,0.0,,
+class,0.0,0.0,0.0,0.0,0.0,open
+class,0.0,0.0,0.0,0.0,1.0,short
+class,0.0,0.0,0.0,0.0,2.0,mousebite
+class,0.0,0.0,0.0,0.0,3.0,spur
+class,0.0,0.0,0.0,0.0,4.0,copper
+class,0.0,0.0,0.0,0.0,5.0,pin-hole

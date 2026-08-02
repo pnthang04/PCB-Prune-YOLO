@@ -18,6 +18,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, default=Path("configs/benchmark/default.yaml"))
     parser.add_argument("--model", type=Path)
+    parser.add_argument("--source-model", type=Path)
     parser.add_argument("--device")
     parser.add_argument("--imgsz", type=int)
     parser.add_argument("--warmup-iterations", type=int)
@@ -32,10 +33,25 @@ def main() -> None:
 
     checkpoint = Path(config["model"])
     device = resolve_device(config["device"])
-    module = YOLO(str(checkpoint)).model.to(device).eval()
     image = torch.randn(1, 3, int(config["imgsz"]), int(config["imgsz"]), device=device)
     torch.cuda.empty_cache() if device.type == "cuda" else None
-    values = model_complexity(module, image)
+    if checkpoint.suffix == ".engine":
+        from ultralytics.nn.autobackend import AutoBackend
+
+        module = AutoBackend(str(checkpoint), device=device, fp16=True)
+        image = image.half()
+        source_model = config.get("source_model")
+        if not source_model:
+            raise ValueError("Benchmark TensorRT cần --source-model để xác minh params/MACs")
+        source = YOLO(str(source_model)).model.to(device).eval()
+        values = model_complexity(source, image.float())
+        del source
+        values["source_model"] = str(source_model)
+        values["measurement_scope"] = "pure_engine_forward_excludes_preprocess_and_nms"
+    else:
+        module = YOLO(str(checkpoint)).model.to(device).eval()
+        values = model_complexity(module, image)
+        values["measurement_scope"] = "pure_model_forward_excludes_preprocess_and_nms"
     with torch.inference_mode():
         values.update(
             benchmark_latency(
@@ -63,6 +79,11 @@ def main() -> None:
                 if device.type == "cuda"
                 else None
             ),
+            "peak_gpu_memory_measurement": (
+                "torch_cuda_allocator; TensorRT execution-context allocation is logged separately"
+                if checkpoint.suffix == ".engine"
+                else "torch_cuda_allocator"
+            ),
             "python_version": platform.python_version(),
             "torch_version": torch.__version__,
             "cuda_version": torch.version.cuda,
@@ -71,6 +92,10 @@ def main() -> None:
     import ultralytics
 
     values["ultralytics_version"] = ultralytics.__version__
+    if checkpoint.suffix == ".engine":
+        import tensorrt
+
+        values["tensorrt_version"] = tensorrt.__version__
     write_report(values, Path(config["output"]), "benchmark")
 
 

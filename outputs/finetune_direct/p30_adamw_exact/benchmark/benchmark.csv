@@ -1,0 +1,2 @@
+parameters,counted_parameters,macs,gmacs,flops_estimate,gflops_estimate,mean_latency_ms,median_latency_ms,p95_latency_ms,fps,model,model_size_mb,batch_size,imgsz,device,gpu_name,gpu_total_memory_mb,peak_gpu_memory_mb,python_version,torch_version,cuda_version,ultralytics_version
+1452562,1452562,1961891200,1.9618912,3923782400,3.9237824,9.863123440172785,9.747029500431381,11.026255997421686,101.38776079055964,outputs/finetune_direct/p30_adamw_exact/weights/best.pt,3.0141544342041016,1,640,cuda:1,Tesla T4,14911.6875,29.1787109375,3.12.12,2.10.0+cu128,12.8,8.4.115

@@ -13,6 +13,7 @@ Classes: `open`, `short`, `mousebite`, `spur`, `copper`, `pin-hole`.
 - Python 3.12.12.
 - PyTorch 2.10.0+cu128; CUDA 12.8; cuDNN 91002.
 - Ultralytics 8.4.115.
+- TensorRT 10.16.1.11 for the FP16 deployment benchmark.
 - Vendored Torch-Pruning 1.6.0 from `src/torch_pruning`.
 - Two Tesla T4 GPUs, each 14.56 GiB.
 - Train: 800 images, 5,485 boxes.
@@ -100,14 +101,16 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
 
 ## Verification state
 
-- Unit tests: 11 passed.
+- Unit tests: see the latest verification run below; this count is historical.
 - Compileall: passed.
 - Ruff on changed pruning/benchmark code: passed.
 - Baseline test and benchmark: complete.
 - DepGraph dry-run: complete.
 - P10 pre-fine-tune validation, complexity, benchmark, and save/load inference: complete.
-- P10 fine-tune: not run.
-- P20/P30: not run.
+- P10 direct and sparse fine-tunes: complete.
+- P20/P30 direct prune, fine-tune, validation, and benchmark: complete.
+- TensorRT FP16 export/validation/benchmark for baseline and direct P10/P20/P30:
+  complete.
 
 ## Group-level sparse training
 
@@ -154,3 +157,152 @@ Sparse P10 before fine-tuning: `outputs/pruning_sparse/p10/pruned.pt`.
 Sparse P10 is worse than the preserved no-round direct-P10 ablation on both
 mAP50 and mAP50-95. Do not fine-tune or present it as a successful paper-path
 result yet. The next experiment must first produce measurable group sparsity.
+
+## Sparse reg=5e-4, P10 and fine-tuning
+
+Sparse run: `outputs/sparse/depgraph_sparse_p10_reg5e4/`.
+
+- Completed 30 epochs; best epoch 10.
+- Sparse validation: precision 0.97646, recall 0.95673, mAP50 0.98539,
+  mAP50-95 0.78938.
+- Regularizer gradient was nonzero in all epochs with no new non-finite values.
+- Epoch 1 to 30 group-norm change: min -0.0954%, mean -0.0042%, median
+  -0.0181%, max +0.0498%; near-zero fraction remained 0. The distribution did
+  not shift down materially.
+
+No-round P10 before fine-tuning: `outputs/pruning_sparse_reg5e4/p10/pruned.pt`.
+
+- Params 2,415,613; MACs 3.2328G.
+- Validation mAP50 0.002427 and mAP50-95 0.000351.
+- New-process CUDA inference passed.
+
+Fine-tuned P10: `outputs/finetune_sparse_reg5e4/p10/weights/best.pt`.
+
+- Training stopped at epoch 37; best epoch 27.
+- Validation precision 0.95909, recall 0.94869, mAP50 0.98124,
+  mAP50-95 0.76318.
+- Mean latency 9.719 ms, FPS 102.89, size 4.850 MiB, peak memory 40.02 MiB.
+- Versus baseline: params -19.80%, MACs -20.63%, mAP50-95 -2.21 points,
+  latency +17.25%, FPS -14.71%.
+- New-process CUDA load and output `[1,10,8400]` passed.
+
+Fine-tuning recovers useful accuracy, but group sparsity remains weak and the
+pruned model does not accelerate T4 batch-1 inference.
+
+Public checkpoint and model card:
+`https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph`. Anonymous model
+page access and partial checkpoint download were verified; the Hub API reports
+`private=false`.
+
+## Matched direct-P10 control
+
+Direct checkpoint: `outputs/pruning_no_round/p10/pruned.pt`. Its executed
+pruning settings match the sparse P10 artifact: local group-magnitude pruning,
+ratio 0.10, one step, no rounding, and the same protected detection outputs.
+
+Matched fine-tune:
+`outputs/finetune_direct_fair/p10_adamw_exact/weights/best.pt`.
+
+- Completed all 50 epochs with AdamW, lr0 0.001, lrf 0.01, momentum 0.9,
+  weight decay 0.0005, batch 64, patience 10, and seed 42.
+- Validation precision 0.96479, recall 0.95706, mAP50 0.98273, and mAP50-95
+  0.77736.
+- Params 2,416,871; MACs 3.2695G; latency 10.433 ms; FPS 95.85; size 4.854 MiB.
+- New-process CUDA load and output `[1,10,8400]` passed.
+- Direct exceeds sparse reg=5e-4 by 0.01418 mAP50-95 (1.42 percentage points)
+  at seed 42. Sparse learning did not improve P10 accuracy in this matched,
+  single-seed experiment.
+- Comparison JSON/CSV and detailed direct reports:
+  `outputs/experiments/direct_vs_sparse_p10/`.
+
+Proceed with direct P20/P30 for the accuracy-compression curve; retain sparse
+P10 as an ablation.
+
+Public direct-P10 checkpoint and model card:
+`https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct`. Anonymous ranged
+download returned HTTP 206 and the Hub API reports `private=false`.
+
+## Direct P20
+
+Pruned checkpoint: `outputs/pruning_direct/p20/pruned.pt`.
+
+- Local group-magnitude pruning, ratio 0.20, one step, no rounding; 59 groups.
+- Params 1,913,971 (-36.46%); MACs 2.5722G (-36.85%).
+- Seven fixed-width Detect outputs protected; forward `[1,10,8400]` and
+  new-process CUDA reload passed.
+- Before fine-tune validation precision, recall, mAP50, and mAP50-95 were 0.
+- Before fine-tune latency 10.802 ms and FPS 92.57.
+
+Fine-tuned checkpoint:
+`outputs/finetune_direct/p20_adamw_exact/weights/best.pt`.
+
+- Completed all 50 epochs with the matched direct-P10 AdamW configuration.
+- Validation precision 0.96214, recall 0.96186, mAP50 0.98184, mAP50-95
+  0.76710.
+- Mean latency 11.717 ms, FPS 85.35, size 3.897 MiB, peak memory 34.14 MiB.
+- New-process CUDA load and output `[1,10,8400]` passed.
+- Versus baseline: mAP50-95 -1.81 points, params -36.46%, MACs -36.85%, but
+  latency +41.35%. Versus direct P10: mAP50-95 -1.03 points.
+- Reports: `outputs/pruning_direct/p20/`,
+  `outputs/finetune_direct/p20_adamw_exact/`, and
+  `outputs/experiments/direct_p20_summary.{json,csv}`.
+
+## Direct P30
+
+Pruned checkpoint: `outputs/pruning_direct/p30/pruned.pt`.
+
+- Local group-magnitude pruning, ratio 0.30, one step, no rounding; 59 groups.
+- Params 1,452,562 (-51.77%); MACs 1.9619G (-51.83%).
+- Seven fixed-width Detect outputs protected; forward `[1,10,8400]` and
+  new-process CUDA reload passed.
+- Before fine-tune validation precision, recall, mAP50, and mAP50-95 were 0.
+- Before fine-tune latency 10.011 ms and FPS 99.89.
+
+Fine-tuned checkpoint:
+`outputs/finetune_direct/p30_adamw_exact/weights/best.pt`.
+
+- Completed all 50 epochs with the matched P10/P20 AdamW configuration.
+- Validation precision 0.95324, recall 0.94374, mAP50 0.97788, mAP50-95
+  0.75030.
+- Mean latency 9.863 ms, FPS 101.39, size 3.014 MiB, peak memory 29.18 MiB.
+- New-process CUDA load and output `[1,10,8400]` passed.
+- Versus baseline: mAP50-95 -3.49 points, params -51.77%, MACs -51.83%, and
+  latency +18.99%. Versus direct P20: mAP50-95 -1.68 points.
+- Reports: `outputs/pruning_direct/p30/`,
+  `outputs/finetune_direct/p30_adamw_exact/`, and
+  `outputs/experiments/direct_p30_summary.{json,csv}`.
+
+## TensorRT FP16 deployment benchmark
+
+Built baseline, direct P10, direct P20, and direct P30 engines on Tesla T4 with
+TensorRT 10.16.1.11, CUDA 12.8, Ultralytics 8.4.115, FP16, batch 1, and static
+`[1,3,640,640]`. No engine includes NMS. Every exact pruned source was checked
+for its expected parameter count and raw output `[1,10,8400]`; new-process
+engine load and inference passed for all four models.
+
+Pure forward results after 50 warm-ups and 200 synchronized measurements:
+
+| Model | TRT mAP50-95 | Mean/median/p95 ms | FPS | Engine MiB | vs own PyTorch | vs TRT baseline |
+|---|---:|---:|---:|---:|---:|---:|
+| Baseline | 0.78716 | 1.837/1.501/2.740 | 544.28 | 7.477 | 4.51x | 1.00x |
+| P10 direct | 0.77842 | 2.023/1.728/3.489 | 494.34 | 7.627 | 5.16x | 0.91x |
+| P20 direct | 0.76931 | 1.933/1.761/2.254 | 517.45 | 7.378 | 6.06x | 0.95x |
+| P30 direct | 0.75610 | 1.754/1.721/3.318 | 569.97 | 5.482 | 5.62x | 1.05x |
+
+Validation uses only the validation split. Detailed export provenance,
+validation metrics (including per-class and preprocess/inference/postprocess
+timings), benchmarks, and comparison reports are under
+`outputs/tensorrt_fp16/`. TensorRT peak memory in benchmark JSON is the PyTorch
+CUDA allocator observation; execution-context allocation is separately emitted
+by TensorRT during engine load (9-10 MiB for these engines).
+
+Public deployment/model artifacts:
+
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16`
+
+All three repositories were created public. P20/P30 contain the validation-best
+PyTorch checkpoint, model card, training args, validation metrics, and benchmark.
+The TensorRT repository contains all four engines plus exact export, validation,
+benchmark, and comparison JSON/CSV.

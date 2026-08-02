@@ -12,7 +12,11 @@ def main() -> None:
     parser.add_argument("--model", type=Path, required=True)
     parser.add_argument("--data", type=Path, default=Path("configs/data/deeppcb.yaml"))
     parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--optimizer", default="AdamW")
     parser.add_argument("--lr0", type=float, default=0.001)
+    parser.add_argument("--lrf", type=float, default=0.01)
+    parser.add_argument("--weight-decay", type=float, default=0.0005)
+    parser.add_argument("--momentum", type=float, default=0.9)
     parser.add_argument("--device", default="0")
     parser.add_argument("--batch", type=int, default=64)
     parser.add_argument("--imgsz", type=int, default=640)
@@ -26,7 +30,11 @@ def main() -> None:
             "model": str(args.model),
             "data": str(args.data),
             "epochs": args.epochs,
+            "optimizer": args.optimizer,
             "lr0": args.lr0,
+            "lrf": args.lrf,
+            "weight_decay": args.weight_decay,
+            "momentum": args.momentum,
             "device": args.device,
             "batch": args.batch,
             "imgsz": args.imgsz,

@@ -1,0 +1,47 @@
+{
+  "model": "YOLOv8n DepGraph direct P30",
+  "selection_split": "val",
+  "seed": 42,
+  "pruning": {
+    "ratio": 0.3,
+    "importance": "group_magnitude",
+    "global_pruning": false,
+    "iterative_steps": 1,
+    "round_to": null,
+    "parameters": 1452562,
+    "macs": 1961891200,
+    "parameter_reduction_percent": 51.77445818716887,
+    "mac_reduction_percent": 51.83494013551384,
+    "reload_inference": true
+  },
+  "before_fine_tune": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "mAP50": 0.0,
+    "mAP50-95": 0.0,
+    "latency_ms": 10.011258875038038,
+    "fps": 99.88753786932719
+  },
+  "fine_tune": {
+    "epochs_run": 50,
+    "optimizer": "AdamW",
+    "lr0": 0.001,
+    "lrf": 0.01,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "batch": 64,
+    "patience": 10
+  },
+  "after_fine_tune": {
+    "checkpoint": "outputs/finetune_direct/p30_adamw_exact/weights/best.pt",
+    "precision": 0.9532359026085936,
+    "recall": 0.9437431976398601,
+    "mAP50": 0.9778818888829804,
+    "mAP50-95": 0.7503037352615889,
+    "latency_ms": 9.863123440172785,
+    "fps": 101.38776079055964,
+    "model_size_mb": 3.0141544342041016,
+    "peak_gpu_memory_mb": 29.1787109375,
+    "reload_inference": true
+  }
+}

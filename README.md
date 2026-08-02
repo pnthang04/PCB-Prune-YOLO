@@ -7,7 +7,7 @@ Phạm Ngọc Thắng
 ![Model](https://img.shields.io/badge/Model-YOLOv8n-55a630)
 ![Language](https://img.shields.io/badge/Language-Python-3776ab)
 
-**Quick Links:** [📦 Tải dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Model baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [⚙️ Cấu hình](#cấu-hình-baseline) | [🚀 Huấn luyện](#huấn-luyện) | [📊 Kết quả](#kết-quả-baseline)
+**Quick Links:** [📦 Dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [🤗 P10 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct) | [🤗 P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) | [🤗 P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct) | [⚡ TensorRT FP16](https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16) | [🤗 P10 sparse](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph)
 
 Hướng dẫn tự động chạy trên server: [`SERVER_RUNBOOK.md`](SERVER_RUNBOOK.md).
 
@@ -172,6 +172,13 @@ Kết quả validation trước fine-tune:
 | Baseline | No | 3,012,018 | 4.0733G | 0.98630 | 0.78524 | 8.289 ms | 120.64 |
 | P10 direct, no round | No | 2,416,871 | 3.2695G | 0.00586 | 0.000923 | TODO | TODO |
 | P10 sparse, no round | Yes | 2,415,613 | 3.2328G | 0.002615 | 0.000375 | 9.737 ms | 102.71 |
+| P10 sparse reg=5e-4, trước FT | Yes | 2,415,613 | 3.2328G | 0.002427 | 0.000351 | 10.127 ms | 98.75 |
+| P10 sparse reg=5e-4, sau FT | Yes | 2,415,613 | 3.2328G | 0.98124 | 0.76318 | 9.719 ms | 102.89 |
+| P10 direct, sau FT khớp cấu hình | No | 2,416,871 | 3.2695G | 0.98273 | 0.77736 | 10.433 ms | 95.85 |
+| P20 direct, trước FT | No | 1,913,971 | 2.5722G | 0.00000 | 0.00000 | 10.802 ms | 92.57 |
+| P20 direct, sau FT | No | 1,913,971 | 2.5722G | 0.98184 | 0.76710 | 11.717 ms | 85.35 |
+| P30 direct, trước FT | No | 1,452,562 | 1.9619G | 0.00000 | 0.00000 | 10.011 ms | 99.89 |
+| P30 direct, sau FT | No | 1,452,562 | 1.9619G | 0.97788 | 0.75030 | 9.863 ms | 101.39 |
 
 Lần sparse training đầu tiên dùng `reg=1e-4`, dừng sớm ở epoch 20 và có
 validation mAP50-95 tốt nhất 0.78752 tại epoch 10. Tuy regularizer gradient khác
@@ -179,6 +186,72 @@ validation mAP50-95 tốt nhất 0.78752 tại epoch 10. Tuy regularizer gradien
 pruning. Vì vậy P10 sparse hiện tại chưa được fine-tune và chưa được xem là mô
 hình pruning thành công. Bước tiếp theo là điều chỉnh sparse regularization chỉ
 dựa trên validation trước khi chạy lại P10.
+
+Thí nghiệm tiếp theo dùng `reg=5e-4` đủ 30 epoch. Sparse checkpoint chưa prune
+đạt mAP50-95 0.78938, nhưng group norm chỉ dịch xuống rất nhẹ và near-zero
+fraction vẫn bằng 0. Sau P10, fine-tune dừng ở epoch 37 với best epoch 27 và phục
+hồi mAP50-95 lên 0.76318. Mô hình giảm 19.80% tham số và 20.63% MACs so với
+baseline, nhưng latency T4 tăng 17.25%; do đó chưa có speedup triển khai thực tế.
+
+Control bắt buộc `direct pruning → fine-tune` được chạy đủ 50 epoch với
+AdamW, `lr0=0.001`, `lrf=0.01`, momentum 0.9, weight decay 0.0005, batch 64 và
+patience 10. Direct P10 đạt mAP50-95 0.77736, cao hơn sparse P10 0.01418
+(1.42 điểm phần trăm) ở seed 42. Vì vậy sparse learning `reg=5e-4` chưa giúp
+accuracy P10 sau fine-tune trong thí nghiệm hiện tại. Đây là kết luận một seed;
+P20/P30 sẽ dùng direct pruning để tạo đường accuracy–compression.
+
+Checkpoint direct P10 được phát hành public tại
+[thangkt/PCB-Prune-YOLO-P10-Direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct).
+
+Direct P20 giảm 36.46% tham số và 36.85% MACs so với baseline. Trước fine-tune,
+validation collapse về 0; sau đủ 50 epoch cùng cấu hình P10, mAP50-95 phục hồi
+lên 0.76710. P20 thấp hơn P10 direct 1.03 điểm mAP50-95 và thấp hơn baseline
+1.81 điểm, đồng thời latency T4 vẫn tăng lên 11.717 ms nên chưa có speedup thực tế.
+
+Direct P30 giảm 51.77% tham số và 51.83% MACs. Sau 50 epoch, mAP50-95 đạt
+0.75030: thấp hơn baseline 3.49 điểm, P10 2.71 điểm và P20 1.68 điểm. Model chỉ
+3.014 MiB, nhưng latency 9.863 ms vẫn chậm hơn baseline 18.99%; vì vậy P30 là
+ứng viên nén mạnh, không phải ứng viên accuracy hoặc latency tốt nhất.
+
+## TensorRT FP16 trên Tesla T4
+
+Bốn engine được build trực tiếp trên cùng Tesla T4 với TensorRT 10.16.1.11,
+CUDA 12.8 và Ultralytics 8.4.115. Input tĩnh là `[1,3,640,640]`, batch 1,
+FP16, không dynamic shape và không gắn NMS vào engine. Tất cả engine đã load
+trong process mới và trả output `[1,10,8400]` với đúng sáu lớp.
+
+| Model | Params | MACs | PyTorch mAP50-95 | TensorRT mAP50-95 | PyTorch latency | TensorRT latency | TensorRT FPS | Engine size |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Baseline | 3,012,018 | 4.0733G | 0.78524 | 0.78716 | 8.289 ms | 1.837 ms | 544.28 | 7.477 MiB |
+| P10 direct | 2,416,871 | 3.2695G | 0.77736 | 0.77842 | 10.433 ms | 2.023 ms | 494.34 | 7.627 MiB |
+| P20 direct | 1,913,971 | 2.5722G | 0.76710 | 0.76931 | 11.717 ms | 1.933 ms | 517.45 | 7.378 MiB |
+| P30 direct | 1,452,562 | 1.9619G | 0.75030 | 0.75610 | 9.863 ms | 1.754 ms | 569.97 | 5.482 MiB |
+
+Latency PyTorch và TensorRT trong bảng là forward thuần, không gồm preprocess
+hoặc NMS, với 50 warm-up và 200 lần đo có CUDA synchronize. Speedup TensorRT so
+với chính PyTorch lần lượt là 4.51x, 5.16x, 6.06x và 5.62x. So với TensorRT
+baseline, P10 đạt 0.91x, P20 0.95x và P30 1.05x; vì vậy chỉ P30 nhanh hơn
+baseline TensorRT trong lần đo này, khoảng 4.7%.
+
+Thời gian pipeline validation trung bình cho preprocess / engine inference /
+postprocess-NMS lần lượt là baseline 1.413/3.290/2.230 ms, P10
+1.379/3.842/2.153 ms, P20 1.346/3.857/2.285 ms và P30 1.425/3.515/2.046 ms mỗi
+ảnh. JSON/CSV đầy đủ nằm tại `outputs/tensorrt_fp16/`; file `.engine` phụ thuộc
+phần cứng/phần mềm build nên được giữ ngoài Git. Bốn engine và toàn bộ metadata
+được phát hành tại
+[thangkt/PCB-Prune-YOLO-TensorRT-FP16](https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16).
+
+P30 là lựa chọn triển khai ưu tiên khi cần nén mạnh: giảm 51.77% tham số,
+51.83% MACs, đạt 569.97 FPS và nhanh hơn TensorRT baseline khoảng 4.7%. Đổi lại,
+TensorRT mAP50-95 giảm từ 0.78716 xuống 0.75610 và recall giảm từ 0.96178 xuống
+0.92858. Checkpoint PyTorch public:
+[P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) và
+[P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct).
+
+Checkpoint P10 fine-tuned và model card được phát hành public tại
+[thangkt/PCB-Prune-YOLO-P10-DepGraph](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph).
+Vì structured pruning thay đổi kiến trúc, hãy clone và cài project trước khi
+load checkpoint để class `PrunableC2f` khả dụng.
 
 ## Kiểm tra code
 

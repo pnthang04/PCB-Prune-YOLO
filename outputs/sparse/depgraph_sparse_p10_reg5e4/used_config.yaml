@@ -1,0 +1,46 @@
+checkpoint: outputs/train/baseline/weights/best.pt
+data: configs/data/deeppcb.yaml
+project: outputs/sparse
+name: depgraph_sparse_p10_reg5e4
+epochs: 30
+patience: 0
+imgsz: 640
+batch: 64
+workers: 8
+seed: 42
+device: '0'
+amp: true
+deterministic: true
+optimizer: SGD
+lr0: 0.001
+val: true
+plots: true
+save: true
+sparse:
+  alpha: 4
+  regularization_strength: 0.0005
+  pruning_ratio: 0.1
+  iterative_steps: 1
+  global_pruning: true
+  round_to: null
+  ignored_layers:
+  - model.22.cv2.0.2
+  - model.22.cv2.1.2
+  - model.22.cv2.2.2
+  - model.22.cv3.0.2
+  - model.22.cv3.1.2
+  - model.22.cv3.2.2
+  - model.22.dfl.conv
+  near_zero_threshold: 0.001
+provenance:
+  alpha: PAPER_EQUATION_5
+  regularization_strength: ADAPTATION_FROM_OFFICIAL_CIFAR10_GROUP_SL
+  epochs: ADAPTATION_FIXED_30_EPOCH_COMPARISON
+  patience: ADAPTATION_DISABLED_TO_COMPLETE_SPARSE_SCHEDULE
+  lr0: ADAPTATION_LOWER_THAN_YOLO_BASELINE_FOR_CHECKPOINT_TRAINING
+  pruning_ratio: ADAPTATION_PROJECT_EXPERIMENT_P10
+  iterative_steps: ADAPTATION_SINGLE_PRUNING_STEP
+  global_pruning: OFFICIAL_CODE_GROUP_SL_EXPERIMENTS
+  round_to: ADAPTATION_NO_ROUNDING_AFTER_DIRECT_P10_COLLAPSE
+  ignored_layers: ADAPTATION_YOLO_FIXED_WIDTH_DETECTION_OUTPUTS
+  near_zero_threshold: ADAPTATION_DIAGNOSTIC_ONLY
