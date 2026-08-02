@@ -243,3 +243,28 @@ Fine-tuned checkpoint:
 - Reports: `outputs/pruning_direct/p20/`,
   `outputs/finetune_direct/p20_adamw_exact/`, and
   `outputs/experiments/direct_p20_summary.{json,csv}`.
+
+## Direct P30
+
+Pruned checkpoint: `outputs/pruning_direct/p30/pruned.pt`.
+
+- Local group-magnitude pruning, ratio 0.30, one step, no rounding; 59 groups.
+- Params 1,452,562 (-51.77%); MACs 1.9619G (-51.83%).
+- Seven fixed-width Detect outputs protected; forward `[1,10,8400]` and
+  new-process CUDA reload passed.
+- Before fine-tune validation precision, recall, mAP50, and mAP50-95 were 0.
+- Before fine-tune latency 10.011 ms and FPS 99.89.
+
+Fine-tuned checkpoint:
+`outputs/finetune_direct/p30_adamw_exact/weights/best.pt`.
+
+- Completed all 50 epochs with the matched P10/P20 AdamW configuration.
+- Validation precision 0.95324, recall 0.94374, mAP50 0.97788, mAP50-95
+  0.75030.
+- Mean latency 9.863 ms, FPS 101.39, size 3.014 MiB, peak memory 29.18 MiB.
+- New-process CUDA load and output `[1,10,8400]` passed.
+- Versus baseline: mAP50-95 -3.49 points, params -51.77%, MACs -51.83%, and
+  latency +18.99%. Versus direct P20: mAP50-95 -1.68 points.
+- Reports: `outputs/pruning_direct/p30/`,
+  `outputs/finetune_direct/p30_adamw_exact/`, and
+  `outputs/experiments/direct_p30_summary.{json,csv}`.

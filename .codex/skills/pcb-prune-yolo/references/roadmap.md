@@ -41,6 +41,10 @@
   50-epoch fine-tune, post-fine-tune validation/benchmark, and new-process CUDA
   reload. P20 reached validation mAP50-95 0.76710 with 36.46% fewer params and
   36.85% fewer MACs, but latency remained worse than baseline.
+- Completed direct P30 pruning, pre/post-fine-tune validation and benchmark,
+  matched 50-epoch fine-tune, and new-process CUDA reload. P30 reached
+  validation mAP50-95 0.75030 with 51.77% fewer params and 51.83% fewer MACs;
+  latency remained 18.99% slower than baseline.
 
 ## Not completed
 
@@ -48,7 +52,6 @@
   the first `reg=1e-4` run retained baseline accuracy but produced no near-zero
   groups and its P10 result was worse than direct pruning.
 
-- Run P30 pre-fine-tune validation, fine-tune, and benchmark.
 - Decide whether `round_to=8` or no rounding is the standard policy. Current validation favors no rounding before fine-tuning, but both are extremely weak.
 - Implement safe multi-GPU DDP fine-tuning for changed model objects.
 - Produce the final comparison table covering baseline and P10/P20/P30 before/after fine-tuning.
@@ -70,7 +73,7 @@
 
 ## Next decision gate
 
-Run direct P30 with the same no-round local group-magnitude pruning and explicit
-AdamW fine-tune configuration as P10/P20. Record pre-fine-tune validation,
-save/load inference, post-fine-tune validation, and batch-1 T4 benchmark before
-selecting the final model on validation.
+Build the final comparison table and select the operating point on validation.
+P10 has the highest pruned accuracy, P20 is the current balanced compression
+candidate, and P30 is the strongest compression candidate. Evaluate only the
+selected model on test, then publish that final checkpoint and reports.

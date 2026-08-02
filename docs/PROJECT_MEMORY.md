@@ -47,6 +47,14 @@ precision 0.96214, recall 0.96186, mAP50 0.98184, and mAP50-95 0.76710. This is
 11.717 ms (85.35 FPS), so MAC reduction still does not produce acceleration.
 Save/load CUDA inference passed. Next gate is direct P30.
 
+Direct P30 completed the same pipeline and all 50 fine-tune epochs. It reduces
+params/MACs by 51.77%/51.83% and reaches validation precision 0.95324, recall
+0.94374, mAP50 0.97788, and mAP50-95 0.75030. This is 3.49 points below
+baseline, 2.71 below direct P10, and 1.68 below P20. T4 latency is 9.863 ms
+(101.39 FPS), still 18.99% slower than baseline despite the model shrinking to
+3.014 MiB. Save/load CUDA inference passed. P30 is the strongest compression
+point, while P20 remains the more balanced accuracy-compression candidate.
+
 Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:
