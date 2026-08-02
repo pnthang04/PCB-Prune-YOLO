@@ -70,8 +70,17 @@
   1.780 ms baseline (0.968x); `trtexec` per-layer is also slightly slower.
   Although E2E including NMS is 1.076x faster, severe accuracy/recall loss makes
   it content-dependent rather than accepted architecture acceleration.
+- Completed the independent P40-HW structural latency gate from baseline. A8,
+  A16 and BLOCK all beat matched P30 forward latency; A8 is selected at 1.3540
+  ms versus 1.7575 ms P30 with 0.903M params and 1.1212G MACs. Its pre-FT
+  validation is zero, so no long training or KD was launched.
 
 ## Not completed
+
+- Complete the truncated P40-HW training specification (teacher checkpoint,
+  distillation outputs/loss, temperature, weights, epochs and early stopping),
+  then run standard FT and KD from the exact same A8 pre-FT checkpoint. Rebuild
+  and benchmark FP16 engines after training before accepting deployment speed.
 
 - Fix the P30 explicit-Q/DQ graph before any full QAT: fuse Conv-BN, reduce
   Q/DQ and reformat boundaries around SiLU/residual/concat, then require a

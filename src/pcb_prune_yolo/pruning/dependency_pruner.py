@@ -23,6 +23,7 @@ class YOLODepGraphPruner:
         iterative_steps: int = 1,
         round_to: int | None = 8,
         global_pruning: bool = False,
+        hardware_policy: str = "standard",
         **_: Any,
     ) -> None:
         if not 0 <= pruning_ratio < 1:
@@ -34,12 +35,17 @@ class YOLODepGraphPruner:
         self.iterative_steps = iterative_steps
         self.round_to = round_to
         self.global_pruning = global_pruning
+        if hardware_policy not in {"standard", "block"}:
+            raise ValueError(f"hardware_policy không hỗ trợ: {hardware_policy}")
+        self.hardware_policy = hardware_policy
         self.graph: Any | None = None
         self.group_count = 0
         self.meta_pruner: Any | None = None
         self.replaced_c2f = replace_c2f(self.model)
         self.head_name, self.detection_head = self._find_detection_head()
         self.protected_modules = self._find_protected_modules()
+        self.block_protected_modules = self._find_block_protected_modules()
+        self.initial_channel_layout = self.channel_layout()
 
     def _find_detection_head(self) -> tuple[str, torch.nn.Module]:
         """Return the terminal Ultralytics Detect module without pinning its class."""
@@ -70,6 +76,60 @@ class YOLODepGraphPruner:
         """List fixed-width output layers excluded as pruning roots."""
         return [name for name, _ in self.protected_modules]
 
+    def _find_block_protected_modules(self) -> list[tuple[str, torch.nn.Module]]:
+        """Protect C2f bottleneck outputs as roots for the block-level policy."""
+        if self.hardware_policy != "block":
+            return []
+        protected: list[tuple[str, torch.nn.Module]] = []
+        for name, module in self.model.named_modules():
+            # Keep each Bottleneck output width intact so residual/C2f branch
+            # boundaries stay regular, while its internal cv1 remains eligible.
+            if ".m." in name and name.endswith(".cv2.conv") and isinstance(
+                module, torch.nn.Conv2d
+            ):
+                protected.append((name, module))
+        return protected
+
+    def ignored_root_modules(self) -> list[torch.nn.Module]:
+        """Return modules protected from serving as output-pruning roots."""
+        return [
+            module
+            for _, module in [*self.protected_modules, *self.block_protected_modules]
+        ]
+
+    def channel_layout(self) -> dict[str, int]:
+        """Return convolution output widths for alignment and mutation audits."""
+        return {
+            name: int(module.out_channels)
+            for name, module in self.model.named_modules()
+            if isinstance(module, torch.nn.Conv2d)
+        }
+
+    def channel_audit(self) -> dict[str, Any]:
+        """Summarize changed convolution widths and hardware alignment."""
+        current = self.channel_layout()
+        changed = {
+            name: {"before": before, "after": current[name]}
+            for name, before in self.initial_channel_layout.items()
+            if name in current and current[name] != before
+        }
+        prunable_widths = [
+            width
+            for name, width in current.items()
+            if name not in self.protected_layer_names()
+        ]
+        return {
+            "policy": self.hardware_policy,
+            "round_to": self.round_to,
+            "changed_convolution_outputs": len(changed),
+            "changed_channels": changed,
+            "all_prunable_outputs_aligned_to_8": all(v % 8 == 0 for v in prunable_widths),
+            "aligned_to_8_count": sum(v % 8 == 0 for v in prunable_widths),
+            "aligned_to_16_count": sum(v % 16 == 0 for v in prunable_widths),
+            "audited_convolutions": len(prunable_widths),
+            "block_protected_roots": [name for name, _ in self.block_protected_modules],
+        }
+
     def build_dependency_graph(self) -> Any:
         """Trace dependencies and enumerate groups without changing any channels."""
         import torch_pruning as tp
@@ -84,7 +144,7 @@ class YOLODepGraphPruner:
         # Materialize groups now so tracing/API errors fail during dry-run.
         groups = list(
             self.graph.get_all_groups(
-                ignored_layers=[module for _, module in self.protected_modules]
+                ignored_layers=self.ignored_root_modules()
             )
         )
         self.group_count = len(groups)
@@ -127,7 +187,7 @@ class YOLODepGraphPruner:
             importance=create_importance(self.importance_name),
             pruning_ratio=self.pruning_ratio,
             iterative_steps=self.iterative_steps,
-            ignored_layers=[module for _, module in self.protected_modules],
+            ignored_layers=self.ignored_root_modules(),
             round_to=self.round_to,
             global_pruning=self.global_pruning,
         )
@@ -147,7 +207,7 @@ class YOLODepGraphPruner:
             alpha=alpha,
             pruning_ratio=self.pruning_ratio,
             iterative_steps=self.iterative_steps,
-            ignored_layers=[module for _, module in self.protected_modules],
+            ignored_layers=self.ignored_root_modules(),
             round_to=self.round_to,
             global_pruning=self.global_pruning,
         )

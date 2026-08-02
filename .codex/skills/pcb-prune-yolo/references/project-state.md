@@ -119,6 +119,12 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
   P30 FP16. Q/DQ count is 133 pairs; coverage is 38/68 INT8-output convs versus
   PTQ 35/61, with more reformats and kernel launches. Decision: FIX_GRAPH_FIRST;
   full QAT and distillation are stopped.
+- P40-HW FP16 architecture gate is complete for A8, A16 and BLOCK, all rebuilt
+  from baseline at target ratio 0.40. All save/load/CUDA/TRT invariants pass.
+  A8 is fastest at 1.3540 ms versus a matched P30 rerun at 1.7575 ms (1.298x),
+  with 903,466 params and 1.1212G MACs. A8 pre-fine-tune validation is zero for
+  all metrics/classes. Training is stopped before long FT/KD because the supplied
+  request ends before specifying the distillation experiment.
 - TensorRT FP16 export/validation/benchmark for baseline and direct P10/P20/P30:
   complete.
 

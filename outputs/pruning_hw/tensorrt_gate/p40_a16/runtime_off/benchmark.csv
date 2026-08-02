@@ -1,0 +1,2 @@
+engine,cuda_graph,forward_mean_latency_ms,forward_median_latency_ms,forward_p95_latency_ms,forward_fps,e2e_mean_latency_ms,e2e_median_latency_ms,e2e_p95_latency_ms,e2e_fps,peak_gpu_memory_mb,engine_size_mb
+outputs/pruning_hw/tensorrt_gate/p40_a16/model.engine,False,1.490267355038668,1.6909890000533778,1.7440766037907451,671.0205364285478,3.0735161047050497,3.0364970007212833,3.4339448506216286,325.3602603445493,5.33837890625,3.2215938568115234

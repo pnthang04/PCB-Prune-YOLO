@@ -1,0 +1,20 @@
+{
+  "engine": "outputs/tensorrt_fp16/baseline/model.engine",
+  "input_shape": [
+    640,
+    640
+  ],
+  "iterations": 200,
+  "cuda_graph": false,
+  "data_transfers": false,
+  "layer_counts": {
+    "layers": 158,
+    "convolution": 83,
+    "reformat": 27,
+    "copy": 63,
+    "pointwise": 79
+  },
+  "kernel_launches": 32016,
+  "kernel_launches_per_iteration": 160.08,
+  "tensorrt": "10.16.1.11"
+}

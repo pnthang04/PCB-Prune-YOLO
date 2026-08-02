@@ -279,3 +279,23 @@ is invalid. Export with `scripts/export_qat_tensorrt.py`, which emits a strongly
 typed explicit-Q/DQ engine with detailed inspector data. Current decision is
 `FIX_GRAPH_FIRST`; do not extend epochs until a modified graph beats P30 FP16
 forward latency under the same 50/200 runtime protocol.
+
+## P40-HW latency-first pruning
+
+This workflow is independent of HALP, QAT and INT8. Reproduce candidates with
+the immutable configs, one at a time:
+
+```bash
+python scripts/prune_model.py --config configs/prune/p40_hw_a8.yaml
+python scripts/prune_model.py --config configs/prune/p40_hw_a16.yaml
+python scripts/prune_model.py --config configs/prune/p40_hw_block.yaml
+```
+
+`hardware_policy=block` protects only the ten C2f Bottleneck residual-output
+convolutions as pruning roots; DepGraph still propagates safe input dependency
+changes. Use `scripts/export_tensorrt.py`, `benchmark_tensorrt_runtime.py` and
+`profile_tensorrt_engine.py` with unique output directories. The gate is
+forward-only graph-off latency; do not use pre-FT E2E because collapsed
+confidence changes NMS work. A8 passed the latency gate but has zero pre-FT
+validation. Do not launch its fair FT/KD branches until the missing KD settings
+are explicitly recorded; both branches must start from the same `pruned.pt`.

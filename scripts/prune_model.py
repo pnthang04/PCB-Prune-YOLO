@@ -21,10 +21,18 @@ def main() -> None:
     parser.add_argument("--pruning-ratio", type=float)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--round-to", type=int)
+    parser.add_argument("--hardware-policy", choices=("standard", "block"))
     parser.add_argument("--dry-run", action=argparse.BooleanOptionalAction, default=None)
     args = parser.parse_args()
     config = load_config(args.config)
-    for key in ("checkpoint", "pruning_ratio", "output", "round_to", "dry_run"):
+    for key in (
+        "checkpoint",
+        "pruning_ratio",
+        "output",
+        "round_to",
+        "hardware_policy",
+        "dry_run",
+    ):
         value = getattr(args, key)
         if value is not None:
             config[key] = str(value) if isinstance(value, Path) else value
@@ -44,6 +52,7 @@ def main() -> None:
         iterative_steps=int(config["iterative_steps"]),
         round_to=int(config["round_to"]) if config.get("round_to") else None,
         global_pruning=bool(config["global_pruning"]),
+        hardware_policy=str(config.get("hardware_policy", "standard")),
     )
 
     tag = f"p{round(pruning_ratio * 100):02d}"
@@ -60,6 +69,8 @@ def main() -> None:
         "dependency_groups": pruner.group_count,
         "replaced_c2f": pruner.replaced_c2f,
         "protected_layers": pruner.protected_layer_names(),
+        "hardware_policy": pruner.hardware_policy,
+        "block_protected_roots": [name for name, _ in pruner.block_protected_modules],
         "before": before,
         "forward_before": forward_before,
         "after": None,
@@ -74,6 +85,7 @@ def main() -> None:
         if report["after"]["parameters"] >= before["parameters"]:  # type: ignore[index]
             raise RuntimeError("Pruning không làm giảm parameter; từ chối lưu checkpoint")
         report["forward_after"] = pruner.validate_forward()
+        report["channel_audit"] = pruner.channel_audit()
         checkpoint = output / "pruned.pt"
         pruner.save_pruned_model(checkpoint)
         report["checkpoint"] = str(checkpoint)

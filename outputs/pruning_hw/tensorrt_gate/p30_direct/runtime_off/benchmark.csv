@@ -1,0 +1,2 @@
+engine,cuda_graph,forward_mean_latency_ms,forward_median_latency_ms,forward_p95_latency_ms,forward_fps,e2e_mean_latency_ms,e2e_median_latency_ms,e2e_p95_latency_ms,e2e_fps,peak_gpu_memory_mb,engine_size_mb
+outputs/tensorrt_fp16/p30_direct/model.engine,False,1.7574732751018018,1.5542740002274513,2.0746499496453907,568.9986949827586,8.762237899973115,8.38687799841864,11.824821397749467,114.1260955723501,5.33837890625,5.482402801513672

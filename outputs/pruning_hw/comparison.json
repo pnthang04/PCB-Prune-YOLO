@@ -1,0 +1,97 @@
+{
+  "protocol": {
+    "gpu": "Tesla T4",
+    "tensorrt": "10.16.1.11",
+    "cuda": "12.8",
+    "precision": "FP16",
+    "input": [1, 3, 640, 640],
+    "batch": 1,
+    "workspace_gib": 4,
+    "warmup": 50,
+    "iterations": 200,
+    "cuda_graph": false,
+    "context_stream_buffers_reused": true,
+    "selection_split": "val",
+    "test_used": false
+  },
+  "models": {
+    "baseline": {
+      "params": 3012018,
+      "macs": 4073266400,
+      "forward_ms": {"mean": 1.6193158546593622, "median": 1.6238235002674628, "p95": 1.7186303026392125},
+      "e2e_mean_ms": 8.760586259813863,
+      "kernel_launches_per_iteration": 160.08,
+      "trt_layers": 158,
+      "reformat": 27,
+      "pointwise": 79,
+      "engine_size_mb": 7.476772308349609
+    },
+    "p30_direct": {
+      "params": 1452562,
+      "macs": 1961900000,
+      "forward_ms": {"mean": 1.7574732751018018, "median": 1.5542740002274513, "p95": 2.0746499496453907},
+      "e2e_mean_ms": 8.762237899973115,
+      "kernel_launches_per_iteration": 175.105,
+      "trt_layers": 161,
+      "reformat": 27,
+      "pointwise": 90,
+      "engine_size_mb": 5.482402801513672
+    },
+    "p40_a8": {
+      "params": 903466,
+      "params_reduction_vs_baseline": 0.7000462812639234,
+      "macs": 1121237600,
+      "macs_reduction_vs_baseline": 0.7247325635269031,
+      "dependency_groups": 59,
+      "forward_ms": {"mean": 1.3539831051093643, "median": 1.1196585001016501, "p95": 1.8410959528409876},
+      "e2e_mean_ms_pre_finetune": 3.262280759990972,
+      "kernel_launches_per_iteration": 168.01,
+      "trt_layers": 162,
+      "reformat": 29,
+      "pointwise": 88,
+      "engine_size_mb": 3.5439510345458984,
+      "forward_speedup_vs_p30": 1.298002366846259,
+      "validation_before_finetune": {"precision": 0, "recall": 0, "mAP50": 0, "mAP50-95": 0},
+      "latency_gate": true
+    },
+    "p40_a16": {
+      "params": 799730,
+      "params_reduction_vs_baseline": 0.7344869784974725,
+      "macs": 1221759200,
+      "macs_reduction_vs_baseline": 0.7000541874697908,
+      "dependency_groups": 59,
+      "forward_ms": {"mean": 1.490267355038668, "median": 1.6909890000533778, "p95": 1.7440766037907451},
+      "e2e_mean_ms_pre_finetune": 3.0735161047050497,
+      "kernel_launches_per_iteration": 159.045,
+      "trt_layers": 155,
+      "reformat": 23,
+      "pointwise": 85,
+      "engine_size_mb": 3.2215938568115234,
+      "forward_speedup_vs_p30": 1.1793006598176476,
+      "latency_gate": true
+    },
+    "p40_block": {
+      "params": 1131930,
+      "params_reduction_vs_baseline": 0.6241954729354207,
+      "macs": 1420712800,
+      "macs_reduction_vs_baseline": 0.6512104388752967,
+      "dependency_groups": 51,
+      "forward_ms": {"mean": 1.5589802147587761, "median": 1.2240295000083279, "p95": 2.4483860484906472},
+      "e2e_mean_ms_pre_finetune": 3.2276675998946303,
+      "kernel_launches_per_iteration": 163.035,
+      "trt_layers": 160,
+      "reformat": 27,
+      "pointwise": 89,
+      "engine_size_mb": 3.8626537322998047,
+      "forward_speedup_vs_p30": 1.1273223729614419,
+      "latency_gate": true
+    }
+  },
+  "selected_candidate": "p40_a8",
+  "decision": "REPORT_ACCURACY_COLLAPSE_BEFORE_TRAINING",
+  "notes": [
+    "Forward-only is the architecture latency gate.",
+    "Pre-finetune E2E is not comparable to trained detectors because confidence and NMS workload collapsed.",
+    "The attached request ended before specifying the distillation loss, teacher, temperature, weights, epochs, and stopping rule."
+  ]
+}

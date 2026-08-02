@@ -117,6 +117,14 @@ fixed and full-engine latency passes.
 
 Last verified: 2026-08-02
 
+The independent P40-HW latency gate created three FP16 candidates from the
+same baseline without touching HALP/QAT/INT8/test. A8/A16/BLOCK have
+0.903M/0.800M/1.132M parameters. Under a fresh matched 50/200 graph-off run,
+their forward means are 1.3540/1.4903/1.5590 ms versus 1.7575 ms for P30.
+A8 is selected provisionally (1.298x P30 speedup), but its validation metrics
+are all zero before fine-tuning. Training is stopped pending the missing KD
+specification from the truncated request. See `docs/P40_HW_LATENCY_GATE.md`.
+
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:
 
 - `SKILL.md`: operating rules and context routing.

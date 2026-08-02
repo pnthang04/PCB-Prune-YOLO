@@ -1,0 +1,39 @@
+{
+  "name": "p40_block",
+  "source_checkpoint": "outputs/pruning_hw/p40_block_v2/p40/pruned.pt",
+  "engine": "outputs/pruning_hw/tensorrt_gate/p40_block/model.engine",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_shape_before_export": [
+    1,
+    10,
+    8400
+  ],
+  "class_count": 6,
+  "class_names": [
+    "open",
+    "short",
+    "mousebite",
+    "spur",
+    "copper",
+    "pin-hole"
+  ],
+  "precision": "fp16",
+  "dynamic": false,
+  "batch_size": 1,
+  "parameters": 1131930,
+  "counted_parameters": 1131930,
+  "macs": 1420712800,
+  "gmacs": 1.4207128,
+  "flops_estimate": 2841425600,
+  "gflops_estimate": 2.8414256,
+  "gpu_name": "Tesla T4",
+  "torch_version": "2.10.0+cu128",
+  "cuda_version": "12.8",
+  "tensorrt_version": "10.16.1.11",
+  "ultralytics_version": "8.4.115"
+}

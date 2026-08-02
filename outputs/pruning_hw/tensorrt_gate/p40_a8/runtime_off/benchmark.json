@@ -1,0 +1,41 @@
+{
+  "engine": "outputs/pruning_hw/tensorrt_gate/p40_a8/model.engine",
+  "cuda_graph": false,
+  "static_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "input_dtype": "torch.float32",
+  "output_shape": [
+    1,
+    10,
+    8400
+  ],
+  "context_reused": true,
+  "stream_reused": true,
+  "gpu_buffers_reused": true,
+  "pinned_host_buffer": true,
+  "h2d": "non_blocking copy on reused CUDA stream",
+  "warmup_iterations": 50,
+  "benchmark_iterations": 200,
+  "forward_scope": "TensorRT enqueue only; CUDA Graph captures inference launches only",
+  "e2e_scope": "CPU letterbox/normalize + pinned copy + async H2D + TensorRT + NMS; disk excluded",
+  "forward": {
+    "mean_latency_ms": 1.3539831051093643,
+    "median_latency_ms": 1.1196585001016501,
+    "p95_latency_ms": 1.8410959528409876,
+    "fps": 738.5616528200533
+  },
+  "e2e": {
+    "mean_latency_ms": 3.262280759990972,
+    "median_latency_ms": 3.1251725013135,
+    "p95_latency_ms": 4.33233575131453,
+    "fps": 306.5340090479421
+  },
+  "peak_gpu_memory_mb": 5.33837890625,
+  "engine_size_mb": 3.5439510345458984,
+  "gpu": "Tesla T4",
+  "tensorrt": "10.16.1.11"
+}

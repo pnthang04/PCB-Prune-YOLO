@@ -270,6 +270,18 @@ hơn P30 FP16 4.20% forward và 8.68% E2E, nên không chạy QAT dài hoặc
 distillation. Gate hiện tại là `FIX_GRAPH_FIRST`; xem
 [`docs/P30_INT8_QAT_SMOKE_REPORT.md`](docs/P30_INT8_QAT_SMOKE_REPORT.md).
 
+### P40-HW latency gate
+
+Ba candidate mới được prune lại từ baseline với target ratio 0.40: A8, A16 và
+BLOCK. Tất cả giữ output `[1,10,8400]`, bảo vệ Detect/DFL và qua kiểm tra
+save → process mới load → CUDA/TensorRT inference. Trong phép đo FP16 graph-off
+cùng T4, P30 là 1.7575 ms; A8 đạt **1.3540 ms** (1.298x), A16 1.4903 ms và
+BLOCK 1.5590 ms. A8 được chọn qua latency gate với 903,466 params và 1.1212G
+MACs. Tuy nhiên validation trước fine-tune của A8 bằng 0 cho toàn bộ metric, vì
+vậy chưa train dài hoặc distill. Chi tiết và artifact nằm tại
+[`docs/P40_HW_LATENCY_GATE.md`](docs/P40_HW_LATENCY_GATE.md) và
+`outputs/pruning_hw/comparison.{json,csv}`.
+
 ## HALP: latency-aware pruning
 
 Giai đoạn 1 và dry-run Stage 2 của adaptation HALP đã hoàn tất; đây chưa phải mô
