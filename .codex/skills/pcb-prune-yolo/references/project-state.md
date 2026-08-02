@@ -368,9 +368,18 @@ new-process CUDA load/inference (`[1,10,8400]`, 6 classes) and batch-1
 PyTorch benchmark: identical architecture (903,466 params, 1.1212G MACs,
 ~1.96 MiB) since fine-tuning does not change channel counts. Both accuracy
 figures remain well below P30 direct (mAP50-95 0.75030) at a much more
-aggressive compression point (-70% MACs vs P30's -51.83%), so P40-A8 (even
-with KD) is a faster-but-less-accurate alternative to P30, not a strict
-improvement. Test split was not touched.
+aggressive compression point (-70.00% params, -72.47% MACs vs P30's
+-51.77%/-51.83%), so P40-A8 (even with KD) is a faster-but-less-accurate
+alternative to P30, not a strict improvement. Test split was not touched.
+
+Both checkpoints were published publicly on Hugging Face with model card,
+training args, validation metrics, and benchmark reports:
+
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-KD`
+
+Anonymous download of `best.pt` and public API visibility (`private: false`)
+were verified for both repositories.
 
 TensorRT FP16 engines were rebuilt for both fine-tuned checkpoints, plus a
 fresh baseline engine in the same session (a same-instance rebuild is

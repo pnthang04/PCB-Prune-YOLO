@@ -137,9 +137,14 @@ epochs, no early stop). KD reached validation mAP50-95 0.660 versus 0.634 for
 standard FT (+2.7 points), and also won precision, recall and mAP50; both
 passed save/new-process-load/inference and batch-1 benchmark with identical
 architecture (903,466 params, 1.1212G MACs). Both remain well below P30
-direct's 0.75030 at a much more aggressive compression point (-70% MACs vs
-P30's -51.83%), so P40-A8 KD is a faster/smaller but less accurate alternative
-to P30, not a replacement. Test split was not used.
+direct's 0.75030 at a much more aggressive compression point (-70.00% params,
+-72.47% MACs vs P30's -51.77%/-51.83%), so P40-A8 KD is a faster/smaller but
+less accurate alternative to P30, not a replacement. Test split was not used.
+
+Both P40-A8 checkpoints (standard FT and KD) were published publicly on
+Hugging Face (`thangkt/PCB-Prune-YOLO-P40-A8-Direct`,
+`thangkt/PCB-Prune-YOLO-P40-A8-KD`) with model card, args, validation, and
+benchmark; anonymous download and `private=false` were verified for both.
 
 TensorRT FP16 engines were subsequently rebuilt for both fine-tuned
 checkpoints, plus a fresh baseline engine in the same session (absolute

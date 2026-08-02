@@ -88,14 +88,14 @@
   specs). Confirmed both fine-tuned engines beat the same-session baseline by
   ~1.21x (1.716 ms to 1.417-1.423 ms), matching the pre-FT architecture-level
   expectation. Both passed new-process load/inference.
+- Published both P40-A8 checkpoints (standard FT and KD) publicly on Hugging
+  Face with model card, training args, validation metrics, and benchmark;
+  verified anonymous download and `private=false` for both.
 
 ## Not completed
 
 - Decide whether P40-A8 KD is added to the README accuracy-compression table
   as a fourth, more aggressive operating point alongside P10/P20/P30.
-- Publish the P40-A8 KD checkpoint (and engine) to Hugging Face if it is
-  accepted as an operating point, following the same public-repository and
-  anonymous-download verification used for P10/P20/P30.
 
 - Fix the P30 explicit-Q/DQ graph before any full QAT: fuse Conv-BN, reduce
   Q/DQ and reformat boundaries around SiLU/residual/concat, then require a

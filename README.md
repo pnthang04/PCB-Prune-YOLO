@@ -7,7 +7,7 @@ Phạm Ngọc Thắng
 ![Model](https://img.shields.io/badge/Model-YOLOv8n-55a630)
 ![Language](https://img.shields.io/badge/Language-Python-3776ab)
 
-**Quick Links:** [📦 Dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [🤗 P10 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct) | [🤗 P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) | [🤗 P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct) | [⚡ TensorRT FP16](https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16) | [🤗 P10 sparse](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph)
+**Quick Links:** [📦 Dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [🤗 P10 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct) | [🤗 P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) | [🤗 P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct) | [⚡ TensorRT FP16](https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16) | [🤗 P10 sparse](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph) | [🤗 P40-A8 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-Direct) | [🤗 P40-A8 KD](https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-KD)
 
 Hướng dẫn tự động chạy trên server: [`SERVER_RUNBOOK.md`](SERVER_RUNBOOK.md).
 
@@ -294,10 +294,14 @@ patience 10, seed 42), chỉ khác việc có distillation hay không:
 | KD, teacher = baseline | 0.895 | 0.828 | 0.913 | 0.660 |
 
 KD tốt hơn fine-tune chuẩn trên mọi chỉ số (+2.7 điểm mAP50-95) trong so sánh
-công bằng, cùng kiến trúc 903,466 params/1.1212G MACs. Cả hai vẫn thấp hơn
-nhiều so với P30 (mAP50-95 0.75030) do P40-A8 nén mạnh hơn hẳn (−70% MACs so
-với −51.83% của P30), nên đây là ứng viên nhanh/nhẹ nhất hiện có, không phải
-thay thế P30 về accuracy. Test set chưa được dùng.
+công bằng, cùng kiến trúc 903,466 params/1.1212G MACs (−70.00% params,
+−72.47% MACs so với baseline, so với −51.77%/−51.83% của P30), nên đây là
+ứng viên nhanh/nhẹ nhất hiện có, không phải thay thế P30 về accuracy. Test set
+chưa được dùng. Hai checkpoint đã public tại
+[thangkt/PCB-Prune-YOLO-P40-A8-Direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-Direct)
+và
+[thangkt/PCB-Prune-YOLO-P40-A8-KD](https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-KD),
+kèm model card, args, validation và benchmark; đã xác minh tải ẩn danh.
 
 Engine TensorRT FP16 được build lại cho cả hai checkpoint đã fine-tune (cùng
 phiên đo với baseline để so sánh công bằng, 50 warm-up/200 lần đo, batch 1):

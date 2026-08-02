@@ -104,13 +104,23 @@ measurement (1.3540 ms, 1.298x faster than P30) describes this architecture
 and is expected to still hold, pending re-measurement.
 
 Both P40-A8 branches remain well below P30 direct's validation mAP50-95
-(0.75030) at a substantially more aggressive compression point (-70% MACs
-versus P30's -51.83%). P40-A8 with KD is therefore the strongest fast/light
-candidate found so far, but a faster-and-smaller-but-less-accurate alternative
-to P30, not a replacement for it. Test split was not used.
+(0.75030) at a substantially more aggressive compression point (-70.00%
+parameters, -72.47% MACs versus baseline, compared to P30's -51.77%/-51.83%).
+P40-A8 with KD is therefore the strongest fast/light candidate found so far,
+but a faster-and-smaller-but-less-accurate alternative to P30, not a
+replacement for it. Test split was not used.
 
 Reports: `outputs/finetune_direct/p40_a8_adamw_exact/{evaluation_val,benchmark}`
 and `outputs/finetune_direct/p40_a8_kd_baseline_teacher/{evaluation_val,benchmark}`.
+
+Both checkpoints were published publicly on Hugging Face with model card,
+training args, validation metrics, and benchmark:
+
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-KD`
+
+Anonymous (unauthenticated) download of `best.pt` and public API visibility
+(`private: false`) were verified for both repositories.
 
 ### TensorRT re-measurement after fine-tuning
 
