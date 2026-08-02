@@ -7,7 +7,7 @@ Phạm Ngọc Thắng
 ![Model](https://img.shields.io/badge/Model-YOLOv8n-55a630)
 ![Language](https://img.shields.io/badge/Language-Python-3776ab)
 
-**Quick Links:** [📦 Tải dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Model baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [⚙️ Cấu hình](#cấu-hình-baseline) | [🚀 Huấn luyện](#huấn-luyện) | [📊 Kết quả](#kết-quả-baseline)
+**Quick Links:** [📦 Tải dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Model baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [🤗 P10 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct) | [🤗 P10 sparse](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph) | [⚙️ Cấu hình](#cấu-hình-baseline) | [🚀 Huấn luyện](#huấn-luyện) | [📊 Kết quả](#kết-quả-baseline)
 
 Hướng dẫn tự động chạy trên server: [`SERVER_RUNBOOK.md`](SERVER_RUNBOOK.md).
 
@@ -172,6 +172,9 @@ Kết quả validation trước fine-tune:
 | Baseline | No | 3,012,018 | 4.0733G | 0.98630 | 0.78524 | 8.289 ms | 120.64 |
 | P10 direct, no round | No | 2,416,871 | 3.2695G | 0.00586 | 0.000923 | TODO | TODO |
 | P10 sparse, no round | Yes | 2,415,613 | 3.2328G | 0.002615 | 0.000375 | 9.737 ms | 102.71 |
+| P10 sparse reg=5e-4, trước FT | Yes | 2,415,613 | 3.2328G | 0.002427 | 0.000351 | 10.127 ms | 98.75 |
+| P10 sparse reg=5e-4, sau FT | Yes | 2,415,613 | 3.2328G | 0.98124 | 0.76318 | 9.719 ms | 102.89 |
+| P10 direct, sau FT khớp cấu hình | No | 2,416,871 | 3.2695G | 0.98273 | 0.77736 | 10.433 ms | 95.85 |
 
 Lần sparse training đầu tiên dùng `reg=1e-4`, dừng sớm ở epoch 20 và có
 validation mAP50-95 tốt nhất 0.78752 tại epoch 10. Tuy regularizer gradient khác
@@ -179,6 +182,27 @@ validation mAP50-95 tốt nhất 0.78752 tại epoch 10. Tuy regularizer gradien
 pruning. Vì vậy P10 sparse hiện tại chưa được fine-tune và chưa được xem là mô
 hình pruning thành công. Bước tiếp theo là điều chỉnh sparse regularization chỉ
 dựa trên validation trước khi chạy lại P10.
+
+Thí nghiệm tiếp theo dùng `reg=5e-4` đủ 30 epoch. Sparse checkpoint chưa prune
+đạt mAP50-95 0.78938, nhưng group norm chỉ dịch xuống rất nhẹ và near-zero
+fraction vẫn bằng 0. Sau P10, fine-tune dừng ở epoch 37 với best epoch 27 và phục
+hồi mAP50-95 lên 0.76318. Mô hình giảm 19.80% tham số và 20.63% MACs so với
+baseline, nhưng latency T4 tăng 17.25%; do đó chưa có speedup triển khai thực tế.
+
+Control bắt buộc `direct pruning → fine-tune` được chạy đủ 50 epoch với
+AdamW, `lr0=0.001`, `lrf=0.01`, momentum 0.9, weight decay 0.0005, batch 64 và
+patience 10. Direct P10 đạt mAP50-95 0.77736, cao hơn sparse P10 0.01418
+(1.42 điểm phần trăm) ở seed 42. Vì vậy sparse learning `reg=5e-4` chưa giúp
+accuracy P10 sau fine-tune trong thí nghiệm hiện tại. Đây là kết luận một seed;
+P20/P30 sẽ dùng direct pruning để tạo đường accuracy–compression.
+
+Checkpoint direct P10 được phát hành public tại
+[thangkt/PCB-Prune-YOLO-P10-Direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct).
+
+Checkpoint P10 fine-tuned và model card được phát hành public tại
+[thangkt/PCB-Prune-YOLO-P10-DepGraph](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph).
+Vì structured pruning thay đổi kiến trúc, hãy clone và cài project trước khi
+load checkpoint để class `PrunableC2f` khả dụng.
 
 ## Kiểm tra code
 

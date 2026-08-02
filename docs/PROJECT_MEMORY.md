@@ -14,7 +14,32 @@ fine-tuning, worse than direct P10. Its save/load and benchmark checks passed;
 do not fine-tune it until sparse regularization is tuned to create measurable
 group sparsity.
 
-Last verified: 2026-08-01
+A second sparse run used `reg=5e-4` for all 30 epochs. Its best unpruned
+validation mAP50-95 was 0.78938, but mean/median group norm changed by only
+-0.0042%/-0.0181% and near-zero fraction stayed zero. P10 again collapsed before
+fine-tuning, then recovered to mAP50-95 0.76318 after fine-tuning (best epoch 27,
+stopped epoch 37). It reduces params by 19.80% and MACs by 20.63%, but remains
+17.25% slower than baseline on T4 batch 1.
+
+The fine-tuned P10 checkpoint is public at
+`https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph`, together with its
+model card, sparse config, validation metrics, benchmark, and summary. Anonymous
+access was verified. Treat it as the current P10 candidate, not the final model
+before P20/P30 comparison.
+
+The matched direct-P10 control was then fine-tuned for all 50 epochs with
+explicit AdamW, lr0 0.001, lrf 0.01, momentum 0.9, weight decay 0.0005, batch
+64, patience 10, and seed 42. It reached validation mAP50 0.98273 and mAP50-95
+0.77736, versus 0.98124/0.76318 for sparse P10. Direct is therefore +1.42
+mAP50-95 percentage points at this seed. Save/load CUDA inference passed; its
+benchmark is 2,416,871 params, 3.2695 GMACs, 10.433 ms, and 95.85 FPS. Continue
+the P20/P30 accuracy-compression curve with direct pruning and retain sparse P10
+as an ablation. Reports are in `outputs/experiments/direct_vs_sparse_p10/`.
+The direct checkpoint is public at
+`https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct`; anonymous ranged
+download and `private=false` were verified.
+
+Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:
 

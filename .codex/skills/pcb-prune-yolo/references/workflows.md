@@ -48,6 +48,13 @@ Sparse-train from the unpruned baseline before the main P10 experiment:
 python scripts/train_sparse.py --config configs/prune/depgraph_sparse.yaml
 ```
 
+The completed stronger-regularization experiment uses a separate immutable
+config and output name:
+
+```bash
+python scripts/train_sparse.py --config configs/prune/depgraph_sparse_reg5e4.yaml
+```
+
 For a short hook check, add `--smoke --epochs 2 --fraction 0.1 --batch 32`.
 The sparse trainer is currently single-GPU because its in-memory DepGraph object
 is not reconstructed by Ultralytics DDP. It logs group norms and regularizer
@@ -99,7 +106,11 @@ Use the dedicated entry point, which injects the already-pruned model into the U
 python scripts/finetune_pruned.py \
   --model outputs/pruning_no_round/p10/pruned.pt \
   --epochs 50 \
+  --optimizer AdamW \
   --lr0 0.001 \
+  --lrf 0.01 \
+  --momentum 0.9 \
+  --weight-decay 0.0005 \
   --batch 64 \
   --device 0 \
   --name p10
@@ -108,6 +119,16 @@ python scripts/finetune_pruned.py \
 Current safe implementation supports one GPU per fine-tune process. Do not pass `0,1`: default Ultralytics DDP subprocess reconstruction can lose the changed in-memory structure. Add and verify explicit pruned-model DDP support before using two GPUs.
 
 After fine-tuning, evaluate the best checkpoint on validation and benchmark it. Do not evaluate its test split until the final pruning configuration has been selected.
+
+The sparse `reg=5e-4` P10 fine-tune command was:
+
+```bash
+python scripts/finetune_pruned.py \
+  --model outputs/pruning_sparse_reg5e4/p10/pruned.pt \
+  --epochs 50 --optimizer AdamW --lr0 0.001 --lrf 0.01 \
+  --momentum 0.9 --weight-decay 0.0005 --batch 64 --device 0 --patience 10 \
+  --project outputs/finetune_sparse_reg5e4 --name p10
+```
 
 ## P20 and P30
 
@@ -131,3 +152,8 @@ Structured pruning changes module dimensions. Never save only a state dict and e
 - Use short commit messages.
 - Update README metrics only from committed JSON/CSV artifacts.
 - Publish large checkpoints to Hugging Face, keep repositories public only when explicitly requested, and verify anonymous download.
+
+Current public P10 repository:
+`https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph`. It contains the
+complete changed model object and requires this project installation for the
+serialized `PrunableC2f` class.

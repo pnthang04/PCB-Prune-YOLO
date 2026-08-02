@@ -30,6 +30,13 @@
   validation, and new-process CUDA inference.
 - Full sparse-training run with `reg=1e-4`, followed by no-round sparse P10
   validation, complexity, benchmark, and new-process inference verification.
+- Fixed 30-epoch sparse run with `reg=5e-4`, P10 pruning, 37-epoch fine-tuning,
+  validation, benchmark, and new-process inference verification.
+- Published the fine-tuned P10 checkpoint, model card, config, validation,
+  benchmark, and summary artifacts in a public Hugging Face model repository.
+- Completed the matched direct-P10 control with explicit AdamW settings. It
+  reached validation mAP50-95 0.77736 versus 0.76318 for sparse P10 at seed 42;
+  save/load inference, JSON/CSV evaluation, and benchmark passed.
 
 ## Not completed
 
@@ -37,8 +44,6 @@
   the first `reg=1e-4` run retained baseline accuracy but produced no near-zero
   groups and its P10 result was worse than direct pruning.
 
-- Fine-tune P10 for 30–50 epochs.
-- Confirm P10 accuracy recovery and benchmark the best fine-tuned checkpoint.
 - Run P20 pre-fine-tune validation, fine-tune, and benchmark.
 - Run P30 pre-fine-tune validation, fine-tune, and benchmark.
 - Decide whether `round_to=8` or no rounding is the standard policy. Current validation favors no rounding before fine-tuning, but both are extremely weak.
@@ -46,7 +51,9 @@
 - Produce the final comparison table covering baseline and P10/P20/P30 before/after fine-tuning.
 - Select the best pruned model using validation mAP50-95.
 - Evaluate only that selected pruned model on test.
-- Publish final pruned checkpoint(s) and update README/model cards.
+- Publish only the final validation-selected model after P20/P30 comparisons;
+  the current P10 candidate is already available as an explicitly provisional
+  public artifact.
 
 ## Known issues and decisions
 
@@ -60,9 +67,8 @@
 
 ## Next decision gate
 
-Fine-tune the no-round P10 candidate for up to 50 epochs with `lr0=0.001`, batch 64, image size 640, seed 42, AMP, and validation-based early stopping. Continue to P20/P30 only after confirming that the P10 training path preserves the pruned dimensions and recovers meaningful validation mAP50-95.
-
-For the sparse-learning path, do not fine-tune the current sparse P10. First run
-a controlled regularization-strength experiment using values grounded in the
-official reproduction configs and require nonzero near-zero fraction before
-pruning again.
+Run direct P20 with the same no-round local group-magnitude pruning and the
+same explicit AdamW fine-tune configuration as matched direct P10. Record
+pre-fine-tune validation, save/load inference, post-fine-tune validation, and
+batch-1 T4 benchmark before starting P30. Keep sparse P10 as an ablation because
+it was 1.42 mAP50-95 points below direct P10 at seed 42.
