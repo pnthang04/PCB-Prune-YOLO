@@ -45,6 +45,12 @@
   matched 50-epoch fine-tune, and new-process CUDA reload. P30 reached
   validation mAP50-95 0.75030 with 51.77% fewer params and 51.83% fewer MACs;
   latency remained 18.99% slower than baseline.
+- Completed static batch-1 TensorRT FP16 export, new-process inference,
+  validation-only evaluation, and synchronized 50/200 latency benchmarks for
+  baseline and direct P10/P20/P30 on Tesla T4. P30 was the only pruned engine
+  faster than TensorRT baseline in this run (about 1.05x).
+- Published public P20/P30 validation-best checkpoints and all four TensorRT
+  FP16 engines with model cards and measured reports on Hugging Face.
 
 ## Not completed
 

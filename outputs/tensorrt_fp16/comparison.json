@@ -1,0 +1,68 @@
+{
+  "scope": {
+    "dataset_split": "val",
+    "input_shape": [1, 3, 640, 640],
+    "batch_size": 1,
+    "precision": "fp16",
+    "dynamic_shapes": false,
+    "warmup_iterations": 50,
+    "benchmark_iterations": 200,
+    "pure_latency_excludes": ["preprocessing", "NMS"],
+    "gpu": "Tesla T4",
+    "tensorrt_version": "10.16.1.11",
+    "cuda_version": "12.8",
+    "torch_version": "2.10.0+cu128",
+    "ultralytics_version": "8.4.115",
+    "peak_gpu_memory_note": "peak_gpu_memory_mib is observed by the PyTorch CUDA allocator; TensorRT execution-context allocation is logged separately at engine load"
+  },
+  "models": [
+    {
+      "model": "baseline", "parameters": 3012018, "macs": 4073266400,
+      "pytorch_map50_95": 0.78524, "tensorrt_precision": 0.9675325947571839,
+      "tensorrt_recall": 0.9617830426294427, "tensorrt_map50": 0.9836192902988321,
+      "tensorrt_map50_95": 0.7871632933518187, "pytorch_mean_latency_ms": 8.289,
+      "tensorrt_mean_latency_ms": 1.837303730117128, "tensorrt_median_latency_ms": 1.5013949996500742,
+      "tensorrt_p95_latency_ms": 2.739976000157185, "tensorrt_fps": 544.2758231031568,
+      "tensorrt_engine_size_mib": 7.476772308349609, "pytorch_to_tensorrt_speedup": 4.511502297702066,
+      "trt_baseline_to_model_speedup": 1.0, "validation_preprocess_ms": 1.4128299298863567,
+      "validation_inference_ms": 3.2901282298007573, "validation_postprocess_nms_ms": 2.230188724806794,
+      "peak_gpu_memory_mib": 19.05322265625
+    },
+    {
+      "model": "p10_direct", "parameters": 2416871, "macs": 3269461600,
+      "pytorch_map50_95": 0.7773601109, "tensorrt_precision": 0.9639387584067625,
+      "tensorrt_recall": 0.9508054332974109, "tensorrt_map50": 0.9807209311037121,
+      "tensorrt_map50_95": 0.7784167426961883, "pytorch_mean_latency_ms": 10.43257626,
+      "tensorrt_mean_latency_ms": 2.0229106199803937, "tensorrt_median_latency_ms": 1.7276430007768795,
+      "tensorrt_p95_latency_ms": 3.4885230015788693, "tensorrt_fps": 494.3372139742349,
+      "tensorrt_engine_size_mib": 7.627391815185547, "pytorch_to_tensorrt_speedup": 5.157210682942143,
+      "trt_baseline_to_model_speedup": 0.9082476071705706, "validation_preprocess_ms": 1.3793646001977322,
+      "validation_inference_ms": 3.841775689870701, "validation_postprocess_nms_ms": 2.153313165053987,
+      "peak_gpu_memory_mib": 16.8173828125
+    },
+    {
+      "model": "p20_direct", "parameters": 1913971, "macs": 2572161600,
+      "pytorch_map50_95": 0.7671004007, "tensorrt_precision": 0.9696520772694063,
+      "tensorrt_recall": 0.9496359835404116, "tensorrt_map50": 0.980323264131055,
+      "tensorrt_map50_95": 0.7693090051241716, "pytorch_mean_latency_ms": 11.716616345,
+      "tensorrt_mean_latency_ms": 1.9325410250530695, "tensorrt_median_latency_ms": 1.761409499522415,
+      "tensorrt_p95_latency_ms": 2.2537910008395556, "tensorrt_fps": 517.453439298935,
+      "tensorrt_engine_size_mib": 7.378376007080078, "pytorch_to_tensorrt_speedup": 6.062803424666367,
+      "trt_baseline_to_model_speedup": 0.9507191341858701, "validation_preprocess_ms": 1.3457183101672854,
+      "validation_inference_ms": 3.8574886749665893, "validation_postprocess_nms_ms": 2.285020630042709,
+      "peak_gpu_memory_mib": 14.8984375
+    },
+    {
+      "model": "p30_direct", "parameters": 1452562, "macs": 1961891200,
+      "pytorch_map50_95": 0.7503037353, "tensorrt_precision": 0.9630053238239128,
+      "tensorrt_recall": 0.92858358993507, "tensorrt_map50": 0.9770030959914364,
+      "tensorrt_map50_95": 0.7561045923770547, "pytorch_mean_latency_ms": 9.86312344,
+      "tensorrt_mean_latency_ms": 1.7544926100708835, "tensorrt_median_latency_ms": 1.7208339995704591,
+      "tensorrt_p95_latency_ms": 3.3178800003952347, "tensorrt_fps": 569.965353094077,
+      "tensorrt_engine_size_mib": 5.482402801513672, "pytorch_to_tensorrt_speedup": 5.621638634090068,
+      "trt_baseline_to_model_speedup": 1.0471994692772737, "validation_preprocess_ms": 1.4251806948595913,
+      "validation_inference_ms": 3.515310769980715, "validation_postprocess_nms_ms": 2.0462753048559534,
+      "peak_gpu_memory_mib": 13.15234375
+    }
+  ]
+}

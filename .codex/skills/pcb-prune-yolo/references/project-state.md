@@ -13,6 +13,7 @@ Classes: `open`, `short`, `mousebite`, `spur`, `copper`, `pin-hole`.
 - Python 3.12.12.
 - PyTorch 2.10.0+cu128; CUDA 12.8; cuDNN 91002.
 - Ultralytics 8.4.115.
+- TensorRT 10.16.1.11 for the FP16 deployment benchmark.
 - Vendored Torch-Pruning 1.6.0 from `src/torch_pruning`.
 - Two Tesla T4 GPUs, each 14.56 GiB.
 - Train: 800 images, 5,485 boxes.
@@ -100,14 +101,16 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
 
 ## Verification state
 
-- Unit tests: 11 passed.
+- Unit tests: see the latest verification run below; this count is historical.
 - Compileall: passed.
 - Ruff on changed pruning/benchmark code: passed.
 - Baseline test and benchmark: complete.
 - DepGraph dry-run: complete.
 - P10 pre-fine-tune validation, complexity, benchmark, and save/load inference: complete.
-- P10 fine-tune: not run.
-- P20/P30: not run.
+- P10 direct and sparse fine-tunes: complete.
+- P20/P30 direct prune, fine-tune, validation, and benchmark: complete.
+- TensorRT FP16 export/validation/benchmark for baseline and direct P10/P20/P30:
+  complete.
 
 ## Group-level sparse training
 
@@ -268,3 +271,38 @@ Fine-tuned checkpoint:
 - Reports: `outputs/pruning_direct/p30/`,
   `outputs/finetune_direct/p30_adamw_exact/`, and
   `outputs/experiments/direct_p30_summary.{json,csv}`.
+
+## TensorRT FP16 deployment benchmark
+
+Built baseline, direct P10, direct P20, and direct P30 engines on Tesla T4 with
+TensorRT 10.16.1.11, CUDA 12.8, Ultralytics 8.4.115, FP16, batch 1, and static
+`[1,3,640,640]`. No engine includes NMS. Every exact pruned source was checked
+for its expected parameter count and raw output `[1,10,8400]`; new-process
+engine load and inference passed for all four models.
+
+Pure forward results after 50 warm-ups and 200 synchronized measurements:
+
+| Model | TRT mAP50-95 | Mean/median/p95 ms | FPS | Engine MiB | vs own PyTorch | vs TRT baseline |
+|---|---:|---:|---:|---:|---:|---:|
+| Baseline | 0.78716 | 1.837/1.501/2.740 | 544.28 | 7.477 | 4.51x | 1.00x |
+| P10 direct | 0.77842 | 2.023/1.728/3.489 | 494.34 | 7.627 | 5.16x | 0.91x |
+| P20 direct | 0.76931 | 1.933/1.761/2.254 | 517.45 | 7.378 | 6.06x | 0.95x |
+| P30 direct | 0.75610 | 1.754/1.721/3.318 | 569.97 | 5.482 | 5.62x | 1.05x |
+
+Validation uses only the validation split. Detailed export provenance,
+validation metrics (including per-class and preprocess/inference/postprocess
+timings), benchmarks, and comparison reports are under
+`outputs/tensorrt_fp16/`. TensorRT peak memory in benchmark JSON is the PyTorch
+CUDA allocator observation; execution-context allocation is separately emitted
+by TensorRT during engine load (9-10 MiB for these engines).
+
+Public deployment/model artifacts:
+
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16`
+
+All three repositories were created public. P20/P30 contain the validation-best
+PyTorch checkpoint, model card, training args, validation metrics, and benchmark.
+The TensorRT repository contains all four engines plus exact export, validation,
+benchmark, and comparison JSON/CSV.

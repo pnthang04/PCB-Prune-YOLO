@@ -10,7 +10,7 @@ def evaluate(checkpoint: Path, data: Path, split: str, device: str) -> dict[str,
         raise FileNotFoundError(f"Không tìm thấy checkpoint: {checkpoint}")
     from ultralytics import YOLO
 
-    model = YOLO(str(checkpoint))
+    model = YOLO(str(checkpoint), task="detect")
     metrics: Any = model.val(
         data=str(data), split=split, device=None if device == "auto" else device
     )
@@ -32,4 +32,12 @@ def evaluate(checkpoint: Path, data: Path, split: str, device: str) -> dict[str,
                 "mAP50-95": float(metrics.box.maps[int(class_id)]),
             }
         )
-    return {"split": split, "overall": overall, "per_class": per_class}
+    return {
+        "split": split,
+        "overall": overall,
+        "per_class": per_class,
+        "pipeline_speed_ms_per_image": {
+            key: float(value) for key, value in metrics.speed.items()
+        },
+        "measurement_scope": "validation_pipeline_includes_preprocess_inference_and_postprocess_nms",
+    }

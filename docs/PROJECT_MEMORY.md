@@ -55,6 +55,19 @@ baseline, 2.71 below direct P10, and 1.68 below P20. T4 latency is 9.863 ms
 3.014 MiB. Save/load CUDA inference passed. P30 is the strongest compression
 point, while P20 remains the more balanced accuracy-compression candidate.
 
+TensorRT FP16 deployment evaluation is complete for baseline and direct
+P10/P20/P30 on the same Tesla T4, TensorRT 10.16.1.11, CUDA 12.8, static batch
+1 `[1,3,640,640]`. Pure-forward means are 1.837, 2.023, 1.933, and 1.754 ms;
+validation mAP50-95 values are 0.78716, 0.77842, 0.76931, and 0.75610. P30 is
+the only pruned engine faster than TensorRT baseline in this measurement
+(1.05x), making it the compression/speed deployment candidate rather than the
+accuracy candidate. All engines passed new-process inference with
+`[1,10,8400]`. Public artifacts:
+
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct`
+- `https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16`
+
 Last verified: 2026-08-02
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:
@@ -85,7 +98,10 @@ P10 `round_to=8` reduces params to 2,289,938 and MACs to 2.9733G. Save, new-proc
 
 ## Next gate
 
-Fine-tune the no-round P10 candidate for up to 50 epochs with learning rate 0.001, batch 64, image size 640, seed 42, AMP, and validation-based early stopping. Verify the pruned dimensions are preserved and meaningful validation accuracy recovers before starting P20/P30.
+Select the final operating point on validation: P10 for best pruned accuracy,
+P20 for balanced compression, or P30 for maximum compression and measured
+TensorRT speed. Only the selected checkpoint should then receive final test-set
+evaluation.
 
 ## Verification
 
@@ -94,4 +110,5 @@ Fine-tune the no-round P10 candidate for up to 50 epochs with learning rate 0.00
 - Compileall and Ruff: passed.
 - Baseline test/benchmark: complete.
 - P10 dry-run, pruning, validation, benchmark, and save/load inference: complete.
-- P10 fine-tune and P20/P30: not run.
+- P10/P20/P30 direct fine-tuning: complete.
+- TensorRT FP16 export, validation, and benchmark for all four models: complete.

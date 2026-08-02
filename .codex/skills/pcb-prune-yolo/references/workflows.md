@@ -157,3 +157,37 @@ Current public P10 repository:
 `https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph`. It contains the
 complete changed model object and requires this project installation for the
 serialized `PrunableC2f` class.
+
+## TensorRT FP16 export and benchmark
+
+Build each engine separately on the target Tesla T4. The export command refuses
+to overwrite an existing engine/report:
+
+```bash
+python scripts/export_tensorrt.py \
+  --checkpoint outputs/train/baseline/weights/best.pt \
+  --name baseline --output outputs/tensorrt_fp16 \
+  --device cuda:0 --imgsz 640 --workspace 4
+
+python scripts/verify_tensorrt_engine.py \
+  --engine outputs/tensorrt_fp16/baseline/model.engine \
+  --device cuda:0 --imgsz 640
+
+python scripts/evaluate_model.py \
+  --checkpoint outputs/tensorrt_fp16/baseline/model.engine \
+  --data configs/data/deeppcb.yaml --split val --device 0 \
+  --output outputs/tensorrt_fp16/baseline/validation_pipeline
+
+python scripts/benchmark_model.py \
+  --model outputs/tensorrt_fp16/baseline/model.engine \
+  --source-model outputs/train/baseline/weights/best.pt \
+  --device cuda:0 --imgsz 640 --warmup-iterations 50 \
+  --benchmark-iterations 200 \
+  --output outputs/tensorrt_fp16/baseline/benchmark
+```
+
+Repeat with the direct P10/P20/P30 fine-tuned checkpoints and unique names.
+The benchmark measures pure engine forward and excludes preprocessing/NMS;
+validation reports record those pipeline stages separately. Do not use test or
+INT8 for this experiment. Build and run engines only against the same TensorRT,
+CUDA, GPU, and Ultralytics versions.

@@ -7,7 +7,7 @@ Phạm Ngọc Thắng
 ![Model](https://img.shields.io/badge/Model-YOLOv8n-55a630)
 ![Language](https://img.shields.io/badge/Language-Python-3776ab)
 
-**Quick Links:** [📦 Tải dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Model baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [🤗 P10 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct) | [🤗 P10 sparse](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph) | [⚙️ Cấu hình](#cấu-hình-baseline) | [🚀 Huấn luyện](#huấn-luyện) | [📊 Kết quả](#kết-quả-baseline)
+**Quick Links:** [📦 Dataset](https://huggingface.co/datasets/thangkt/PCB-Prune-YOLO-DeepPCB) | [🤗 Baseline](https://huggingface.co/thangkt/PCB-Prune-YOLO-Baseline) | [🤗 P10 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-Direct) | [🤗 P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) | [🤗 P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct) | [⚡ TensorRT FP16](https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16) | [🤗 P10 sparse](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph)
 
 Hướng dẫn tự động chạy trên server: [`SERVER_RUNBOOK.md`](SERVER_RUNBOOK.md).
 
@@ -212,6 +212,41 @@ Direct P30 giảm 51.77% tham số và 51.83% MACs. Sau 50 epoch, mAP50-95 đạ
 0.75030: thấp hơn baseline 3.49 điểm, P10 2.71 điểm và P20 1.68 điểm. Model chỉ
 3.014 MiB, nhưng latency 9.863 ms vẫn chậm hơn baseline 18.99%; vì vậy P30 là
 ứng viên nén mạnh, không phải ứng viên accuracy hoặc latency tốt nhất.
+
+## TensorRT FP16 trên Tesla T4
+
+Bốn engine được build trực tiếp trên cùng Tesla T4 với TensorRT 10.16.1.11,
+CUDA 12.8 và Ultralytics 8.4.115. Input tĩnh là `[1,3,640,640]`, batch 1,
+FP16, không dynamic shape và không gắn NMS vào engine. Tất cả engine đã load
+trong process mới và trả output `[1,10,8400]` với đúng sáu lớp.
+
+| Model | Params | MACs | PyTorch mAP50-95 | TensorRT mAP50-95 | PyTorch latency | TensorRT latency | TensorRT FPS | Engine size |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Baseline | 3,012,018 | 4.0733G | 0.78524 | 0.78716 | 8.289 ms | 1.837 ms | 544.28 | 7.477 MiB |
+| P10 direct | 2,416,871 | 3.2695G | 0.77736 | 0.77842 | 10.433 ms | 2.023 ms | 494.34 | 7.627 MiB |
+| P20 direct | 1,913,971 | 2.5722G | 0.76710 | 0.76931 | 11.717 ms | 1.933 ms | 517.45 | 7.378 MiB |
+| P30 direct | 1,452,562 | 1.9619G | 0.75030 | 0.75610 | 9.863 ms | 1.754 ms | 569.97 | 5.482 MiB |
+
+Latency PyTorch và TensorRT trong bảng là forward thuần, không gồm preprocess
+hoặc NMS, với 50 warm-up và 200 lần đo có CUDA synchronize. Speedup TensorRT so
+với chính PyTorch lần lượt là 4.51x, 5.16x, 6.06x và 5.62x. So với TensorRT
+baseline, P10 đạt 0.91x, P20 0.95x và P30 1.05x; vì vậy chỉ P30 nhanh hơn
+baseline TensorRT trong lần đo này, khoảng 4.7%.
+
+Thời gian pipeline validation trung bình cho preprocess / engine inference /
+postprocess-NMS lần lượt là baseline 1.413/3.290/2.230 ms, P10
+1.379/3.842/2.153 ms, P20 1.346/3.857/2.285 ms và P30 1.425/3.515/2.046 ms mỗi
+ảnh. JSON/CSV đầy đủ nằm tại `outputs/tensorrt_fp16/`; file `.engine` phụ thuộc
+phần cứng/phần mềm build nên được giữ ngoài Git. Bốn engine và toàn bộ metadata
+được phát hành tại
+[thangkt/PCB-Prune-YOLO-TensorRT-FP16](https://huggingface.co/thangkt/PCB-Prune-YOLO-TensorRT-FP16).
+
+P30 là lựa chọn triển khai ưu tiên khi cần nén mạnh: giảm 51.77% tham số,
+51.83% MACs, đạt 569.97 FPS và nhanh hơn TensorRT baseline khoảng 4.7%. Đổi lại,
+TensorRT mAP50-95 giảm từ 0.78716 xuống 0.75610 và recall giảm từ 0.96178 xuống
+0.92858. Checkpoint PyTorch public:
+[P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) và
+[P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct).
 
 Checkpoint P10 fine-tuned và model card được phát hành public tại
 [thangkt/PCB-Prune-YOLO-P10-DepGraph](https://huggingface.co/thangkt/PCB-Prune-YOLO-P10-DepGraph).
