@@ -74,6 +74,10 @@ class YOLODepGraphPruner:
         """Trace dependencies and enumerate groups without changing any channels."""
         import torch_pruning as tp
 
+        # Ultralytics strip_optimizer() stores checkpoints with requires_grad=False.
+        # DepGraph relies on autograd edges, so restore tracing gradients in this
+        # in-memory pruning model before both this graph and the high-level pruner.
+        self.model.requires_grad_(True)
         self.graph = tp.DependencyGraph().build_dependency(
             self.model, example_inputs=self.example_input
         )
@@ -130,6 +134,27 @@ class YOLODepGraphPruner:
         for _ in range(self.iterative_steps):
             self.meta_pruner.step()
         return self.model
+
+    def create_sparse_pruner(self, reg: float, alpha: int = 4) -> Any:
+        """Create the vendored DepGraph group-sparsity pruner without pruning yet."""
+        import torch_pruning as tp
+
+        self.meta_pruner = tp.pruner.GroupNormPruner(
+            self.model,
+            self.example_input,
+            importance=create_importance(self.importance_name),
+            reg=reg,
+            alpha=alpha,
+            pruning_ratio=self.pruning_ratio,
+            iterative_steps=self.iterative_steps,
+            ignored_layers=[module for _, module in self.protected_modules],
+            round_to=self.round_to,
+            global_pruning=self.global_pruning,
+        )
+        self.group_count = len(self.meta_pruner._groups)
+        if self.group_count == 0:
+            raise RuntimeError("GroupNormPruner không tìm thấy pruning group an toàn")
+        return self.meta_pruner
 
     def save_pruned_model(self, path: Path) -> None:
         """Save the complete changed architecture in an Ultralytics checkpoint."""

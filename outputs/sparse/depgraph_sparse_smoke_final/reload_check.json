@@ -1,0 +1,7 @@
+{
+  "loaded": true,
+  "class_count": 6,
+  "class_names": ["open", "short", "mousebite", "spur", "copper", "pin-hole"],
+  "prediction_shape": [1, 10, 8400],
+  "device": "cuda:0"
+}

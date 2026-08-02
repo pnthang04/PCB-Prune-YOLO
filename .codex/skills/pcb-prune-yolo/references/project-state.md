@@ -1,6 +1,6 @@
 # Project state
 
-Last verified: 2026-08-01
+Last verified: 2026-08-02
 
 ## Purpose
 
@@ -108,3 +108,49 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
 - P10 pre-fine-tune validation, complexity, benchmark, and save/load inference: complete.
 - P10 fine-tune: not run.
 - P20/P30: not run.
+
+## Group-level sparse training
+
+Implemented `GroupNormPruner` sparse-gradient training from the unpruned baseline.
+The custom trainer unscales AMP gradients, calls the vendored TP 1.6.0
+`regularize(model, alpha=2**4)`, then clips and steps. It refreshes groups each
+epoch and protects the same six Detect output convolutions plus DFL.
+
+Accepted smoke artifact: `outputs/sparse/depgraph_sparse_smoke_final/`.
+
+- 1 epoch, 10% of train (80 images), full 200-image validation, batch 32, GPU 0.
+- Train losses: box 0.94178, cls 0.65621, DFL 0.89616.
+- Validation: precision 0.96472, recall 0.97079, mAP50 0.98624,
+  mAP50-95 0.78532.
+- 59 dependency groups and 4,864 channel/group-norm values regularized; zero
+  degenerate groups skipped; near-zero fraction at threshold 0.001 was 0.
+- Regularizer gradient delta L2 was 0.0397833, nonzero, with no newly introduced
+  non-finite gradient values.
+- New-process CUDA load and inference succeeded with six classes and output
+  `[1, 10, 8400]`.
+
+This is only a hook smoke test, not a completed sparse-training or P10 result.
+
+## Full sparse training and sparse P10
+
+Full run: `outputs/sparse/depgraph_sparse_p10/`. Early stopping ended the
+configured 30-epoch run at epoch 20; the best validation checkpoint was epoch 10.
+
+- Sparse best validation: precision 0.97628, recall 0.95690, mAP50 0.98548,
+  mAP50-95 0.78752.
+- Regularizer gradient was nonzero in all 20 epochs and introduced no non-finite
+  gradients, but near-zero fraction remained 0 at threshold 0.001 and group-norm
+  statistics barely moved.
+
+Sparse P10 before fine-tuning: `outputs/pruning_sparse/p10/pruned.pt`.
+
+- DepGraph: 59 groups; seven fixed-width output layers protected; no rounding.
+- Params: 2,415,613; MACs: 3.2328G; estimated FLOPs: 6.4656G.
+- Validation: precision 0.004666, recall 0.051948, mAP50 0.002615,
+  mAP50-95 0.000375.
+- Mean latency: 9.737 ms; FPS: 102.71; peak GPU memory: 40.02 MiB.
+- New-process CUDA load and inference succeeded with output `[1,10,8400]`.
+
+Sparse P10 is worse than the preserved no-round direct-P10 ablation on both
+mAP50 and mAP50-95. Do not fine-tune or present it as a successful paper-path
+result yet. The next experiment must first produce measurable group sparsity.

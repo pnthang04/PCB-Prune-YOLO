@@ -1,0 +1,10 @@
+checkpoint: outputs/sparse/depgraph_sparse_p10/weights/best.pt
+output: outputs/pruning_sparse
+imgsz: 640
+device: auto
+pruning_ratio: 0.1
+importance: group_magnitude
+iterative_steps: 1
+round_to: 0
+global_pruning: false
+dry_run: false

@@ -1,4 +1,4 @@
-# PCB-Prune-YOLO: PCB Defect Detection Baseline
+# PCB-Prune-YOLO: DepGraph Pruning for PCB Defect Detection
 
 Phạm Ngọc Thắng
 
@@ -11,7 +11,9 @@ Phạm Ngọc Thắng
 
 Hướng dẫn tự động chạy trên server: [`SERVER_RUNBOOK.md`](SERVER_RUNBOOK.md).
 
-Baseline phát hiện sáu loại lỗi PCB. Phạm vi hiện tại chỉ gồm chuẩn bị dữ liệu, kiểm tra dữ liệu, huấn luyện, đánh giá và benchmark mô hình gốc.
+Project huấn luyện YOLOv8n phát hiện sáu loại lỗi PCB và nghiên cứu structured
+channel pruning bằng DepGraph/Torch-Pruning. Baseline đã hoàn tất; P10 direct và
+P10 sau group-level sparse learning đã được đánh giá trước fine-tune.
 
 ## Cấu trúc
 
@@ -140,6 +142,44 @@ python scripts/benchmark_model.py --model outputs/train/baseline/weights/best.pt
 
 Đánh giá xuất precision, recall, mAP50 và mAP50-95 tổng thể/theo lớp dưới dạng JSON và CSV. Benchmark batch size 1 xuất số tham số, dung lượng checkpoint, FPS, mean/median/p95 latency và peak GPU memory khi có CUDA.
 
+## DepGraph pruning
+
+Pipeline hiện tại:
+
+```text
+baseline best.pt → group-level sparse training → P10 structured pruning
+→ validation → benchmark → save/load process mới
+```
+
+Sparse training giữ nguyên YOLO detection loss và thêm gradient regularization
+của `GroupNormPruner` sau backward, trước optimizer step. Chi tiết paper/API và
+phân loại PAPER/OFFICIAL CODE/ADAPTATION nằm trong
+[`docs/DEPGRAPH_SPARSE.md`](docs/DEPGRAPH_SPARSE.md).
+
+```bash
+python scripts/train_sparse.py --config configs/prune/depgraph_sparse.yaml
+
+python scripts/prune_model.py \
+  --checkpoint outputs/sparse/depgraph_sparse_p10/weights/best.pt \
+  --pruning-ratio 0.10 --round-to 0 \
+  --output outputs/pruning_sparse --no-dry-run
+```
+
+Kết quả validation trước fine-tune:
+
+| Model | Sparse learning | Params | MACs | mAP50 | mAP50-95 | Latency | FPS |
+|---|---|---:|---:|---:|---:|---:|---:|
+| Baseline | No | 3,012,018 | 4.0733G | 0.98630 | 0.78524 | 8.289 ms | 120.64 |
+| P10 direct, no round | No | 2,416,871 | 3.2695G | 0.00586 | 0.000923 | TODO | TODO |
+| P10 sparse, no round | Yes | 2,415,613 | 3.2328G | 0.002615 | 0.000375 | 9.737 ms | 102.71 |
+
+Lần sparse training đầu tiên dùng `reg=1e-4`, dừng sớm ở epoch 20 và có
+validation mAP50-95 tốt nhất 0.78752 tại epoch 10. Tuy regularizer gradient khác
+0, tỷ lệ group norm gần 0 vẫn bằng 0; P10 sau đó chưa cải thiện so với direct
+pruning. Vì vậy P10 sparse hiện tại chưa được fine-tune và chưa được xem là mô
+hình pruning thành công. Bước tiếp theo là điều chỉnh sparse regularization chỉ
+dựa trên validation trước khi chạy lại P10.
+
 ## Kiểm tra code
 
 ```bash
@@ -147,7 +187,9 @@ python -m compileall -q src scripts tests
 python -m pytest -q
 ```
 
-Không commit dataset, checkpoint, thư mục chạy hoặc output. Giai đoạn này chưa triển khai pruning và knowledge distillation.
+Không commit dataset, checkpoint, cache hoặc ảnh training-batch. Các JSON/CSV,
+config đã dùng, confusion matrix và metric plot được giữ trong Git để clone dự
+án vẫn xem được trạng thái thí nghiệm. Knowledge distillation chưa được sử dụng.
 
 ## Thứ tự chạy trên server
 
