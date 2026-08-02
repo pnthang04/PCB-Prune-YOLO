@@ -1,0 +1,39 @@
+{
+  "name": "p40_a8_kd_baseline_teacher_ext",
+  "source_checkpoint": "outputs/finetune_direct/p40_a8_kd_baseline_teacher_ext/weights/best.pt",
+  "engine": "outputs/tensorrt_recheck/p40_a8_kd_baseline_teacher_ext/model.engine",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_shape_before_export": [
+    1,
+    10,
+    8400
+  ],
+  "class_count": 6,
+  "class_names": [
+    "open",
+    "short",
+    "mousebite",
+    "spur",
+    "copper",
+    "pin-hole"
+  ],
+  "precision": "fp16",
+  "dynamic": false,
+  "batch_size": 1,
+  "parameters": 903466,
+  "counted_parameters": 903466,
+  "macs": 1121237600,
+  "gmacs": 1.1212376,
+  "flops_estimate": 2242475200,
+  "gflops_estimate": 2.2424752,
+  "gpu_name": "Tesla T4",
+  "torch_version": "2.10.0+cu128",
+  "cuda_version": "12.8",
+  "tensorrt_version": "10.16.1.11",
+  "ultralytics_version": "8.4.115"
+}

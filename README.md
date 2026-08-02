@@ -283,37 +283,51 @@ vậy chưa train dài hoặc distill. Chi tiết và artifact nằm tại
 `outputs/pruning_hw/comparison.{json,csv}`.
 
 Ultralytics 8.4.115 (bản pin của project) có sẵn knowledge distillation
-(`distill_model`/`dis`, score-weighted feature L2 loss ở đầu vào Detect head),
-nên P40-A8 được fine-tune 50 epoch bằng hai nhánh cùng cấu hình AdamW
-(`lr0=0.001`, `lrf=0.01`, momentum 0.9, weight decay 0.0005, batch 64,
-patience 10, seed 42), chỉ khác việc có distillation hay không:
+(`distill_model`/`dis`, score-weighted feature L2 loss ở đầu vào Detect head).
+Fine-tune đầu tiên (50 epoch, cùng cấu hình AdamW `lr0=0.001`, `lrf=0.01`,
+momentum 0.9, weight decay 0.0005, batch 64, patience 10, seed 42) cho thấy cả
+hai nhánh vẫn đang cải thiện ở epoch cuối (chưa hội tụ), nên được chạy lại với
+100 epoch, patience 20 và cosine LR — lần này cả hai đều bão hòa rõ ràng ở
+cuối chu kỳ:
 
-| Nhánh | Precision | Recall | mAP50 | mAP50-95 |
-|---|---:|---:|---:|---:|
-| Fine-tune chuẩn | 0.867 | 0.805 | 0.893 | 0.634 |
-| KD, teacher = baseline | 0.895 | 0.828 | 0.913 | 0.660 |
+| Nhánh | Epoch | Precision | Recall | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|---:|
+| Fine-tune chuẩn, 50 epoch | 50 | 0.867 | 0.805 | 0.893 | 0.634 |
+| KD, 50 epoch | 50 | 0.895 | 0.828 | 0.913 | 0.660 |
+| Fine-tune chuẩn, 100 epoch + cos_lr | 100 | 0.929 | 0.888 | 0.950 | 0.701 |
+| **KD, 100 epoch + cos_lr** | 100 | 0.930 | 0.898 | 0.957 | **0.712** |
 
-KD tốt hơn fine-tune chuẩn trên mọi chỉ số (+2.7 điểm mAP50-95) trong so sánh
-công bằng, cùng kiến trúc 903,466 params/1.1212G MACs (−70.00% params,
-−72.47% MACs so với baseline, so với −51.77%/−51.83% của P30), nên đây là
-ứng viên nhanh/nhẹ nhất hiện có, không phải thay thế P30 về accuracy. Test set
-chưa được dùng. Hai checkpoint đã public tại
+Train dài hơn giúp cả hai tăng mạnh (+6.7 và +5.2 điểm mAP50-95); khoảng cách
+KD so với fine-tune chuẩn thu hẹp từ +2.7 xuống +1.1 điểm khi có đủ epoch, KD
+vẫn thắng. Sweep thêm `dis=3.0`/`10.0` xác nhận mặc định `dis=6.0` đã gần tối
+ưu (0.711/0.712/0.709), không cần đổi. Cùng kiến trúc 903,466 params/1.1212G
+MACs (−70.00% params, −72.47% MACs so với baseline).
+
+**So với P30** (mAP50-95 0.75030, −51.77%/−51.83% params/MACs): sau khi train
+đủ epoch, P40-A8 KD chỉ còn kém P30 **3.83 điểm** mAP50-95 (so với 9.03 điểm
+lúc mới fine-tune 50 epoch), trong khi vẫn nén mạnh hơn hẳn (37.8% ít params,
+42.85% ít MACs hơn P30) và nhanh hơn ~1.3x trên TensorRT — một đánh đổi hợp lý
+hơn nhiều so với trước, dù P30 vẫn là lựa chọn accuracy cao nhất.
+
+Test set chưa được dùng. Hai checkpoint (bản 100 epoch) đã public tại
 [thangkt/PCB-Prune-YOLO-P40-A8-Direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-Direct)
 và
 [thangkt/PCB-Prune-YOLO-P40-A8-KD](https://huggingface.co/thangkt/PCB-Prune-YOLO-P40-A8-KD),
 kèm model card, args, validation và benchmark; đã xác minh tải ẩn danh.
 
-Engine TensorRT FP16 được build lại cho cả hai checkpoint đã fine-tune (cùng
-phiên đo với baseline để so sánh công bằng, 50 warm-up/200 lần đo, batch 1):
+Engine TensorRT FP16 được build lại cho checkpoint 100-epoch (cùng phiên đo
+với baseline để so sánh công bằng, 50 warm-up/200 lần đo, batch 1):
 
 | Model | Params | MACs | TensorRT latency | FPS | So với baseline |
 |---|---:|---:|---:|---:|---:|
 | Baseline | 3,012,018 | 4.0733G | 1.716 ms | 582.75 | 1.00x |
-| P40-A8 chuẩn | 903,466 | 1.1212G | 1.423 ms | 702.91 | 1.21x |
-| P40-A8 KD | 903,466 | 1.1212G | 1.417 ms | 705.96 | 1.21x |
+| P40-A8 chuẩn (100 epoch) | 903,466 | 1.1212G | 1.422 ms | 703.22 | 1.21x |
+| P40-A8 KD (100 epoch) | 903,466 | 1.1212G | 1.497 ms | 668.12 | 1.15x |
 
-Cả hai đều nhanh hơn baseline TensorRT khoảng 21%, đã qua verify save →
-process mới load → inference. Chi tiết ở
+Cả hai vẫn nhanh hơn baseline TensorRT rõ rệt (kiến trúc không đổi qua
+fine-tune nên latency gần như y hệt bản 50 epoch trước đó; chênh lệch nhỏ
+giữa hai lần đo là nhiễu đo đạc/tactic selection, không phải khác biệt kiến
+trúc), đã qua verify save → process mới load → inference. Chi tiết ở
 [`docs/P40_HW_LATENCY_GATE.md`](docs/P40_HW_LATENCY_GATE.md).
 
 ## HALP: latency-aware pruning

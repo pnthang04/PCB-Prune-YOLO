@@ -146,6 +146,23 @@ Hugging Face (`thangkt/PCB-Prune-YOLO-P40-A8-Direct`,
 `thangkt/PCB-Prune-YOLO-P40-A8-KD`) with model card, args, validation, and
 benchmark; anonymous download and `private=false` were verified for both.
 
+The 50-epoch runs above were still improving at the final epoch (KD's best
+epoch was epoch 50 itself), so both were re-run with `epochs=100`,
+`patience=20`, `cos_lr=True`, everything else unchanged. Both now plateau
+under cosine annealing (converged, not epoch-budget-limited). Results:
+standard FT mAP50-95 0.701 (+6.7 points over 50 epochs), KD 0.712 (+5.2
+points); KD's lead over standard FT narrowed from +2.7 to +1.1 points with
+enough training. A `dis` sweep (3.0/10.0 vs the default 6.0) confirmed 6.0
+is already near-optimal (0.711/0.712/0.709 — within noise). Versus P30
+(0.75030 mAP50-95, -51.77%/-51.83% params/MACs), the 100-epoch KD checkpoint
+is now only 3.83 points behind (down from 9.03 at 50 epochs) while keeping
+much stronger compression (-70.00%/-72.47%) and a ~1.3x TensorRT speed
+advantage — a substantially more competitive trade-off than before. TensorRT
+engines rebuilt for the 100-epoch checkpoints confirm the same architecture
+latency (1.422/1.497 ms vs a same-session baseline of 1.716 ms). The
+100-epoch checkpoints supersede the 50-epoch ones and were re-published to
+the same two Hugging Face repositories. Test split was not used.
+
 TensorRT FP16 engines were subsequently rebuilt for both fine-tuned
 checkpoints, plus a fresh baseline engine in the same session (absolute
 PyTorch/TensorRT latency numbers can drift ~10-20% across different cloud T4

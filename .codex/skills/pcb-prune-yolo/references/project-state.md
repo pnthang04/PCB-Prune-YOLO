@@ -381,6 +381,42 @@ training args, validation metrics, and benchmark reports:
 Anonymous download of `best.pt` and public API visibility (`private: false`)
 were verified for both repositories.
 
+**Superseded by a 100-epoch re-run.** The 50-epoch results above were still
+improving at the final epoch for both branches (KD's best validation epoch
+was epoch 50 itself, `patience=10` never triggered), so both were re-run from
+the identical restored `pruned.pt` with `epochs=100`, `patience=20`, and
+`cos_lr=True` (`--cos-lr` flag added to `scripts/finetune_pruned.py`),
+otherwise unchanged:
+
+| Branch | Epochs | Precision | Recall | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|---:|
+| Standard FT | 50 | 0.867 | 0.805 | 0.893 | 0.634 |
+| KD (`dis=6.0`) | 50 | 0.895 | 0.828 | 0.913 | 0.660 |
+| Standard FT | 100 | 0.929 | 0.888 | 0.950 | 0.701 |
+| KD (`dis=6.0`) | 100 | 0.930 | 0.898 | 0.957 | 0.712 |
+
+Both curves now plateau under cosine annealing (confirmed convergence, not an
+arbitrary cutoff). A `dis` sweep (3.0 and 10.0) found the default 6.0 already
+near-optimal: 0.711/0.712/0.709 mAP50-95 respectively, within noise — no
+further distillation-weight tuning planned. TensorRT FP16 engines were
+rebuilt for the 100-epoch checkpoints (same architecture as before):
+standard FT 1.422 ms (703.22 FPS), KD 1.497 ms (668.12 FPS), both still ahead
+of a same-session baseline (1.716 ms); the small standard/KD gap here is
+measurement noise, not an architecture difference. Both passed new-process
+load/inference.
+
+**Comparison to P30 improved substantially.** At 50 epochs, KD trailed P30
+(mAP50-95 0.75030) by 9.03 points; at 100 epochs the gap is only 3.83 points
+(0.712 vs 0.75030), while P40-A8 keeps much stronger compression (-70.00%
+params / -72.47% MACs vs P30's -51.77%/-51.83%, i.e. 37.8% fewer params and
+42.85% fewer MACs than P30 itself) and a ~1.3x TensorRT speed advantage. This
+is a substantially more competitive trade-off than the 50-epoch result
+suggested. The 100-epoch checkpoints supersede the 50-epoch ones and were
+re-published to the same two Hugging Face repositories. Dis-sweep artifacts
+(`outputs/finetune_direct/p40_a8_kd_dis3/`, `.../p40_a8_kd_dis10/`) were kept
+locally/in Git reports but not published, since they did not beat `dis=6.0`.
+Test split was not used at any point.
+
 TensorRT FP16 engines were rebuilt for both fine-tuned checkpoints, plus a
 fresh baseline engine in the same session (a same-instance rebuild is
 required because absolute PyTorch/TensorRT latency drifts noticeably, roughly

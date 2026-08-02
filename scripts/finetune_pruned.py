@@ -36,6 +36,11 @@ def main() -> None:
         default=6.0,
         help="Distillation loss weight (Ultralytics default), used only with --distill-model",
     )
+    parser.add_argument(
+        "--cos-lr",
+        action="store_true",
+        help="Use cosine LR annealing instead of Ultralytics' default linear decay",
+    )
     args = parser.parse_args()
     config = {
         "model": str(args.model),
@@ -54,6 +59,7 @@ def main() -> None:
         "seed": 42,
         "amp": True,
         "deterministic": True,
+        "cos_lr": args.cos_lr,
         "project": args.project,
         "name": args.name,
     }

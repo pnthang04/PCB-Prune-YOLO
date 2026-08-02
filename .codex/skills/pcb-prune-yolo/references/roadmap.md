@@ -1,3 +1,4 @@
+
 # Roadmap
 
 ## Project goals
@@ -91,11 +92,25 @@
 - Published both P40-A8 checkpoints (standard FT and KD) publicly on Hugging
   Face with model card, training args, validation metrics, and benchmark;
   verified anonymous download and `private=false` for both.
+- Re-ran both P40-A8 branches for 100 epochs with cosine LR (the 50-epoch
+  runs were still improving, not converged) and confirmed plateau/convergence.
+  Standard FT reached mAP50-95 0.701 (+6.7 points) and KD 0.712 (+5.2 points).
+  A `dis` sweep (3.0/10.0) confirmed the default 6.0 was already near-optimal.
+  Rebuilt and verified TensorRT engines for the 100-epoch checkpoints
+  (architecture unchanged, latency confirmed consistent). The gap to P30
+  narrowed from 9.03 to 3.83 mAP50-95 points while keeping much stronger
+  compression and a TensorRT speed advantage. Re-published the improved
+  checkpoints to the same two Hugging Face repositories.
 
 ## Not completed
 
-- Decide whether P40-A8 KD is added to the README accuracy-compression table
-  as a fourth, more aggressive operating point alongside P10/P20/P30.
+- Decide whether P40-A8 KD is added to the main README accuracy-compression
+  table as a fourth, more aggressive operating point alongside P10/P20/P30.
+  After the 100-epoch re-run this is a much more favorable trade-off (only
+  3.83 mAP50-95 points behind P30 for 37.8% fewer params / 42.85% fewer MACs
+  / ~1.3x TensorRT speed), so worth revisiting, but the P40-HW gate remains
+  documented as an independent experiment from the main P10/P20/P30 line
+  unless the user asks to merge them.
 
 - Fix the P30 explicit-Q/DQ graph before any full QAT: fuse Conv-BN, reduce
   Q/DQ and reformat boundaries around SiLU/residual/concat, then require a

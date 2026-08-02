@@ -122,6 +122,49 @@ training args, validation metrics, and benchmark:
 Anonymous (unauthenticated) download of `best.pt` and public API visibility
 (`private: false`) were verified for both repositories.
 
+### Extended fine-tune (100 epochs, cosine LR) and distillation-weight sweep
+
+Date: 2026-08-02. The 50-epoch results above were still improving at the
+final epoch for both branches (`patience=10` never triggered, and the KD
+branch's best validation epoch was epoch 50 itself), so both were re-run from
+the identical restored `pruned.pt` with `epochs=100`, `patience=20`, and
+`cos_lr=True` (all other hyperparameters unchanged). `scripts/finetune_pruned.py`
+gained a `--cos-lr` passthrough flag for this.
+
+| Branch | Epochs | Precision | Recall | mAP50 | mAP50-95 |
+|---|---:|---:|---:|---:|---:|
+| Standard FT | 50 | 0.867 | 0.805 | 0.893 | 0.634 |
+| KD (`dis=6.0`) | 50 | 0.895 | 0.828 | 0.913 | 0.660 |
+| Standard FT | 100 | 0.929 | 0.888 | 0.950 | 0.701 |
+| **KD (`dis=6.0`)** | 100 | 0.930 | 0.898 | 0.957 | **0.712** |
+
+Both curves now plateau under cosine annealing (`results.csv` oscillates
+within ~0.01 mAP50-95 over the last 15 epochs of each run), confirming
+convergence rather than an arbitrary cutoff. Extending training closed most of
+the gap to P30: KD is now only 0.0383 mAP50-95 below P30 (0.712 vs 0.75030),
+down from 0.0903 at 50 epochs, while retaining P40-A8's much stronger
+compression (-70.00%/-72.47% params/MACs vs P30's -51.77%/-51.83%) and a
+~1.3x TensorRT forward-latency advantage over P30 (matched-session P40-HW
+gate measurement).
+
+A `dis` sweep (`3.0` and `10.0`, otherwise identical to the 100-epoch KD run)
+found the Ultralytics default `dis=6.0` was already near-optimal: 0.711
+(`dis=3.0`), 0.712 (`dis=6.0`), 0.709 (`dis=10.0`) — differences within noise.
+No further distillation-weight tuning is planned; artifacts are under
+`outputs/finetune_direct/p40_a8_kd_dis3/` and `.../p40_a8_kd_dis10/` but were
+not published.
+
+TensorRT FP16 engines were rebuilt for the 100-epoch checkpoints (same
+architecture, so latency is expected to match the 50-epoch measurement):
+standard FT 1.422 ms (703.22 FPS), KD 1.497 ms (668.12 FPS) — both still well
+ahead of the same-session baseline (1.716 ms); the small KD/standard gap here
+is measurement noise/tactic selection, not an architecture difference (both
+checkpoints have identical 903,466 params / 1.1212G MACs). Both engines passed
+new-process load/inference. The 100-epoch checkpoints supersede the 50-epoch
+ones as the current best P40-A8 candidates and were re-published to the same
+two Hugging Face repositories (`PCB-Prune-YOLO-P40-A8-Direct`,
+`PCB-Prune-YOLO-P40-A8-KD`). Test split was not used at any point.
+
 ### TensorRT re-measurement after fine-tuning
 
 Date: 2026-08-02. TensorRT 10.16.1.11 was reinstalled and fresh FP16 engines

@@ -31,39 +31,43 @@ distillation) is
 
 | Precision | Recall | mAP50 | mAP50-95 |
 |---:|---:|---:|---:|
-| 0.895 | 0.828 | 0.913 | 0.660 |
+| 0.930 | 0.898 | 0.957 | 0.712 |
 
-Under an otherwise identical fine-tune recipe, this knowledge-distillation
-checkpoint beats the matched standard fine-tune by +2.7 mAP50-95 percentage
-points (0.660 vs 0.634), and wins on precision, recall and mAP50 as well.
-Both remain well below P10/P20/P30 direct (0.77736 / 0.76710 / 0.75030)
-because this architecture is a substantially more aggressive compression
-point (-70.00% parameters, -72.47% MACs versus baseline, compared to P30's
--51.77% / -51.83%), selected for a TensorRT hardware-latency gate rather than
-for accuracy. The DeepPCB test split was not used for model selection.
+An initial 50-epoch fine-tune reached only mAP50-95 0.660, with the best
+validation epoch landing on the very last epoch (not converged), so training
+was extended to 100 epochs with cosine LR annealing, after which the curve
+plateaus. Under an otherwise identical fine-tune recipe, this checkpoint
+beats the matched standard fine-tune by +1.1 mAP50-95 percentage points
+(0.712 vs 0.701). A `dis` sweep (3.0 and 10.0) confirmed the default `dis=6.0`
+used here was already near-optimal (0.711 / 0.712 / 0.709, within noise).
+Versus P30 direct (0.75030, -51.77%/-51.83% params/MACs), this checkpoint is
+now only 3.83 points lower for 37.8% fewer parameters and 42.85% fewer MACs —
+a substantially more competitive trade-off than the initial 50-epoch result.
+The DeepPCB test split was not used for model selection.
 
 ## Compression and Tesla T4 benchmark
 
 | Parameters | MACs | Size | Latency batch 1 (PyTorch) | FPS |
 |---:|---:|---:|---:|---:|
-| 903,466 | 1.1212G | 1.960 MiB | 7.730 ms | 129.37 |
+| 903,466 | 1.1212G | 1.960 MiB | 8.018 ms | 124.72 |
 
 Input size is 640. Latency uses 50 warm-up and 200 synchronized CUDA
 iterations. Fine-tuning does not change channel counts, so a same-session
-rebuilt TensorRT FP16 engine for this checkpoint measured 1.417 ms forward
-(50 warm-up / 200 iterations, batch 1), about 1.21x faster than a
-same-session baseline TensorRT engine (1.716 ms); TensorRT engines are not
-included in this repository.
+rebuilt TensorRT FP16 engine for this checkpoint measured 1.497 ms forward
+(50 warm-up / 200 iterations, batch 1), still clearly ahead of a same-session
+baseline TensorRT engine (1.716 ms); TensorRT engines are not included in
+this repository.
 
 ## Training configuration
 
 - DepGraph local group-magnitude pruning, target ratio 0.40, `round_to=8`
-- AdamW, `lr0=0.001`, `lrf=0.01`, momentum 0.9, weight decay 0.0005
-- 50 epochs, batch 64, patience 10, seed 42, AMP and deterministic mode
+- AdamW, `lr0=0.001`, `lrf=0.01`, momentum 0.9, weight decay 0.0005, cosine LR
+- 100 epochs, batch 64, patience 20, seed 42, AMP and deterministic mode
 - Knowledge distillation: Ultralytics 8.4.115 native `distill_model` +
-  `dis=6.0` (framework default) — a score-weighted feature L2 loss between
-  teacher and student at the Detect head's input layers, on top of the
-  normal detection loss. Teacher checkpoint: baseline `best.pt`, frozen.
+  `dis=6.0` (framework default, confirmed near-optimal by a 3.0/10.0 sweep) —
+  a score-weighted feature L2 loss between teacher and student at the Detect
+  head's input layers, on top of the normal detection loss. Teacher
+  checkpoint: baseline `best.pt`, frozen.
 - Six classes: open, short, mousebite, spur, copper, pin-hole
 
 ## Loading
