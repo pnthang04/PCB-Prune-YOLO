@@ -1,0 +1,50 @@
+[
+  {
+    "epoch": 1,
+    "optimizer_steps": 25,
+    "gradient_exists": true,
+    "gradient_finite": true,
+    "weight_updated": true,
+    "loss_finite": true,
+    "loss_values": [
+      1.096,
+      0.67168,
+      0.94912,
+      3.08364,
+      1.38462,
+      1.85977
+    ]
+  },
+  {
+    "epoch": 2,
+    "optimizer_steps": 37,
+    "gradient_exists": true,
+    "gradient_finite": true,
+    "weight_updated": true,
+    "loss_finite": true,
+    "loss_values": [
+      1.04917,
+      0.65273,
+      0.9363,
+      1.04649,
+      0.54788,
+      0.94785
+    ]
+  },
+  {
+    "epoch": 3,
+    "optimizer_steps": 50,
+    "gradient_exists": true,
+    "gradient_finite": true,
+    "weight_updated": true,
+    "loss_finite": true,
+    "loss_values": [
+      1.02346,
+      0.61912,
+      0.92783,
+      0.86585,
+      0.49037,
+      0.91004
+    ]
+  }
+]

@@ -29,7 +29,7 @@ curl -L \
 ```
 
 Other public checkpoints and TensorRT engines are linked from `README.md`.
-Stage 2 starts from the unpruned baseline above, not P10/P20/P30.
+HALP work starts from the unpruned baseline above, not P10/P20/P30.
 
 ## 3. Restore the official research reference if needed
 
@@ -75,16 +75,26 @@ Read in this order:
 5. `docs/PROJECT_MEMORY.md`
 6. `docs/HALP_ADAPTATION_PLAN.md`
 
-Next work is HALP Stage 2 only:
+Stage 2 is complete as a non-mutating dry-run. Verify its persisted artifacts:
 
-```text
-YOLO detection-loss Taylor saliency
-→ DepGraph dependency groups
-→ exact 2D LUT costs / targeted LUT refinement
-→ latency-aware channel grouping
-→ augmented-knapsack dry-run
+```bash
+python -m pytest -q tests/test_halp_stage2.py
+python scripts/run_halp_stage2.py --saliency-batches 8 --batch 8 \
+  --output outputs/halp/stage2_recheck
 ```
 
-Do not prune, fine-tune, run the test split, or claim a complete HALP model
-until the Stage 2 dry-run invariants pass. The suggested first eventual latency
-target is 5%, selected using validation only.
+Next work is HALP Stage 3 only:
+
+```text
+apply one small 5% structural milestone from the Stage 2 plan
+→ rebuild DepGraph after changed widths
+→ recompute downstream Cin and require exact LUT pairs
+→ save complete architecture
+→ load in a new process and verify [1,10,8400]
+→ validation and measured TensorRT latency gate
+```
+
+Do not fine-tune, run the test split, or claim a complete HALP model until a
+small Stage 3 structural milestone passes save/load/inference. The first latency
+target is the predeclared 5% milestone; every later model choice uses validation
+only.

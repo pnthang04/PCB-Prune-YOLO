@@ -1,0 +1,12 @@
+{
+  "process": "new_python_process",
+  "checkpoint": "outputs/qat/p30_int8_qat_smoke_e3_v2/weights/best.pt",
+  "output_shape": [
+    1,
+    10,
+    8400
+  ],
+  "class_count": 6,
+  "finite": true,
+  "cuda_inference": true
+}

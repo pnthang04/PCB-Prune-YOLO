@@ -1,0 +1,2458 @@
+{
+  "quantizer_count": 348,
+  "enabled_quantizer_count": 131,
+  "quantizers": [
+    {
+      "name": "model.0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.cv0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.cv0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.m.0.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.m.0.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.m.0.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.m.0.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.m.0.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.m.0.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.m.0.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.m.0.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.2.m.0.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.2.m.0.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.3.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.3.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.3.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.3.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.3.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.cv0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.cv0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.0.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.m.0.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.0.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.m.0.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.0.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.0.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.m.0.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.0.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.m.0.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.0.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.1.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.m.1.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.1.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.m.1.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.1.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.1.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.m.1.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.1.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.4.m.1.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.4.m.1.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.5.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.5.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.5.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.5.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.5.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.cv0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.cv0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.0.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.m.0.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.0.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.m.0.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.0.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.0.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.m.0.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.0.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.m.0.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.0.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.1.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.m.1.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.1.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.m.1.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.1.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.1.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.m.1.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.1.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.6.m.1.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.6.m.1.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.7.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.7.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.7.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.7.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.7.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.cv0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.cv0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.m.0.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.m.0.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.m.0.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.m.0.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.m.0.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.m.0.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.m.0.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.m.0.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.8.m.0.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.8.m.0.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.9.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.9.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.9.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.9.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.9.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.9.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.9.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.9.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.9.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.9.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.9.m.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.9.m.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.cv0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.cv0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.m.0.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.m.0.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.m.0.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.m.0.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.m.0.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.m.0.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.m.0.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.m.0.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.12.m.0.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.12.m.0.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.cv0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.cv0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.m.0.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.m.0.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.m.0.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.m.0.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.m.0.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.m.0.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.m.0.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.m.0.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.15.m.0.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.15.m.0.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.16.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.16.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.16.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.16.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.16.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.cv0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.cv0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.m.0.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.m.0.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.m.0.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.m.0.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.m.0.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.m.0.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.m.0.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.m.0.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.18.m.0.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.18.m.0.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.19.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.19.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.19.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.19.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.19.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.cv0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.cv0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.m.0.cv1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.m.0.cv1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.m.0.cv1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.m.0.cv1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.m.0.cv1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.m.0.cv2.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.m.0.cv2.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.m.0.cv2.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.21.m.0.cv2.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.21.m.0.cv2.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.0.0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.0.0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.0.1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.0.1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.2.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.2.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.0.2.weight_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.1.0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.1.0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.1.1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.1.1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.2.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.2.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.1.2.weight_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.2.0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.2.0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.2.1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv2.2.1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.2.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.2.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv2.2.2.weight_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.0.0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.0.0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.0.1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.0.1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.2.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.2.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.0.2.weight_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.1.0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.1.0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.1.1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.1.1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.2.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.2.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.1.2.weight_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.0.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.2.0.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.0.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.2.0.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.0.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.1.conv.input_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.2.1.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.1.conv.weight_quantizer",
+      "enabled": true,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": true
+    },
+    {
+      "name": "model.22.cv3.2.1.bn.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.1.bn.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.2.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.2.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.cv3.2.2.weight_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.dfl.conv.input_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.dfl.conv.output_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": null,
+      "has_amax": false
+    },
+    {
+      "name": "model.22.dfl.conv.weight_quantizer",
+      "enabled": false,
+      "num_bits": 8,
+      "axis": 0,
+      "has_amax": false
+    }
+  ],
+  "backend": "nvidia-modelopt",
+  "modelopt_version": "0.45.0",
+  "preset": "INT8_DEFAULT_CFG",
+  "calibration_algorithm": "max",
+  "calibration_split": "train",
+  "calibration_count": 64,
+  "calibration_manifest": "/kaggle/PCB-Prune-YOLO/outputs/qat/p30_int8_qat_smoke_e3_v2/quantization/calibration_images.txt",
+  "excluded_modules": [
+    "model.22.cv2.0.2",
+    "model.22.cv2.1.2",
+    "model.22.cv2.2.2",
+    "model.22.cv3.0.2",
+    "model.22.cv3.1.2",
+    "model.22.cv3.2.2",
+    "model.22.dfl"
+  ]
+}

@@ -7,4 +7,5 @@ importance: group_magnitude
 iterative_steps: 1
 round_to: 8
 global_pruning: false
+hardware_policy: standard
 dry_run: true

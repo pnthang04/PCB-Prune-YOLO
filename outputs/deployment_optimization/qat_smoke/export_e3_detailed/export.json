@@ -1,0 +1,26 @@
+{
+  "base_checkpoint": "outputs/finetune_direct/p30_adamw_exact/weights/best.pt",
+  "qat_checkpoint": "outputs/qat/p30_int8_qat_smoke_e3_v2/weights/best.pt",
+  "onnx": "outputs/deployment_optimization/qat_smoke/export_e3_detailed/model_qdq.onnx",
+  "engine": "outputs/deployment_optimization/qat_smoke/export_e3_detailed/model_qdq.engine",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_shape": [
+    1,
+    10,
+    8400
+  ],
+  "class_count": 6,
+  "onnx_quantize_linear": 133,
+  "onnx_dequantize_linear": 133,
+  "explicit_qdq": true,
+  "workspace_gib": 4.0,
+  "strongly_typed": true,
+  "profiling_verbosity": "DETAILED",
+  "modelopt_version": "0.45.0",
+  "ultralytics_version": "8.4.115"
+}

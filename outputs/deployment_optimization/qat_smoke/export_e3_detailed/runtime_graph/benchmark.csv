@@ -1,0 +1,2 @@
+engine,cuda_graph,forward_mean_latency_ms,forward_median_latency_ms,forward_p95_latency_ms,forward_fps,e2e_mean_latency_ms,e2e_median_latency_ms,e2e_p95_latency_ms,e2e_fps,peak_gpu_memory_mb,engine_size_mb
+outputs/deployment_optimization/qat_smoke/export_e3_detailed/model_qdq.engine,True,1.762104824956623,1.7533434984216,1.800956045917701,567.5031279848046,8.961638859946106,8.65326900020591,11.933506406057859,111.58673269790899,5.33935546875,5.1861162185668945

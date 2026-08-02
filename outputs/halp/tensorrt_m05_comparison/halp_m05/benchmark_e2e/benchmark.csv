@@ -1,0 +1,2 @@
+engine,measurement_scope,preloaded_images,warmup_iterations,benchmark_iterations,mean_latency_ms,median_latency_ms,p95_latency_ms,fps,peak_gpu_memory_mb,engine_size_mb,execution_context_reused,disk_io_timed,device
+outputs/halp/tensorrt_m05_comparison/halp_m05/model.engine,preprocess_H2D_TensorRT_forward_NMS_excludes_disk_io,200,50,200,4.607983939968108,4.5327139960136265,5.142404553043889,217.01464523917613,10.8681640625,7.010778427124023,True,False,Tesla T4

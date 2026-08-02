@@ -10,6 +10,8 @@ outputs/**
 !outputs/**/*.csv
 !outputs/**/args.yaml
 !outputs/**/used_config.yaml
+!outputs/**/calibration_data.yaml
+!outputs/**/calibration_images.txt
 !outputs/**/results.png
 !outputs/**/Box*_curve.png
 !outputs/**/confusion_matrix*.png

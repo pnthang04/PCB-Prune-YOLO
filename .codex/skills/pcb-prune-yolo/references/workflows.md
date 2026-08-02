@@ -220,3 +220,82 @@ baseline from the public Hugging Face repository, installs pinned TensorRT via
 `requirements-tensorrt.txt`, optionally checks out official HALP at the reviewed
 commit, validates the committed LUT, and lists the context files in reading
 order.
+
+## HALP Stage 3 TensorRT gate
+
+Use unique output names and the same export settings for baseline and a HALP
+candidate. Forward-only uses `benchmark_model.py`; E2E without disk I/O uses
+preloaded validation images:
+
+```bash
+python scripts/benchmark_tensorrt_e2e.py \
+  --engine MODEL.engine --output UNIQUE_OUTPUT \
+  --warmup 50 --iterations 200
+```
+
+The E2E result includes preprocessing, H2D, engine execution, NMS, and result
+construction. It is content-dependent: never treat an E2E gain as architecture
+speedup when forward-only does not improve or accuracy/recall changes strongly.
+
+Ultralytics prefixes `.engine` files with a length-prefixed JSON metadata
+header. `trtexec --loadEngine` needs the raw plan after that header; retain the
+original engine and extract a separate diagnostic plan. Use TensorRT 10.16.1.11
+`--dumpProfile --separateProfileRun --profilingVerbosity=detailed` with 200
+iterations. The current serialized engines do not retain detailed tactic IDs;
+do not invent them from layer timing. Isolated operator tactics remain recorded
+in the HALP LUT and must be labeled as operator-level evidence only.
+
+## Direct P30 deployment optimization
+
+This workflow is independent of HALP and must remain validation-only. Benchmark
+a metadata-wrapped Ultralytics engine with reused context, buffers and stream:
+
+```bash
+python scripts/benchmark_tensorrt_runtime.py \
+  --engine outputs/tensorrt_fp16/p30_direct/model.engine \
+  --output outputs/deployment_optimization/runtime/p30_direct/UNIQUE_NAME \
+  --warmup 50 --iterations 200 [--cuda-graph]
+```
+
+Export a new P30 PTQ engine without touching the checkpoint or FP16 engine:
+
+```bash
+python scripts/export_tensorrt_int8.py \
+  --checkpoint outputs/finetune_direct/p30_adamw_exact/weights/best.pt \
+  --name UNIQUE_NAME --data configs/data/deeppcb.yaml \
+  --calibration-count 500 --calibration-seed 42
+```
+
+The export script selects only `images/train`, records the exact manifest and
+refuses overwrites. Always audit TensorRT layer formats and validate on `val`
+before latency claims. The current implicit PTQ result fails the accuracy gate;
+do not reuse its cache for a changed graph and do not run distillation before a
+plain explicit-Q/DQ QAT control.
+
+The completed QAT smoke uses `configs/qat/p30_int8_qat.yaml` and
+`scripts/train_qat.py`. Its checkpoint must be restored with
+`modelopt.torch.opt.restore(base_model, checkpoint)`; ordinary `YOLO(checkpoint)`
+is invalid. Export with `scripts/export_qat_tensorrt.py`, which emits a strongly
+typed explicit-Q/DQ engine with detailed inspector data. Current decision is
+`FIX_GRAPH_FIRST`; do not extend epochs until a modified graph beats P30 FP16
+forward latency under the same 50/200 runtime protocol.
+
+## P40-HW latency-first pruning
+
+This workflow is independent of HALP, QAT and INT8. Reproduce candidates with
+the immutable configs, one at a time:
+
+```bash
+python scripts/prune_model.py --config configs/prune/p40_hw_a8.yaml
+python scripts/prune_model.py --config configs/prune/p40_hw_a16.yaml
+python scripts/prune_model.py --config configs/prune/p40_hw_block.yaml
+```
+
+`hardware_policy=block` protects only the ten C2f Bottleneck residual-output
+convolutions as pruning roots; DepGraph still propagates safe input dependency
+changes. Use `scripts/export_tensorrt.py`, `benchmark_tensorrt_runtime.py` and
+`profile_tensorrt_engine.py` with unique output directories. The gate is
+forward-only graph-off latency; do not use pre-FT E2E because collapsed
+confidence changes NMS work. A8 passed the latency gate but has zero pre-FT
+validation. Do not launch its fair FT/KD branches until the missing KD settings
+are explicitly recorded; both branches must start from the same `pruned.pt`.

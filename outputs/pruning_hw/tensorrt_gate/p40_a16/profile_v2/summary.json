@@ -1,0 +1,20 @@
+{
+  "engine": "outputs/pruning_hw/tensorrt_gate/p40_a16/model.engine",
+  "input_shape": [
+    640,
+    640
+  ],
+  "iterations": 200,
+  "cuda_graph": false,
+  "data_transfers": false,
+  "layer_counts": {
+    "layers": 155,
+    "convolution": 76,
+    "reformat": 23,
+    "copy": 47,
+    "pointwise": 85
+  },
+  "kernel_launches": 31809,
+  "kernel_launches_per_iteration": 159.045,
+  "tensorrt": "10.16.1.11"
+}

@@ -1,0 +1,2 @@
+model,parameters,parameter_reduction,macs,mac_reduction,precision,recall,mAP50,mAP50-95,mean_latency_ms,median_latency_ms,p95_latency_ms,fps,peak_gpu_memory_mb,model_size_mb,fine_tuned,test_evaluated
+HALP Stage 3 M05 before fine-tuning,2690674,0.106684,3918092000,0.038100,0.9413528916450574,0.9016476628328393,0.9641820135195247,0.6768050403499709,10.11516707494593,10.280115002387902,11.016856995411217,98.86144169352195,44.423828125,10.569141387939453,false,false

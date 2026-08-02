@@ -109,6 +109,22 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
 - P10 pre-fine-tune validation, complexity, benchmark, and save/load inference: complete.
 - P10 direct and sparse fine-tunes: complete.
 - P20/P30 direct prune, fine-tune, validation, and benchmark: complete.
+- Baseline/P30 FP16 `trtexec` + Nsight profile and reusable-buffer/CUDA-Graph
+  runtime ablation: complete. CUDA Graph helps P30 forward mean but not E2E.
+- P30 INT8 PTQ calibration from 500 train-only images, engine layer audit,
+  validation and latency benchmark: complete. mAP50-95 is 0.61119 versus
+  0.75610 FP16, so the PTQ engine is rejected and QAT remains pending.
+- P30 ModelOpt explicit-Q/DQ QAT smoke (3 epochs) is complete. Validation
+  mAP50-95 recovered to 0.72462, but forward/E2E remain 4.20%/8.68% slower than
+  P30 FP16. Q/DQ count is 133 pairs; coverage is 38/68 INT8-output convs versus
+  PTQ 35/61, with more reformats and kernel launches. Decision: FIX_GRAPH_FIRST;
+  full QAT and distillation are stopped.
+- P40-HW FP16 architecture gate is complete for A8, A16 and BLOCK, all rebuilt
+  from baseline at target ratio 0.40. All save/load/CUDA/TRT invariants pass.
+  A8 is fastest at 1.3540 ms versus a matched P30 rerun at 1.7575 ms (1.298x),
+  with 903,466 params and 1.1212G MACs. A8 pre-fine-tune validation is zero for
+  all metrics/classes. Training is stopped before long FT/KD because the supplied
+  request ends before specifying the distillation experiment.
 - TensorRT FP16 export/validation/benchmark for baseline and direct P10/P20/P30:
   complete.
 
@@ -315,6 +331,55 @@ license restricts official code/derivatives to non-commercial research or
 evaluation, so the project uses it as a reference and implements independent
 AGPL-compatible adaptation code. Full provenance and PAPER/OFFICIAL
 CODE/ADAPTATION/TODO classification are in `docs/HALP_ADAPTATION_PLAN.md`.
+
+## HALP Stage 2 dry-run
+
+`scripts/run_halp_stage2.py` starts from the unpruned baseline and performs no
+optimizer step or structural pruning. The verified run used 8 train minibatches
+at batch 8, accumulated the official BN Taylor term, enumerated backbone-only
+DepGraph roots, and solved a 5% prefix-constrained latency milestone.
+
+- Artifacts: `outputs/halp/stage2/dry_run.json` and `groups.csv`.
+- 25 backbone roots; 13 eligible and 12 protected for missing latency cliffs.
+- No exact LUT pair was missing.
+- Eligible dense latency: 0.447758 ms; budget: 0.425370 ms; selected: 0.419882 ms.
+- Detect/DFL fixed outputs remained protected; 6-class output was `[1,10,8400]`.
+- C2f `cv0` and `cv1` branches map to the original Stage 1 `cv1` operator
+  surface. Structural Stage 3 must rebuild costs after every milestone so
+  downstream `Cin` changes are never silently approximated.
+
+## HALP Stage 3 M05
+
+The official Taylor detail was corrected before pruning: sum signed
+`gamma*dL/dgamma + beta*dL/dbeta` terms across a dependency group, then take
+the absolute value. Seven roots were structurally pruned. Eight newly required
+2D LUT pairs were profiled on the same T4/TensorRT setup; the final audit is
+exact with no interpolation.
+
+- Checkpoint: `outputs/halp/stage3_m05/pruned.pt` (ignored by Git).
+- Reports: `outputs/halp/stage3_m05/{report,summary}.json`, validation and
+  benchmark JSON/CSV; refined LUT under `outputs/halp/lut_stage3/`.
+- Params 2,690,674 (-10.67%); MACs 3.9181G (-3.81%).
+- Pre-fine-tune validation: P 0.94135, R 0.90165, mAP50 0.96418,
+  mAP50-95 0.67681.
+- PyTorch latency 10.115 ms; FPS 98.86; slower than baseline.
+- New-process load and output `[1,10,8400]` passed.
+
+This is a structurally valid intermediate checkpoint, not a successful final
+HALP model. Fine-tuning and full TensorRT engine measurement remain TODO. Test
+was not used.
+
+Matched TensorRT FP16 gate under `outputs/halp/tensorrt_m05_comparison/`:
+
+- Baseline forward 1.7797 ms, M05 1.8385 ms: M05 speedup 0.968x (slower).
+- `trtexec` per-layer total 1.6741 vs 1.6768 ms: no acceleration.
+- E2E excluding disk but including preprocess/H2D/NMS: 4.9587 vs 4.6080 ms,
+  yet M05 loses 0.12971 mAP50-95 and 0.07235 recall, so the NMS/content effect
+  is not accepted as architecture speedup.
+- Engine layers 159 → 166, reformats 28 → 34, pointwise nodes 14 → 30;
+  pointwise time 0.1087 → 0.2405 ms.
+- Decision: stop further milestones and final fine-tuning. Fix C2f export fusion
+  and account for full-engine graph overhead in cost/grouping first.
 
 Measured TensorRT FP16 LUT on Tesla T4:
 

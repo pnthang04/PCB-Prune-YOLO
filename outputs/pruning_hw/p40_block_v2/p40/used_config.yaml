@@ -1,0 +1,11 @@
+checkpoint: outputs/train/baseline/weights/best.pt
+output: outputs/pruning_hw/p40_block_v2
+imgsz: 640
+device: auto
+pruning_ratio: 0.4
+importance: group_magnitude
+iterative_steps: 1
+round_to: 8
+global_pruning: false
+hardware_policy: block
+dry_run: false

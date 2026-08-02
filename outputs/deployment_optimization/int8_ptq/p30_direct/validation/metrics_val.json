@@ -1,0 +1,66 @@
+{
+  "split": "val",
+  "overall": {
+    "precision": 0.9439337102207302,
+    "recall": 0.9208328000844466,
+    "mAP50": 0.9697811627117479,
+    "mAP50-95": 0.6111853039875624
+  },
+  "per_class": [
+    {
+      "class_id": 0,
+      "class_name": "open",
+      "precision": 0.9673107157571263,
+      "recall": 0.9356890256724367,
+      "mAP50": 0.9686807611420905,
+      "mAP50-95": 0.5832894272062625
+    },
+    {
+      "class_id": 1,
+      "class_name": "short",
+      "precision": 0.9590507837268407,
+      "recall": 0.9141414141414141,
+      "mAP50": 0.9647238923958162,
+      "mAP50-95": 0.5522951349007557
+    },
+    {
+      "class_id": 2,
+      "class_name": "mousebite",
+      "precision": 0.9775990981344727,
+      "recall": 0.8802816901408451,
+      "mAP50": 0.9579382075262158,
+      "mAP50-95": 0.5804438892403286
+    },
+    {
+      "class_id": 3,
+      "class_name": "spur",
+      "precision": 0.9777726262958121,
+      "recall": 0.9004329004329005,
+      "mAP50": 0.9783066249591158,
+      "mAP50-95": 0.5905896433262567
+    },
+    {
+      "class_id": 4,
+      "class_name": "copper",
+      "precision": 0.95646461027757,
+      "recall": 0.9371057985551019,
+      "mAP50": 0.9872502437007987,
+      "mAP50-95": 0.6836707270499567
+    },
+    {
+      "class_id": 5,
+      "class_name": "pin-hole",
+      "precision": 0.8254044271325602,
+      "recall": 0.957345971563981,
+      "mAP50": 0.9617872465464504,
+      "mAP50-95": 0.6768230022018147
+    }
+  ],
+  "pipeline_speed_ms_per_image": {
+    "preprocess": 1.1131297400424955,
+    "inference": 3.0335651147470344,
+    "loss": 0.010998980142176151,
+    "postprocess": 1.6243990050497814
+  },
+  "measurement_scope": "validation_pipeline_includes_preprocess_inference_and_postprocess_nms"
+}

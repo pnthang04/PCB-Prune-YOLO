@@ -1,0 +1,16 @@
+{
+  "engine": "outputs/halp/tensorrt_m05_comparison/halp_m05/model.engine",
+  "measurement_scope": "preprocess_H2D_TensorRT_forward_NMS_excludes_disk_io",
+  "preloaded_images": 200,
+  "warmup_iterations": 50,
+  "benchmark_iterations": 200,
+  "mean_latency_ms": 4.607983939968108,
+  "median_latency_ms": 4.5327139960136265,
+  "p95_latency_ms": 5.142404553043889,
+  "fps": 217.01464523917613,
+  "peak_gpu_memory_mb": 10.8681640625,
+  "engine_size_mb": 7.010778427124023,
+  "execution_context_reused": true,
+  "disk_io_timed": false,
+  "device": "Tesla T4"
+}

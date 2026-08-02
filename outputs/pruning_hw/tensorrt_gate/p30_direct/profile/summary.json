@@ -1,0 +1,20 @@
+{
+  "engine": "outputs/tensorrt_fp16/p30_direct/model.engine",
+  "input_shape": [
+    640,
+    640
+  ],
+  "iterations": 200,
+  "cuda_graph": false,
+  "data_transfers": false,
+  "layer_counts": {
+    "layers": 161,
+    "convolution": 80,
+    "reformat": 27,
+    "copy": 53,
+    "pointwise": 90
+  },
+  "kernel_launches": 35021,
+  "kernel_launches_per_iteration": 175.105,
+  "tensorrt": "10.16.1.11"
+}

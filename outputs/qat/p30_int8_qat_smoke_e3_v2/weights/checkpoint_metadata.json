@@ -1,0 +1,7 @@
+{
+  "epoch": 3,
+  "fitness": 0.72092,
+  "best_fitness": 0.72092,
+  "format": "NVIDIA ModelOpt state + PyTorch state_dict",
+  "source_checkpoint": "outputs/finetune_direct/p30_adamw_exact/weights/best.pt"
+}

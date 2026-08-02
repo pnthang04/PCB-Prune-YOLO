@@ -1,0 +1,39 @@
+{
+  "name": "halp_m05",
+  "source_checkpoint": "outputs/halp/stage3_m05/pruned.pt",
+  "engine": "outputs/halp/tensorrt_m05_comparison/halp_m05/model.engine",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "output_shape_before_export": [
+    1,
+    10,
+    8400
+  ],
+  "class_count": 6,
+  "class_names": [
+    "open",
+    "short",
+    "mousebite",
+    "spur",
+    "copper",
+    "pin-hole"
+  ],
+  "precision": "fp16",
+  "dynamic": false,
+  "batch_size": 1,
+  "parameters": 2690674,
+  "counted_parameters": 2690674,
+  "macs": 3918092000,
+  "gmacs": 3.918092,
+  "flops_estimate": 7836184000,
+  "gflops_estimate": 7.836184,
+  "gpu_name": "Tesla T4",
+  "torch_version": "2.10.0+cu128",
+  "cuda_version": "12.8",
+  "tensorrt_version": "10.16.1.11",
+  "ultralytics_version": "8.4.115"
+}

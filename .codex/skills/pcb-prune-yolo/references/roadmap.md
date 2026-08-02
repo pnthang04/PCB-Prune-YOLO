@@ -55,13 +55,41 @@
   DepGraph adaptation, and completed Stage 1 TensorRT FP16 T4 LUT profiling:
   27 backbone conv names, 19 unique signatures, 598/598 successful sampled 2D
   configurations, 56 cliffs, and 98 plateaus.
+- Implemented HALP Stage 2 dry-run: averaged BN Taylor saliency over 8 train
+  minibatches, enumerated 25 backbone DepGraph roots, formed measured
+  latency-step prefixes for 13 eligible roots, protected 12 roots without a
+  reliable cliff, and solved the 5% augmented-knapsack milestone with zero
+  missing exact LUT pairs. The model was not mutated and output stayed
+  `[1,10,8400]`.
+- Corrected Taylor dependency aggregation against official HALP, applied the
+  first 5% structural milestone across seven roots, measured eight missing
+  exact LUT pairs, and passed save/new-process-load/inference. M05 has 10.67%
+  fewer params and 3.81% fewer MACs, but pre-fine-tune mAP50-95 is 0.67681 and
+  PyTorch latency is slower at 10.115 ms.
+- Completed the matched TensorRT FP16 gate. M05 forward-only is 1.838 ms versus
+  1.780 ms baseline (0.968x); `trtexec` per-layer is also slightly slower.
+  Although E2E including NMS is 1.076x faster, severe accuracy/recall loss makes
+  it content-dependent rather than accepted architecture acceleration.
+- Completed the independent P40-HW structural latency gate from baseline. A8,
+  A16 and BLOCK all beat matched P30 forward latency; A8 is selected at 1.3540
+  ms versus 1.7575 ms P30 with 0.903M params and 1.1212G MACs. Its pre-FT
+  validation is zero, so no long training or KD was launched.
 
 ## Not completed
 
-- HALP Stage 2: accumulate Taylor saliency on YOLO detection loss, map DepGraph
-  dependency groups to exact two-dimensional LUT costs, form latency-aware
-  groups, and implement/test the augmented knapsack. No HALP pruning or
-  fine-tuning has been run.
+- Complete the truncated P40-HW training specification (teacher checkpoint,
+  distillation outputs/loss, temperature, weights, epochs and early stopping),
+  then run standard FT and KD from the exact same A8 pre-FT checkpoint. Rebuild
+  and benchmark FP16 engines after training before accepting deployment speed.
+
+- Fix the P30 explicit-Q/DQ graph before any full QAT: fuse Conv-BN, reduce
+  Q/DQ and reformat boundaries around SiLU/residual/concat, then require a
+  full-engine forward win over FP16. The completed 3-epoch QAT smoke recovered
+  accuracy but failed coverage and latency gates; distillation remains stopped.
+
+- Fix C2f conversion/export fusion and include full-engine reformat/pointwise
+  overhead in the HALP cost/grouping adaptation. Re-run the M05 TensorRT
+  forward gate before training or another milestone.
 
 - Tune sparse learning on validation until group norms show measurable sparsity;
   the first `reg=1e-4` run retained baseline accuracy but produced no near-zero

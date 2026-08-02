@@ -248,10 +248,45 @@ TensorRT mAP50-95 giảm từ 0.78716 xuống 0.75610 và recall giảm từ 0.9
 [P20 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P20-Direct) và
 [P30 direct](https://huggingface.co/thangkt/PCB-Prune-YOLO-P30-Direct).
 
+### Profile latency và INT8 PTQ
+
+Profile mới trên cùng T4 cho thấy P30 giảm TensorRT GPU-compute nhưng có nhiều
+kernel launch hơn baseline (3,571 so với 2,616), nên giảm MACs chưa chuyển đều
+thành giảm latency. Runtime reuse đã được triển khai; CUDA Graph giảm forward
+mean P30 5.32% nhưng E2E mean không cải thiện (`-0.16%`), vì vậy chưa bật mặc
+định.
+
+P30 INT8 PTQ calibrate bằng 500 ảnh **chỉ từ train** đạt validation mAP50-95
+0.61119, giảm 14.49 điểm phần trăm so với P30 FP16; forward và E2E cũng chậm hơn
+lần lượt 5.03% và 5.68% trong cùng runtime. Engine này không được chọn triển
+khai và chưa chạy QAT/distillation. Báo cáo, protocol và quyết định tiếp theo ở
+[`docs/TENSORRT_LATENCY_OPTIMIZATION.md`](docs/TENSORRT_LATENCY_OPTIMIZATION.md).
+
+Smoke QAT explicit-Q/DQ 3 epoch sau đó phục hồi validation mAP50-95 lên
+0.72462, tốt hơn PTQ 11.34 điểm nhưng vẫn thấp hơn FP16 3.15 điểm. ONNX giữ 133
+cặp Q/DQ; full-FP32 convolution giảm 13 → 7, nhưng tổng TensorRT convolution
+tăng 61 → 68, reformat tăng 72 → 77 và kernel launch tăng. QAT engine vẫn chậm
+hơn P30 FP16 4.20% forward và 8.68% E2E, nên không chạy QAT dài hoặc
+distillation. Gate hiện tại là `FIX_GRAPH_FIRST`; xem
+[`docs/P30_INT8_QAT_SMOKE_REPORT.md`](docs/P30_INT8_QAT_SMOKE_REPORT.md).
+
+### P40-HW latency gate
+
+Ba candidate mới được prune lại từ baseline với target ratio 0.40: A8, A16 và
+BLOCK. Tất cả giữ output `[1,10,8400]`, bảo vệ Detect/DFL và qua kiểm tra
+save → process mới load → CUDA/TensorRT inference. Trong phép đo FP16 graph-off
+cùng T4, P30 là 1.7575 ms; A8 đạt **1.3540 ms** (1.298x), A16 1.4903 ms và
+BLOCK 1.5590 ms. A8 được chọn qua latency gate với 903,466 params và 1.1212G
+MACs. Tuy nhiên validation trước fine-tune của A8 bằng 0 cho toàn bộ metric, vì
+vậy chưa train dài hoặc distill. Chi tiết và artifact nằm tại
+[`docs/P40_HW_LATENCY_GATE.md`](docs/P40_HW_LATENCY_GATE.md) và
+`outputs/pruning_hw/comparison.{json,csv}`.
+
 ## HALP: latency-aware pruning
 
-Giai đoạn 1 của adaptation HALP đã hoàn tất; đây chưa phải mô hình HALP đã
-prune. Baseline backbone có 27 convolution thuộc 19 TensorRT operator signature.
+Giai đoạn 1 và dry-run Stage 2 của adaptation HALP đã hoàn tất; đây chưa phải mô
+hình HALP đã prune. Baseline backbone có 27 convolution thuộc 19 TensorRT
+operator signature.
 LUT T4 FP16 chứa 598 cấu hình `Cin×Cout`, warm-up 50 và đo 200 lần; toàn bộ 598
 cấu hình thành công. Phân tích tìm được 56 latency cliff và 98 plateau. Group
 step đo được thay đổi theo layer (8, 16, 24, 32, 40, 48 hoặc 64), không mặc định
@@ -259,9 +294,41 @@ mọi layer theo 8.
 
 Thiết kế, provenance paper/code, khác biệt SSD–YOLOv8 và giới hạn adaptation nằm
 trong [`docs/HALP_ADAPTATION_PLAN.md`](docs/HALP_ADAPTATION_PLAN.md). LUT và
-staircase report nằm ở `outputs/halp/lut/`. Giai đoạn tiếp theo mới thực hiện
-Taylor saliency → DepGraph latency-aware grouping → augmented knapsack; chưa có
-pruning, fine-tune hoặc test-set evaluation trong giai đoạn hiện tại.
+staircase report nằm ở `outputs/halp/lut/`.
+
+Stage 2 thu Taylor saliency trên 8 train minibatch bằng
+`|γ·∂L/∂γ + β·∂L/∂β|`, dựng dependency graph nhưng chỉ cho phép root
+`model.0`–`model.9`, tạo prefix group theo cliff đo được và giải augmented
+knapsack cho milestone giảm 5% latency. Dry-run tìm 25 backbone root: 13 root
+eligible, 12 root được giữ nguyên vì chưa có latency cliff đáng tin cậy, không
+thiếu cặp LUT chính xác, không sửa trọng số/kênh, và forward vẫn là
+`[1,10,8400]` với 6 lớp. Báo cáo nằm ở `outputs/halp/stage2/`; chạy lại bằng:
+
+```bash
+python scripts/run_halp_stage2.py --saliency-batches 8 --batch 8
+```
+
+Cost hiện tại bám bước đầu của paper: dùng latency của output convolution tại
+trạng thái hiện tại; `Cin` downstream sẽ phải được tính lại ở mỗi milestone
+structural-pruning sau này. Vì vậy chưa có pruning, fine-tune hay test-set
+evaluation trong Stage 2 này.
+
+Stage 3 đã áp dụng structural milestone 5% đầu tiên sau khi sửa Taylor group
+aggregation đúng official HALP: cộng các term có dấu trong dependency group rồi
+mới lấy trị tuyệt đối. Tám cặp `Cin×Cout` phát sinh được đo bổ sung trên cùng T4
+với 50 warm-up và 200 lần đo; audit sau prune dùng LUT chính xác, không nội suy.
+Checkpoint giảm 10.67% params và 3.81% MACs; save → process mới load → inference
+đạt. Tuy nhiên trước fine-tune, validation mAP50-95 chỉ còn 0.67681 và latency
+PyTorch tăng lên 10.115 ms (98.86 FPS), nên đây mới là checkpoint kỹ thuật, chưa
+phải mô hình HALP tốt. Báo cáo nằm ở `outputs/halp/stage3_m05/`; chưa chạy test.
+
+TensorRT gate công bằng cho thấy M05 **không tăng tốc full-engine forward**:
+baseline 1.780 ms so với M05 1.838 ms (`0.968x`). `trtexec` per-layer cũng gần
+như hòa nhưng M05 chậm hơn (`0.998x`). E2E gồm preprocess/H2D/NMS nhanh hơn
+`1.076x`, nhưng đi cùng giảm 0.12971 mAP50-95 và 0.07235 recall nên có thể do
+NMS xử lý ít candidate hơn; không được xem là tăng tốc kiến trúc. Chi tiết
+PAPER/OFFICIAL CODE/ADAPTATION và bottleneck nằm trong
+[`docs/HALP_STAGE3_TENSORRT_REPORT.md`](docs/HALP_STAGE3_TENSORRT_REPORT.md).
 
 Để tiếp tục trên server mới từ một clone sạch, làm theo
 [`docs/RESUME_HALP.md`](docs/RESUME_HALP.md); tài liệu này pin TensorRT, tải lại

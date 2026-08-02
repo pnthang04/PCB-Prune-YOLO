@@ -137,7 +137,10 @@ augmented DP, including negative latency contributions and optional prevention
 of whole-layer pruning. `CostCalculator.get_group_latency_contribute` supplies
 the ordered costs.
 
-**TODO.** No knapsack code is implemented in Stage 1.
+**IMPLEMENTED IN STAGE 2 DRY-RUN.** `halp/stage2.py` implements an equivalent
+multiple-choice DP over legal kept prefixes. This directly enforces the
+preceding constraint. It is tested independently and has not yet been connected
+to structural channel removal.
 
 ## 7. Iterative pruning milestones
 
@@ -151,7 +154,7 @@ the final budget. Fine-tuning follows pruning.
 an interval of 40 iterations. `set_latency_prune_target` creates the exponential
 schedule.
 
-**TODO.** Iterative pruning and fine-tuning are Stage 2+ work.
+**TODO.** Iterative pruning and fine-tuning remain Stage 3 work.
 
 ## 8. Reusable concepts and code boundaries
 
@@ -292,6 +295,48 @@ Artifacts:
 - `outputs/halp/lut/environment.json`
 - `outputs/halp/lut/latency_steps.{json,csv}`
 
-This is only a measured latency LUT. Taylor accumulation, DepGraph-aware
-latency grouping, augmented knapsack, iterative structural pruning, fine-tuning,
-and test evaluation remain TODO.
+## Stage 2 dry-run results
+
+Stage 2 was run from the unpruned baseline using eight training minibatches of
+eight images. It accumulates and averages the paper's BN Taylor term without an
+optimizer step, enumerates only DepGraph roots in `model.0` through `model.9`,
+maps C2f `cv0/cv1` branches to the measured pre-conversion operator surface,
+and solves a 5% eligible-root latency milestone.
+
+- 25 backbone convolution roots were enumerated.
+- 13 roots had both Taylor saliency and a measured latency group size.
+- 12 roots were protected because Stage 1 found no reliable latency cliff.
+- Zero exact LUT pairs required by the selected prefixes were missing.
+- Selected eligible-root latency was 0.419882 ms against a 0.425370 ms budget.
+- The model was not mutated; Detect/DFL outputs remained protected and forward
+  validation returned six classes with output `[1,10,8400]`.
+
+Artifacts are `outputs/halp/stage2/dry_run.json` and `groups.csv`. The current
+cost is the paper-style current-state output-convolution cost. Before structural
+Stage 3, the implementation must apply a small first milestone, rebuild
+DepGraph, recompute downstream `Cin`, require exact LUT pairs, and verify
+save/load/inference. Iterative pruning, fine-tuning, and test evaluation remain
+TODO.
+
+## Stage 3 first structural milestone
+
+Before structural pruning, Stage 2 Taylor aggregation was corrected to match
+official `importance.py`: signed BN terms are summed across each dependency
+group and the absolute value is taken only after that sum. The 5% plan selected
+seven roots. DepGraph was rebuilt before every physical group removal.
+
+The first in-memory audit found eight missing post-pruning `Cin×Cout` pairs.
+They were profiled on the same Tesla T4 and TensorRT environment using 50
+warm-ups, 200 timed iterations, and the existing 20% repeatability gate. The
+final audit had zero missing pairs and no interpolation.
+
+- Parameters: 3,012,018 → 2,690,674 (-10.67%).
+- MACs: 4.0733G → 3.9181G (-3.81%).
+- Validation before fine-tuning: P 0.94135, R 0.90165, mAP50 0.96418,
+  mAP50-95 0.67681.
+- PyTorch batch-1 latency: 10.115 ms, 98.86 FPS; this is slower than baseline.
+- Save, new-process CUDA load, six classes, and `[1,10,8400]` inference passed.
+
+This establishes structural correctness, not a successful final HALP result.
+Fine-tuning and full-engine TensorRT measurement are still required. Test was
+not used.

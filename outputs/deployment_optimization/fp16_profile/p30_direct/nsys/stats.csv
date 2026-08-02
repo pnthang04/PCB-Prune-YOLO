@@ -1,0 +1,106 @@
+Generating SQLite file outputs/deployment_optimization/fp16_profile/p30_direct/nsys/trtexec.sqlite from outputs/deployment_optimization/fp16_profile/p30_direct/nsys/trtexec.nsys-rep
+Processing [outputs/deployment_optimization/fp16_profile/p30_direct/nsys/trtexec.sqlite] with [/opt/nvidia/nsight-systems/2024.6.2/host-linux-x64/reports/cuda_api_sum.py]...
+Time (%),Total Time (ns),Num Calls,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+45.2,161374967,3571,45190.4,4989.0,3703,58198110,1362019.2,cudaLaunchKernel
+17.3,61837475,750,82450.0,1802.5,914,3049030,319866.3,cudaEventSynchronize
+5.3,18895229,57,331495.2,241493.0,51014,4883034,652170.8,cuModuleLoadData
+5.1,18134041,3400,5333.5,4430.0,3137,95685,5113.4,cuLaunchKernel
+5.0,17922820,1,17922820.0,17922820.0,17922820,17922820,0.0,cudaProfilerStop
+3.8,13456086,8,1682010.8,398644.0,44008,6023065,2573107.2,cuLibraryUnload
+3.2,11449980,23,497825.2,5356.0,3570,11318037,2358724.4,cudaMallocAsync_v11020
+3.0,10652695,1800,5918.2,4925.0,3530,66699,4974.1,cuLaunchKernelEx
+2.5,8916787,4,2229196.8,2230649.5,1593260,2862228,701433.7,cudaGetDeviceProperties_v2_v12000
+2.3,8328112,76,109580.4,111792.5,8375,909024,138587.3,cuModuleUnload
+2.1,7555725,28,269847.3,1429.0,845,6936073,1307910.3,cudaFree
+1.2,4190522,2,2095261.0,2095261.0,1379423,2811099,1012347.8,cudaMallocHost
+1.0,3487919,162,21530.4,8317.0,88,902894,71918.1,cudaMemcpyAsync
+0.7,2571160,19,135324.2,99689.0,29352,427871,94727.9,cuModuleLoadFatBinary
+0.7,2411301,362,6661.1,6077.5,2740,76918,6587.7,cudaEventRecord
+0.5,1809365,2,904682.5,904682.5,580969,1228396,457800.0,cudaFreeHost
+0.2,752534,1,752534.0,752534.0,752534,752534,0.0,cudaLaunchHostFunc_v10000
+0.2,627902,3,209300.7,223444.0,130717,273741,72553.4,cudaMalloc
+0.1,497454,9,55272.7,13507.0,3111,384611,123784.5,cudaStreamCreate
+0.1,447394,396,1129.8,469.0,388,19087,1588.6,cudaEventCreateWithFlags
+0.1,421977,164,2573.0,2403.0,943,7022,767.6,cudaStreamWaitEvent
+0.1,341560,63,5421.6,437.0,225,41378,7900.6,cudaMemsetAsync
+0.1,245902,396,621.0,407.0,313,7422,606.4,cudaEventDestroy
+0.0,173573,7,24796.1,7479.0,2364,132005,47331.8,cudaStreamSynchronize
+0.0,108035,9,12003.9,10902.0,4742,22929,6238.7,cudaStreamDestroy
+0.0,87504,419,208.8,155.0,89,4426,243.1,cuGetProcAddress_v2
+0.0,69594,2,34797.0,34797.0,21809,47785,18367.8,cuMemcpyDtoH_v2
+0.0,65159,50,1303.2,1253.0,1104,2893,258.7,cudaStreamIsCapturing_v10000
+0.0,47355,22,2152.5,1493.5,1274,6007,1278.5,cudaDeviceSynchronize
+0.0,5534,1,5534.0,5534.0,5534,5534,0.0,cudaFreeAsync_v11020
+0.0,4527,1,4527.0,4527.0,4527,4527,0.0,cudaProfilerStart
+0.0,4260,1,4260.0,4260.0,4260,4260,0.0,cuInit
+0.0,1495,3,498.3,541.0,204,750,275.5,cuModuleGetLoadingMode
+
+Processing [outputs/deployment_optimization/fp16_profile/p30_direct/nsys/trtexec.sqlite] with [/opt/nvidia/nsight-systems/2024.6.2/host-linux-x64/reports/cuda_gpu_kern_sum.py]...
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+11.6,16606755,2650,6266.7,5088.0,3008,24640,3229.7,generatedNativePointwise
+8.0,11470598,400,28676.5,26992.0,21184,37056,5671.6,trt_volta_fp16x2_hcudnn_winograd_fp16x2_128x128_ldg1_ldg4_relu_tile148t_nt_v1
+4.4,6301275,200,31506.4,28416.0,25312,40896,5224.1,sm75_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x32x64_stage1_warpsize2x1x2_g1_tensor16x8x8_execute_kernel_trt
+4.3,6175296,100,61753.0,62464.0,56928,63103,1905.0,trt_turing_h1688cudnn_256x64_sliced1x2_ldg8_relu_exp_small_nhwc_linkable_tn_v1
+4.1,5829794,350,16656.6,18080.0,3552,29856,7299.8,"void genericReformat::copyPackedKernel<__half, __half, (bool)1, (bool)1, genericReformat::IdentityCoordMapper<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+4.1,5815520,250,23262.1,23424.0,21375,24480,727.0,sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4_execute_kernel_trt
+3.5,4978535,150,33190.2,32672.0,29375,36352,2012.8,trt_turing_fp16x2_hcudnn_fp16x2_128x64_relu_interior_linkable_nn_v1
+3.5,4934500,100,49345.0,47375.5,34496,63200,12116.6,trt_volta_fp16x2_hcudnn_fp16x2_128x64_relu_small_linkable_nn_v1
+3.4,4855814,100,48558.1,46575.5,33472,62016,11999.2,trt_turing_fp16x2_hcudnn_fp16x2_128x32_relu_small_linkable_nn_v1
+3.1,4486793,350,12819.4,12160.0,4992,27232,7436.7,"void genericReformat::copyPackedKernel<__half, __half, (bool)1, (bool)1, genericReformat::ArrayN<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+3.1,4424648,500,8849.3,6080.0,4448,20384,5494.6,"void genericReformat::copyPackedKernel<__half, __half, (bool)0, (bool)1, genericReformat::ArrayN<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+2.6,3738254,50,74765.1,75680.0,68288,76959,2554.8,sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc4_execute_kernel_trt
+2.6,3725517,100,37255.2,37696.0,33728,41023,1253.6,trt_turing_h1688cudnn_256x64_ldg8_relu_exp_small_nhwc_linkable_tn_v1
+2.5,3608430,100,36084.3,34655.0,24671,46784,9437.1,trt_turing_fp16x2_hcudnn_fp16x2_128x32_relu_interior_nn_v1
+2.0,2902257,50,58045.1,58575.5,53887,59423,1641.7,volta_first_layer_filter3x3_fwd_execute_flt_k_16_kernel_trt
+2.0,2900690,50,58013.8,58639.5,53632,59552,1786.2,trt_volta_fp16x2_hcudnn_fp16x2_128x32_relu_small_linkable_nn_v1
+1.9,2722865,50,54457.3,54992.0,49887,56671,1757.8,trt_volta_fp16x2_hcudnn_fp16x2_128x32_relu_small_nn_v1
+1.8,2642418,100,26424.2,26656.0,24256,27520,863.9,sm75_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x32_stage1_warpsize4x1x1_g1_tensor16x8x8
+1.8,2593808,100,25938.1,25984.0,23712,26848,859.7,sm75_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x64x64_stage1_warpsize2x2x1_g1_tensor16x8x8
+1.8,2562928,100,25629.3,24960.0,21824,27712,1568.1,trt_volta_s884cudnn_fp16_256x64_ldg8_relu_exp_interior_nhwc2nchw_tn_v1
+1.8,2528402,100,25284.0,25455.5,23360,26207,776.8,sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x16x64_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc4_execute_kernel_trt
+1.4,2053620,50,41072.4,41536.0,37856,42016,1227.1,sm75_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x32_stage1_warpsize4x1x1_g1_tensor16x8x8_t1r3s3_execute_kernel_trt
+1.4,2023059,50,40461.2,40991.5,37215,41152,1264.5,sm75_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x64x64_stage1_warpsize2x2x1_g1_tensor16x8x8_t1r3s3_execute_kernel_trt
+1.4,2010325,50,40206.5,40368.0,35328,41439,1162.3,"void CUTENSOR_NAMESPACE::permutationKernelPLC3<CUTENSOR_NAMESPACE::VectorWrite2DTensorView<(unsigned char)0, (unsigned char)1, (bool)0, (unsigned int)4, float, __half, CUTENSOR_NAMESPACE::GeneralUnarySmall<float>>, CUTENSOR_NAMESPACE::VectorRead2DTensorView<(unsigned char)1, (unsigned char)0, (bool)0, (unsigned int)4, float, float, CUTENSOR_NAMESPACE::GeneralUnarySmall<float>>, CUTENSOR_NAMESPACE::ThreadLevelElementwise<CUTENSOR_NAMESPACE::ElementwiseConfig2DSmallMode0<CUTENSOR_NAMESPACE::GeneralUnarySmall<float>, CUTENSOR_NAMESPACE::GeneralBinary<float>, (int)2, (int)4, (int)256, (int)128, (signed char)4, (bool)0, (bool)0, (bool)0, (bool)0, (bool)1>, float>, CUTENSOR_NAMESPACE::ElementwiseRuntimePLC3<float, float, __half, float>::Params>(T4)"
+1.4,1997716,150,13318.1,13471.5,12160,13920,432.5,sm50_xmma_pooling_max_nhwc_FP16FP32_WINDOWSIZE_0_NOT_PROPAGATE_NAN_3D_execute_kernel_trt
+1.3,1914228,100,19142.3,18640.0,16672,20736,1190.0,sm75_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x64x64_stage1_warpsize2x2x1_g1_tensor16x8x8_t1r1s1_execute_kernel_trt
+1.3,1869749,100,18697.5,18880.0,17248,19232,571.2,sm75_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize64x64x64_stage1_warpsize2x2x1_g1_tensor16x8x8_execute_kernel_trt
+1.2,1743354,100,17433.5,16928.0,12192,22272,4395.1,sm75_xmma_fprop_implicit_gemm_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x32_stage1_warpsize4x1x1_g1_tensor16x8x8_simple_t1r1s1_execute_kernel_trt
+1.1,1626361,50,32527.2,32784.0,30016,33567,973.1,sm70_xmma_fprop_implicit_gemm_f32f32_f32f32_f32_nchwkcrs_nchw_tilesize128x16x8_stage1_warpsize4x1x1_g1_ffma_aligna4_alignc4_execute_kernel_trt
+1.1,1504793,50,30095.9,30464.0,27680,30688,947.5,sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x64_stage1_warpsize4x1x1_g1_tensor16x8x8_alignc8_execute_kernel_trt
+1.0,1462871,50,29257.4,29552.0,26624,29984,962.2,trt_turing_fp16x2_hcudnn_fp16x2_128x64_relu_interior_nn_v1
+1.0,1429433,50,28588.7,28864.0,26335,29440,892.1,trt_turing_h1688cudnn_256x64_sliced1x2_ldg8_relu_exp_interior_nhwc_linkable_tn_v1
+0.9,1334937,50,26698.7,26976.0,23840,27456,863.8,trt_volta_s884cudnn_fp16_256x64_ldg8_relu_exp_small_nhwc2nchw_tn_v1
+0.9,1271033,50,25420.7,25615.5,24064,25952,512.7,"void cuInt8::nhwc8Tonchhw2<(int)32, (int)8, (int)2>(const __half *, __half *, int, int, int, int, int, int)"
+0.9,1254170,250,5016.7,4256.0,3840,6464,1075.6,"void cuInt8::nhwc8Tonchhw2<(int)32, (int)32, (int)2>(const __half *, __half *, int, int, int, int, int, int)"
+0.9,1233880,50,24677.6,25007.0,22592,25504,769.6,trt_turing_fp16x2_hcudnn_fp16x2_128x64_relu_medium_nn_v1
+0.8,1074650,50,21493.0,21728.0,20159,21792,576.0,ResizeNearest2DKernel
+0.7,987452,100,9874.5,9471.5,6304,13472,3126.5,"void genericReformat::copyPackedKernel<float, __half, (bool)1, (bool)1, genericReformat::ArrayN<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+0.6,913658,100,9136.6,8927.5,5824,12448,2853.6,"void cuInt8::nchhw2Tonhwc8<(int)32, (int)16, (int)2>(const __half *, __half *, int, int, int, int, int, int)"
+0.6,849820,50,16996.4,17072.0,15680,17952,505.6,sm50_xmma_softmax_trt_NCHW_FP16_Dim2_Threads256_execute2_kernel_trt
+0.6,823067,150,5487.1,5536.0,5120,5664,147.3,"void cuInt8::nhwc8Tonchhw2<(int)32, (int)16, (int)2>(const __half *, __half *, int, int, int, int, int, int)"
+0.5,778554,100,7785.5,7424.0,4512,11168,2936.3,"void genericReformat::copyVectorizedKernel<double, float, __half, (bool)1, (bool)0, (int)4>(unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, const float *)"
+0.5,652028,100,6520.3,6400.0,5824,6880,295.3,"void genericReformat::copyPackedKernel<__half, __half, (bool)0, (bool)1, genericReformat::IdentityCoordMapper<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+0.5,646653,50,12933.1,13056.0,11904,13312,393.2,sm75_xmma_gemm_f16f16_f16f16_f16_tn_n_tilesize32x32x64_stage1_warpsize2x2x1_tensor16x8x8_execute_kernel_trt
+0.4,543485,50,10869.7,10912.0,10176,11168,283.1,sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc4_execute_kernel_trt
+0.4,525373,50,10507.5,10560.0,9760,10784,288.0,sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x16x32_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc2_execute_kernel_trt
+0.4,524574,50,10491.5,10592.0,9760,10688,287.2,"void genericReformat::copyVectorizedKernel<double, __half, float, (bool)1, (bool)0, (int)1>(unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, const float *)"
+0.3,499263,50,9985.3,10063.5,9376,10272,243.8,sm75_xmma_gemm_f16f16_f16f16_f16_nn_n_tilesize32x32x64_stage1_warpsize2x2x1_tensor16x8x8_execute_kernel_trt
+0.3,497500,50,9950.0,10047.5,9344,10176,249.2,sm75_xmma_fprop_implicit_gemm_indexed_wo_smem_f16f16_f16f16_f16_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_g1_tensor16x8x8_aligna4_alignc8_execute_kernel_trt
+0.3,447613,100,4476.1,4512.0,4160,4576,114.0,"void cuInt8::nchhw2Tonhwc8<(int)32, (int)32, (int)2>(const __half *, __half *, int, int, int, int, int, int)"
+0.3,419293,100,4192.9,4112.0,3776,4480,214.4,"void genericReformat::copyPackedKernel<__half, float, (bool)1, (bool)1, genericReformat::ArrayN<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+0.3,361246,50,7224.9,7296.0,6752,7360,185.8,"void cuInt8::nchhw2ToNchw<__half>(const __half *, T1 *, int, int, int, int, int, int, cuInt8::ReducedDivisorParameters)"
+0.2,330174,50,6603.5,6688.0,6080,6784,195.1,"void genericReformat::copyPackedKernel<__half, float, (bool)0, (bool)1, genericReformat::IdentityCoordMapper<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+0.2,319711,100,3197.1,3168.0,2944,3360,105.2,"void genericReformat::copyVectorizedKernel<double, float, float, (bool)1, (bool)0, (int)3>(unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, const float *)"
+0.2,247936,50,4958.7,5024.0,4608,5056,135.3,"void cuInt8::nhwcTonchw<float, (int)32, (int)32, (int)2>(const __half *, T1 *, int, int, int, int, int, int)"
+0.2,247551,50,4951.0,4992.0,4608,5056,121.6,"void genericReformat::copyPackedKernel<float, float, (bool)1, (bool)1, genericReformat::ArrayN<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+0.2,234143,50,4682.9,4736.0,4384,4800,123.4,ResizeVectorizedH2x4NearestKernel
+0.2,226752,50,4535.0,4576.0,4224,4672,121.6,"void genericReformat::copyPackedKernel<__half2, __half2, (bool)1, (bool)1, genericReformat::IdentityCoordMapper<(int)4>, (int)4>(unsigned int, unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, int, int, const float *, T5)"
+0.1,160735,50,3214.7,3232.0,3040,3296,68.8,"void genericReformat::copyVectorizedKernel<double, __half, __half, (bool)1, (bool)0, (int)4>(unsigned int, const void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, const float *, void *, genericReformat::ArrayN<T6>, genericReformat::ArrayNWithReducedDivisors<T6>, genericReformat::ArrayN<T6>, int, const float *)"
+0.0,66656,21,3174.1,3104.0,2976,3872,223.5,"void cask_trt::computeOffsetsKernel<(bool)0, (bool)0>(cask_trt::ComputeOffsetsParams)"
+
+Processing [outputs/deployment_optimization/fp16_profile/p30_direct/nsys/trtexec.sqlite] with [/opt/nvidia/nsight-systems/2024.6.2/host-linux-x64/reports/cuda_gpu_mem_time_sum.py]...
+Time (%),Total Time (ns),Count,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Operation
+92.9,20903282,51,409868.3,403998.0,402014,658716,35654.4,[CUDA memcpy Host-to-Device]
+6.4,1436120,52,27617.7,28752.0,1632,30016,5179.2,[CUDA memcpy Device-to-Host]
+0.5,104448,23,4541.2,2752.0,2720,39904,7734.1,[CUDA memset]
+0.3,65920,21,3139.0,2976.0,2656,4256,469.7,[CUDA memcpy Device-to-Device]

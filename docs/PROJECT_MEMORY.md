@@ -75,10 +75,55 @@ paper/supplement and `NVlabs/HALP` commit
 Tesla T4 for 27 YOLOv8n backbone conv names (19 unique signatures): 598/598
 configurations succeeded using 50 warm-ups and 200 timed iterations. Analysis
 found 56 cliffs, 98 plateaus, and layer-specific candidate steps from 8 through
-64 channels. Artifacts are under `outputs/halp/lut/`. Taylor saliency, DepGraph
-group costs, augmented knapsack, pruning, and fine-tuning remain unimplemented.
+64 channels. Stage 2 then averaged true detection-loss BN Taylor saliency over
+8 train minibatches and ran a non-mutating 5% augmented-knapsack dry-run: 13 of
+25 backbone roots were eligible, 12 were protected for lack of a reliable
+cliff, no exact LUT pair was missing, and output remained `[1,10,8400]`.
+Artifacts are under `outputs/halp/lut/` and `outputs/halp/stage2/`. At the end
+of Stage 2, structural pruning and save/load verification had not yet run.
+
+HALP Stage 3 applied the first structural 5% milestone after correcting signed
+Taylor aggregation against the official implementation. Eight missing exact
+LUT pairs were measured on T4; save/new-process-load/inference passed. The
+checkpoint has 2.691M params and 3.918G MACs, but before fine-tuning validation
+mAP50-95 is 0.67681 and PyTorch latency is 10.115 ms, worse than baseline.
+Fine-tuning and full TensorRT measurement are the next gate; test was not used.
+
+The TensorRT gate failed for architecture speed: forward-only M05 is 1.838 ms
+versus 1.780 ms baseline, and `trtexec` per-layer is also slightly slower. M05
+adds seven engine layers, six reformat nodes, and doubles pointwise layer count
+despite slightly lower convolution time. E2E including NMS is faster, but the
+large accuracy/recall loss makes it content-dependent. Do not continue pruning
+or final fine-tuning until C2f fusion and the full-engine cost model are fixed.
+
+The independent direct-P30 deployment optimization branch profiled baseline
+and P30 FP16 without touching HALP or test. P30 has lower `trtexec` GPU compute
+but 3,571 kernel launches versus baseline's 2,616. A reusable context/stream,
+pinned-buffer and async-H2D runtime is implemented. CUDA Graph improves P30
+forward mean by 5.32% but changes E2E by -0.16%, so it is not enabled by
+default. P30 INT8 PTQ used 500 deterministic training images only and produced
+35/61 INT8 convolutions; validation mAP50-95 fell from 0.75610 to 0.61119 and
+latency worsened. Do not deploy this PTQ engine. The next controlled gate is
+P30 QAT with explicit Q/DQ and no distillation initially; it has not run.
+
+P30 explicit-Q/DQ QAT smoke is now complete using NVIDIA ModelOpt 0.45.0. Three
+epochs restored validation mAP50-95 from PTQ's 0.61119 to 0.72462, but the
+strongly-typed TensorRT engine is still 4.20% slower forward and 8.68% slower
+E2E than P30 FP16. ONNX retains 133 Q/DQ pairs. Full-FP32 convolutions fall
+from 13 to 7, yet total conv/reformat/kernel-launch counts rise and INT8-output
+coverage is only 38/68 versus PTQ's 35/61. Decision: `FIX_GRAPH_FIRST`; do not
+run full QAT or distillation until Q/DQ placement and Conv-BN/SiLU fusion are
+fixed and full-engine latency passes.
 
 Last verified: 2026-08-02
+
+The independent P40-HW latency gate created three FP16 candidates from the
+same baseline without touching HALP/QAT/INT8/test. A8/A16/BLOCK have
+0.903M/0.800M/1.132M parameters. Under a fresh matched 50/200 graph-off run,
+their forward means are 1.3540/1.4903/1.5590 ms versus 1.7575 ms for P30.
+A8 is selected provisionally (1.298x P30 speedup), but its validation metrics
+are all zero before fine-tuning. Training is stopped pending the missing KD
+specification from the truncated request. See `docs/P40_HW_LATENCY_GATE.md`.
 
 The authoritative agent context lives in `.codex/skills/pcb-prune-yolo/`:
 

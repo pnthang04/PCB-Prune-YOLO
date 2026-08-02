@@ -1,0 +1,100 @@
+{
+  "date": "2026-08-02",
+  "gpu": "Tesla T4",
+  "input_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "batch": 1,
+  "warmup": 50,
+  "iterations": 200,
+  "split": "validation only",
+  "test_used": false,
+  "rows": [
+    {
+      "model": "Baseline FP16 current",
+      "precision": 0.9675325947571839,
+      "recall": 0.9617830426294427,
+      "mAP50": 0.9836192902988321,
+      "mAP50-95": 0.7871632933518187,
+      "forward_latency_ms": 1.7259196047962178,
+      "e2e_latency_ms": 4.537730995070888,
+      "fps": 220.3744561073035,
+      "engine_size_mb": 7.476772308349609,
+      "scope": "existing matched FP16 profiler"
+    },
+    {
+      "model": "P30 FP16 current",
+      "precision": 0.9630053238239128,
+      "recall": 0.92858358993507,
+      "mAP50": 0.9770030959914364,
+      "mAP50-95": 0.7561045923770547,
+      "forward_latency_ms": 1.774345244775759,
+      "e2e_latency_ms": 4.449542064903653,
+      "fps": 224.74222861890243,
+      "engine_size_mb": 5.482402801513672,
+      "scope": "existing matched FP16 profiler"
+    },
+    {
+      "model": "P30 FP16 reused runtime, graph off",
+      "precision": 0.9630053238239128,
+      "recall": 0.92858358993507,
+      "mAP50": 0.9770030959914364,
+      "mAP50-95": 0.7561045923770547,
+      "forward_latency_ms": 1.8134338999880129,
+      "e2e_latency_ms": 8.263969039835501,
+      "fps": 121.00722971971656,
+      "engine_size_mb": 5.482402801513672,
+      "scope": "custom runtime ablation"
+    },
+    {
+      "model": "P30 FP16 reused runtime, CUDA Graph",
+      "precision": 0.9630053238239128,
+      "recall": 0.92858358993507,
+      "mAP50": 0.9770030959914364,
+      "mAP50-95": 0.7561045923770547,
+      "forward_latency_ms": 1.7169820348499343,
+      "e2e_latency_ms": 8.276779495099618,
+      "fps": 120.81993975942743,
+      "engine_size_mb": 5.482402801513672,
+      "scope": "custom runtime ablation"
+    },
+    {
+      "model": "P30 INT8 PTQ, graph off",
+      "precision": 0.9439337102207302,
+      "recall": 0.9208328000844466,
+      "mAP50": 0.9697811627117479,
+      "mAP50-95": 0.6111853039875624,
+      "forward_latency_ms": 1.9046657249418786,
+      "e2e_latency_ms": 8.733734589841333,
+      "fps": 114.49855611174087,
+      "engine_size_mb": 5.859698295593262,
+      "scope": "custom runtime ablation"
+    },
+    {
+      "model": "P30 INT8 PTQ, CUDA Graph",
+      "precision": 0.9439337102207302,
+      "recall": 0.9208328000844466,
+      "mAP50": 0.9697811627117479,
+      "mAP50-95": 0.6111853039875624,
+      "forward_latency_ms": 1.96284185461991,
+      "e2e_latency_ms": 8.625244650065724,
+      "fps": 115.93874035704947,
+      "engine_size_mb": 5.859698295593262,
+      "scope": "custom runtime ablation"
+    }
+  ],
+  "deltas": {
+    "matched_fp16_p30_e2e_reduction_vs_baseline_percent": 1.9434587520289273,
+    "p30_fp16_cuda_graph_forward_reduction_percent": 5.3187417053754285,
+    "p30_fp16_cuda_graph_e2e_reduction_percent": -0.1550157702959058,
+    "p30_int8_map5095_change_absolute": -0.1449192883894923,
+    "p30_int8_map5095_drop_percentage_points": 14.491928838949232,
+    "p30_int8_vs_fp16_forward_change_percent": 5.030887806523788,
+    "p30_int8_vs_fp16_e2e_change_percent": 5.684502782396468
+  },
+  "decision": "PTQ exceeds the 2 percentage-point mAP50-95 loss gate; do not deploy this PTQ engine. QAT is warranted as the next controlled experiment, but was not run.",
+  "scope_note": "Rows from the matched FP16 profiler and custom runtime ablation are not cross-compared as absolute pipeline latency because preprocessing/NMS implementations differ."
+}

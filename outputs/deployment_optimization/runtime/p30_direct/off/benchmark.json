@@ -1,0 +1,41 @@
+{
+  "engine": "outputs/tensorrt_fp16/p30_direct/model.engine",
+  "cuda_graph": false,
+  "static_shape": [
+    1,
+    3,
+    640,
+    640
+  ],
+  "input_dtype": "torch.float32",
+  "output_shape": [
+    1,
+    10,
+    8400
+  ],
+  "context_reused": true,
+  "stream_reused": true,
+  "gpu_buffers_reused": true,
+  "pinned_host_buffer": true,
+  "h2d": "non_blocking copy on reused CUDA stream",
+  "warmup_iterations": 50,
+  "benchmark_iterations": 200,
+  "forward_scope": "TensorRT enqueue only; CUDA Graph captures inference launches only",
+  "e2e_scope": "CPU letterbox/normalize + pinned copy + async H2D + TensorRT + NMS; disk excluded",
+  "forward": {
+    "mean_latency_ms": 1.8134338999880129,
+    "median_latency_ms": 1.4946230003261007,
+    "p95_latency_ms": 3.156430893432116,
+    "fps": 551.4400056195101
+  },
+  "e2e": {
+    "mean_latency_ms": 8.263969039835501,
+    "median_latency_ms": 8.031735000258777,
+    "p95_latency_ms": 10.690692695061443,
+    "fps": 121.00722971971656
+  },
+  "peak_gpu_memory_mb": 5.33837890625,
+  "engine_size_mb": 5.482402801513672,
+  "gpu": "Tesla T4",
+  "tensorrt": "10.16.1.11"
+}
