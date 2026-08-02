@@ -1,0 +1,82 @@
+{
+  "dry_run": false,
+  "pruning_ratio": 0.1,
+  "dependency_groups": 59,
+  "replaced_c2f": [],
+  "protected_layers": [
+    "model.22.cv2.0.2",
+    "model.22.cv2.1.2",
+    "model.22.cv2.2.2",
+    "model.22.cv3.0.2",
+    "model.22.cv3.1.2",
+    "model.22.cv3.2.2",
+    "model.22.dfl.conv"
+  ],
+  "before": {
+    "parameters": 3012018,
+    "counted_parameters": 3012018,
+    "macs": 4073266400,
+    "gmacs": 4.0732664,
+    "flops_estimate": 8146532800,
+    "gflops_estimate": 8.1465328
+  },
+  "forward_before": {
+    "class_count": 6,
+    "class_names": [
+      "open",
+      "short",
+      "mousebite",
+      "spur",
+      "copper",
+      "pin-hole"
+    ],
+    "prediction_shape": [
+      1,
+      10,
+      8400
+    ]
+  },
+  "after": {
+    "parameters": 2415613,
+    "counted_parameters": 2415613,
+    "macs": 3232802400,
+    "gmacs": 3.2328024,
+    "flops_estimate": 6465604800,
+    "gflops_estimate": 6.4656048
+  },
+  "forward_after": {
+    "class_count": 6,
+    "class_names": [
+      "open",
+      "short",
+      "mousebite",
+      "spur",
+      "copper",
+      "pin-hole"
+    ],
+    "prediction_shape": [
+      1,
+      10,
+      8400
+    ]
+  },
+  "checkpoint": "outputs/pruning_sparse/p10/pruned.pt",
+  "reload_check": {
+    "loaded": true,
+    "class_count": 6,
+    "class_names": [
+      "open",
+      "short",
+      "mousebite",
+      "spur",
+      "copper",
+      "pin-hole"
+    ],
+    "prediction_shape": [
+      1,
+      10,
+      8400
+    ],
+    "device": "cuda"
+  }
+}

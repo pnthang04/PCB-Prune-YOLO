@@ -58,3 +58,9 @@ python scripts/prune_model.py \
 ```
 
 Do not use the test set to choose sparse-training or pruning settings.
+
+Sparse checkpoints saved by Ultralytics are optimizer-stripped and can have all
+parameters marked `requires_grad=False`. The pruning workflow restores gradient
+tracking on the in-memory model before building DepGraph; otherwise an already
+converted `PrunableC2f` checkpoint yields no safe groups. This does not modify
+the saved sparse checkpoint or unprotect detection outputs.

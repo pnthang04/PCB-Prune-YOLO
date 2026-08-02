@@ -1,6 +1,6 @@
 # Project state
 
-Last verified: 2026-08-01
+Last verified: 2026-08-02
 
 ## Purpose
 
@@ -130,3 +130,27 @@ Accepted smoke artifact: `outputs/sparse/depgraph_sparse_smoke_final/`.
   `[1, 10, 8400]`.
 
 This is only a hook smoke test, not a completed sparse-training or P10 result.
+
+## Full sparse training and sparse P10
+
+Full run: `outputs/sparse/depgraph_sparse_p10/`. Early stopping ended the
+configured 30-epoch run at epoch 20; the best validation checkpoint was epoch 10.
+
+- Sparse best validation: precision 0.97628, recall 0.95690, mAP50 0.98548,
+  mAP50-95 0.78752.
+- Regularizer gradient was nonzero in all 20 epochs and introduced no non-finite
+  gradients, but near-zero fraction remained 0 at threshold 0.001 and group-norm
+  statistics barely moved.
+
+Sparse P10 before fine-tuning: `outputs/pruning_sparse/p10/pruned.pt`.
+
+- DepGraph: 59 groups; seven fixed-width output layers protected; no rounding.
+- Params: 2,415,613; MACs: 3.2328G; estimated FLOPs: 6.4656G.
+- Validation: precision 0.004666, recall 0.051948, mAP50 0.002615,
+  mAP50-95 0.000375.
+- Mean latency: 9.737 ms; FPS: 102.71; peak GPU memory: 40.02 MiB.
+- New-process CUDA load and inference succeeded with output `[1,10,8400]`.
+
+Sparse P10 is worse than the preserved no-round direct-P10 ablation on both
+mAP50 and mAP50-95. Do not fine-tune or present it as a successful paper-path
+result yet. The next experiment must first produce measurable group sparsity.

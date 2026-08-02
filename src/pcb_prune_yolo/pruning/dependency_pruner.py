@@ -74,6 +74,10 @@ class YOLODepGraphPruner:
         """Trace dependencies and enumerate groups without changing any channels."""
         import torch_pruning as tp
 
+        # Ultralytics strip_optimizer() stores checkpoints with requires_grad=False.
+        # DepGraph relies on autograd edges, so restore tracing gradients in this
+        # in-memory pruning model before both this graph and the high-level pruner.
+        self.model.requires_grad_(True)
         self.graph = tp.DependencyGraph().build_dependency(
             self.model, example_inputs=self.example_input
         )

@@ -53,6 +53,10 @@ The sparse trainer is currently single-GPU because its in-memory DepGraph object
 is not reconstructed by Ultralytics DDP. It logs group norms and regularizer
 gradient evidence to `sparse_metrics.json` and `results.csv`.
 
+Ultralytics optimizer-stripped checkpoints may load with every parameter frozen.
+The project pruning wrapper must restore `requires_grad=True` on its in-memory
+model before tracing DepGraph. Do not remove this compatibility step.
+
 Dry-run a ratio without deleting channels:
 
 ```bash

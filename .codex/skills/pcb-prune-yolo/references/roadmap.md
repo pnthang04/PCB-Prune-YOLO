@@ -28,12 +28,14 @@
   optimizer-boundary hook using vendored `GroupNormPruner`.
 - One-epoch sparse hook smoke test with nonzero regularizer gradient, stable
   validation, and new-process CUDA inference.
+- Full sparse-training run with `reg=1e-4`, followed by no-round sparse P10
+  validation, complexity, benchmark, and new-process inference verification.
 
 ## Not completed
 
-- Run the proposed 30-epoch group-level sparse training on the full train split.
-- Prune P10 from the validation-selected sparse checkpoint and compare it with
-  the preserved direct-P10 ablation.
+- Tune sparse learning on validation until group norms show measurable sparsity;
+  the first `reg=1e-4` run retained baseline accuracy but produced no near-zero
+  groups and its P10 result was worse than direct pruning.
 
 - Fine-tune P10 for 30–50 epochs.
 - Confirm P10 accuracy recovery and benchmark the best fine-tuned checkpoint.
@@ -59,3 +61,8 @@
 ## Next decision gate
 
 Fine-tune the no-round P10 candidate for up to 50 epochs with `lr0=0.001`, batch 64, image size 640, seed 42, AMP, and validation-based early stopping. Continue to P20/P30 only after confirming that the P10 training path preserves the pruned dimensions and recovers meaningful validation mAP50-95.
+
+For the sparse-learning path, do not fine-tune the current sparse P10. First run
+a controlled regularization-strength experiment using values grounded in the
+official reproduction configs and require nonzero near-zero fraction before
+pruning again.
