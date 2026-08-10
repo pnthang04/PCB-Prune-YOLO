@@ -355,3 +355,21 @@ KD beat standard FT by 2.7 mAP50-95 percentage points at seed 42 (0.660 vs
 does not change channel counts, so the pre-FT TensorRT forward measurement
 (1.3540 ms) still describes this architecture; TensorRT was not rebuilt for
 this comparison. Test split was not used.
+
+## DiariZen-style gated pruning
+
+Run the first validation-only P10 experiment with:
+
+```bash
+python scripts/train_gated_pruning.py --epochs 1 --name p10_smoke
+python scripts/train_gated_pruning.py --config configs/prune/gated_p10.yaml
+python scripts/materialize_gated_pruning.py \
+  --checkpoint outputs/gated_pruning/p10/weights/best.pt \
+  --output outputs/gated_pruning/p10_physical/pruned.pt
+```
+
+Do not start the 30-epoch run before a one-epoch smoke. Physical materialization
+must use learned gate indices through DepGraph; do not substitute
+`BasePruner.step()`. Verify `[1,10,8400]`, save/new-process load, finite gate
+gradients, expected versus realized sparsity, and validation metrics. Test is
+not used.

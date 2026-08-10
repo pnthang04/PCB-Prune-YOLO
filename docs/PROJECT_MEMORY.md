@@ -1,5 +1,14 @@
 # PCB-Prune-YOLO project memory
 
+DiariZen-style learnable gated pruning is implemented but not yet trained on
+DeepPCB. It uses the official paper code's Hard-Concrete sampling, expected L0,
+linear sparsity ramp and augmented-Lagrangian multipliers, while the existing
+YOLO DepGraph owns physical dependency pruning. Native Ultralytics feature KD
+and the unchanged detection loss remain active. Unit tests, synthetic YOLOv8n
+forward/deepcopy, and one-channel physical DepGraph pruning passed; the local
+baseline checkpoint is currently absent, so the dataset-backed one-epoch smoke
+has not run. See `docs/DIARIZEN_GATED_PRUNING_DESIGN.md`.
+
 Group-level sparse training is now implemented using vendored Torch-Pruning 1.6.0.
 The hook runs after backward/unscale and before optimizer step, preserves YOLO's
 detection loss, and logs group norms plus direct evidence that the regularizer

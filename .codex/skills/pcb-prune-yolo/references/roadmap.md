@@ -13,6 +13,12 @@
 
 ## Completed
 
+- Implemented the DiariZen-derived Hard-Concrete gate, differentiable expected
+  L0 constraint, linear sparsity schedule, augmented-Lagrangian optimizer
+  groups, DepGraph group registry, and learned-index physical pruning for YOLO.
+  Added P10 config/CLIs and tests. Synthetic YOLOv8n forward, deepcopy and
+  one-channel materialization pass; no DeepPCB training result is claimed.
+
 - Deterministic DeepPCB conversion and train/validation split.
 - Dataset pairing, coordinate, class-range, and cross-split duplicate validation.
 - YOLOv8n baseline training on two T4 GPUs.
@@ -103,6 +109,11 @@
   checkpoints to the same two Hugging Face repositories.
 
 ## Not completed
+
+- Restore the baseline/data on a training machine and run the one-epoch gated
+  P10 smoke before authorizing the full 30-epoch schedule. Confirm finite gate
+  gradients, expected/realized parameter sparsity, physical save/new-process
+  load/inference, and validation-only metrics.
 
 - Decide whether P40-A8 KD is added to the main README accuracy-compression
   table as a fourth, more aggressive operating point alongside P10/P20/P30.

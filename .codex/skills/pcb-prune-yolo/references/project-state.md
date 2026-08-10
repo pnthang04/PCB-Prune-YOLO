@@ -101,6 +101,13 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
 
 ## Verification state
 
+- DiariZen-style Hard-Concrete gated pruning is implemented under
+  `src/pcb_prune_yolo/pruning/`, with gated training and physical-materialization
+  scripts. It preserves native YOLO detection loss and uses Ultralytics native
+  feature KD. The gate/L0/DepGraph unit tests and synthetic YOLOv8n
+  forward/deepcopy/one-channel materialization passed. No DeepPCB gated-training
+  metric exists yet because the local baseline checkpoint is absent.
+
 - Unit tests: see the latest verification run below; this count is historical.
 - Compileall: passed.
 - Ruff on changed pruning/benchmark code: passed.

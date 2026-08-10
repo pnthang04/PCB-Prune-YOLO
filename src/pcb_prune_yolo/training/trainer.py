@@ -108,6 +108,51 @@ def train_qat(config: dict[str, Any]) -> Any:
     return getattr(trainer.validator, "metrics", None)
 
 
+def train_gated(config: dict[str, Any]) -> Any:
+    """Train Hard-Concrete gates with detection, native KD and an L0 constraint."""
+    from ultralytics import YOLO
+
+    from pcb_prune_yolo.config import save_config
+    from pcb_prune_yolo.pruning.dependency_pruner import YOLODepGraphPruner
+    from pcb_prune_yolo.pruning.gated_groups import build_gated_registry
+
+    options = dict(config)
+    model_path = str(options.pop("checkpoint"))
+    gated = options.pop("gated")
+    if "," in str(options.get("device", "")):
+        raise ValueError("Gated pruning hiện hỗ trợ một GPU trong mỗi process")
+    if "project" in options:
+        options["project"] = str(Path(options["project"]).resolve())
+    yolo = YOLO(model_path)
+    device = torch.device("cpu")
+    example = torch.randn(1, 3, int(options["imgsz"]), int(options["imgsz"]), device=device)
+    wrapper = YOLODepGraphPruner(
+        model=yolo.model,
+        example_input=example,
+        pruning_ratio=float(gated["target_sparsity"]),
+        importance="group_magnitude",
+        iterative_steps=1,
+        round_to=None,
+        global_pruning=False,
+    )
+    registry = build_gated_registry(
+        wrapper,
+        init_drop_rate=float(gated.get("init_drop_rate", 0.01)),
+        min_channels=int(gated.get("min_channels", 8)),
+    )
+    overrides = {**options, "model": model_path, "task": "detect", "mode": "train"}
+    trainer = GatedDetectionTrainer(
+        overrides=overrides,
+        _callbacks=yolo.callbacks,
+        gated_registry=registry,
+        gated_config=gated,
+    )
+    trainer.model = yolo.model
+    save_config(config, trainer.save_dir / "used_config.yaml")
+    trainer.train()
+    return getattr(trainer.validator, "metrics", None)
+
+
 class QATDetectionTrainerMixin:
     """Record smoke-test gradient, update and finite-loss diagnostics."""
 
@@ -312,6 +357,82 @@ class SparseDetectionTrainerMixin:
         report_path.write_text(json.dumps(history, indent=2), encoding="utf-8")
 
 
+class GatedDetectionTrainerMixin:
+    """Add DiariZen's augmented-Lagrangian L0 constraint at optimizer step."""
+
+    def __init__(
+        self,
+        *args: Any,
+        gated_registry: Any,
+        gated_config: dict[str, Any],
+        **kwargs: Any,
+    ) -> None:
+        self.gated_registry = gated_registry
+        self.gated_config = gated_config
+        self.lambda1 = None
+        self.lambda2 = None
+        self._gate_loss = torch.tensor(0.0)
+        self._gate_target = 0.0
+        super().__init__(*args, **kwargs)
+
+    def _setup_train(self) -> None:
+        super()._setup_train()
+        for group in self.gated_registry.groups:
+            group.costs = group.costs.to(group.gate.log_alpha.device)
+
+    def build_optimizer(self, *args: Any, **kwargs: Any) -> Any:
+        optimizer = super().build_optimizer(*args, **kwargs)
+        gate_parameters = self.gated_registry.gate_parameters()
+        gate_ids = {id(parameter) for parameter in gate_parameters}
+        for group in optimizer.param_groups:
+            group["params"] = [parameter for parameter in group["params"] if id(parameter) not in gate_ids]
+        device = gate_parameters[0].device
+        self.lambda1 = torch.nn.Parameter(torch.tensor(0.0, device=device))
+        self.lambda2 = torch.nn.Parameter(torch.tensor(0.0, device=device))
+        reg_lr = float(self.gated_config.get("reg_lr", 0.02))
+        optimizer.add_param_group(
+            {"params": gate_parameters, "lr": reg_lr, "weight_decay": 0.0, "param_group": "gates"}
+        )
+        optimizer.add_param_group(
+            {
+                "params": [self.lambda1, self.lambda2],
+                "lr": -reg_lr,
+                "weight_decay": 0.0,
+                "param_group": "gate_lambda",
+            }
+        )
+        return optimizer
+
+    def _scheduled_target(self) -> float:
+        pretrain = int(self.gated_config.get("pretrain_epochs", 0))
+        warmup = max(1, int(self.gated_config.get("sparsity_warmup_epochs", 5)))
+        progress = min(1.0, max(0.0, (self.epoch + 1 - pretrain) / warmup))
+        return float(self.gated_config["target_sparsity"]) * progress
+
+    def optimizer_step(self) -> None:
+        self._gate_target = self._scheduled_target()
+        expected = self.gated_registry.expected_sparsity()
+        difference = expected - self._gate_target
+        self._gate_loss = self.lambda1 * difference + self.lambda2 * difference.square()
+        self.scaler.scale(self._gate_loss).backward()
+        super().optimizer_step()
+
+    def save_metrics(self, metrics: dict[str, Any]) -> None:
+        merged = {
+            **metrics,
+            "gated/target_sparsity": self._gate_target,
+            "gated/expected_sparsity": float(self.gated_registry.expected_sparsity().detach()),
+            "gated/sparsity_loss": float(self._gate_loss.detach()),
+            "gated/lambda1": float(self.lambda1.detach()),
+            "gated/lambda2": float(self.lambda2.detach()),
+        }
+        super().save_metrics(merged)
+        path = self.save_dir / "gated_metrics.json"
+        history = json.loads(path.read_text()) if path.exists() else []
+        history.append({"epoch": self.epoch + 1, **{k: _json_value(v) for k, v in merged.items()}})
+        path.write_text(json.dumps(history, indent=2), encoding="utf-8")
+
+
 def _json_value(value: Any) -> Any:
     if isinstance(value, torch.Tensor):
         return float(value.detach().cpu())
@@ -336,3 +457,12 @@ def _qat_trainer_class() -> type:
 
 
 QATDetectionTrainer = _qat_trainer_class()
+
+
+def _gated_trainer_class() -> type:
+    from ultralytics.models.yolo.detect.train import DetectionTrainer
+
+    return type("GatedDetectionTrainer", (GatedDetectionTrainerMixin, DetectionTrainer), {})
+
+
+GatedDetectionTrainer = _gated_trainer_class()
