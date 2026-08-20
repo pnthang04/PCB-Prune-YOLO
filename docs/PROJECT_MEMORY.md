@@ -124,7 +124,63 @@ coverage is only 38/68 versus PTQ's 35/61. Decision: `FIX_GRAPH_FIRST`; do not
 run full QAT or distillation until Q/DQ placement and Conv-BN/SiLU fusion are
 fixed and full-engine latency passes.
 
-Last verified: 2026-08-02 (P40-A8 fine-tune/KD update)
+The Hard-Concrete gated pruning registry now supports targeting expected MAC
+reduction, not just expected parameter reduction. Reviewing DiariZen's own
+recipe and the `asappresearch/flop` code it descends from confirmed both
+released trainers optimize parameter sparsity only, despite the "flop"
+package name — MACs are computed only for post-prune reporting, never inside
+either codebase's training loss. Since this project's own history already
+shows parameter reduction alone never produced a T4 latency win (see the
+TensorRT results above), `GatedGroupRegistry` gained `cost_type="macs"`: one
+extra forward hook pass records each convolution's own output spatial size,
+then the existing parameter-cost formula is multiplied by that size (BatchNorm
+counts 0 MACs, being elementwise). This is unit-tested with an exact
+hand-computed example (45 params vs. 7936 MACs per channel on a small
+strided toy model) and the full non-Ultralytics-dependent suite passes
+(27/27), but it has not run against the real YOLOv8n graph or DeepPCB data.
+Matched configs `configs/prune/gated_p10.yaml` (`cost_type: params`) and
+`configs/prune/gated_p10_macs.yaml` (`cost_type: macs`) are ready for that
+comparison once the environment is restored. See
+`docs/DIARIZEN_GATED_PRUNING_DESIGN.md` ("Cost accounting: parameter vs. MAC
+target").
+
+A companion plan, not yet implemented, proposes multi-depth backbone feature
+distillation (DiariZen-style `L1 + (1 - cosine)` at `model.2/4/6/9` instead of
+only the existing Detect-input native KD) for the same gated trainer; see
+`docs/GATED_KD_MULTI_DEPTH_PLAN.md`.
+
+Three real bugs surfaced only once gated pruning was actually run end-to-end
+on the server (GPU + real DeepPCB data), all now fixed and confirmed with a
+fresh 1-epoch smoke for both `cost_type` values (train → materialize →
+new-process load/inference all passed, 4 channels physically pruned each):
+
+1. `expected_sparsity()` divided cost-weighted numerator by total *parameter*
+   count regardless of `cost_type`, so a `cost_type="macs"` run's sparsity
+   ratio mixed MAC and parameter units. Observed impact: a live run logged
+   `expected_sparsity=0.664` against `target=0.10` (6.6x apparent overshoot).
+   Fixed: `GatedGroupRegistry.original_cost` now uses the matching total
+   (total params, or total model MACs via `tp.utils.count_ops_and_params`).
+2. Ultralytics' end-of-training `strip_optimizer` step replaces the saved
+   checkpoint's `model` with the EMA-smoothed shadow copy. `log_alpha` drives
+   a hard top-k threshold at materialize time, not a smooth inference weight,
+   so the EMA copy left every gate clustered within its init range even after
+   the raw model's gates had genuinely separated — one finished 100-epoch run
+   materialized **zero** pruned channels despite logging 66% expected
+   sparsity throughout training. Fixed: `GatedDetectionTrainerMixin.final_eval`
+   now no-ops to skip the strip step, the same pattern
+   `QATDetectionTrainerMixin` already used for an analogous reason.
+3. `YOLODepGraphPruner.save_pruned_model()` stored `train_args` as whatever
+   `getattr(saved_model, "args", {})` returned; after gated+distill training
+   that is an Ultralytics `IterableSimpleNamespace`, not a dict, and
+   `YOLO(checkpoint)` reloading a materialized model crashed with
+   `TypeError: 'IterableSimpleNamespace' object is not a mapping`. Fixed:
+   convert with `vars(train_args)` when it isn't already a dict.
+
+All three fixes and their smoke verification landed together; the prior
+100-epoch runs (both `cost_type` values) predate the fixes and were
+discarded (`outputs/gated_pruning/_stale_discard/`) rather than trusted.
+
+Last verified: 2026-08-20 (gated-pruning cost_type + three-bug fix, smoke-verified end-to-end)
 
 The independent P40-HW latency gate created three FP16 candidates from the
 same baseline without touching HALP/QAT/INT8/test. A8/A16/BLOCK have

@@ -135,6 +135,51 @@ mix MAC or latency constraints into the first experiment; measure them after
 physical pruning. A hardware-aligned follow-up may add `round_to=8` only after
 the faithful no-round control works.
 
+### Cost accounting: parameter vs. MAC target
+
+Neither DiariZen's own recipe nor the `asappresearch/flop` code it is built on
+(reviewed directly, both at their current default branch) actually train
+against a differentiable MAC/FLOP objective, despite the latter's package name:
+both compute `expected_sparsity` from parameter counts only
+(`flop/examples/wt103/train_agp_struct.py`, `diarizen/trainer_distill_prune.py`);
+`get_num_macs()` in the reference model is called only for post-prune reporting
+in `apply_pruning.py`, never inside a training loss. Parameter-count sparsity
+is simply the tractable default both codebases ship, not evidence that a
+MAC-weighted cost is unsound — the underlying L0-regularization framework
+(Louizos et al. 2018; Wang et al. 2020, the FLOP paper) is agnostic to what
+"expected cost" measures, as long as it is a differentiable function of each
+gate's retention probability.
+
+This project measured, and this project's own history shows why both are
+worth trying: parameter and MAC reduction track closely for direct DepGraph
+pruning (P10 19.80%/20.63%, P20 36.46%/36.85%, P30 51.77%/51.83% — within about
+1 point), but parameter reduction alone has never translated into lower T4
+latency for any pruned checkpoint so far (see `references/project-state.md`).
+A gate trained to remove the cheapest *parameters* is not the same as a gate
+trained to remove the cheapest *computation*, and only the latter has any
+chance of the compute reduction the current experiment is actually after.
+
+`GatedGroupRegistry` (`src/pcb_prune_yolo/pruning/gated_groups.py`) therefore
+supports `cost_type="params"` (default, unchanged behavior) or
+`cost_type="macs"`. The MAC variant runs one extra forward pass with the same
+`example_input` already used to build DepGraph, hooking every `Conv2d` to
+record its own output `(height, width)`, then reuses the existing
+parameter-cost formula per module and multiplies by that spatial size — MACs
+of a convolution scale with `Cout * Cin/groups * k^2 * H_out * W_out`, and the
+parameter-cost helper already computes the `Cout * Cin/groups * k^2` part.
+BatchNorm is treated as contributing 0 MACs (elementwise, negligible next to
+its owning convolution) even though it still counts toward parameter cost.
+This is implemented and unit-tested
+(`tests/test_gated_pruning.py::test_mac_cost_scales_by_spatial_size_unlike_param_cost`
+asserts exact hand-computed param and MAC costs on a 2-conv toy model with a
+strided second layer), but has not been exercised on the real DeepPCB dataset
+or the full YOLOv8n graph — the dataset-backed one-epoch smoke this file
+already requires as the next gate must be run once for each `cost_type`
+before comparing them on validation mAP50-95. `configs/prune/gated_p10.yaml`
+(`cost_type: params`) and `configs/prune/gated_p10_macs.yaml`
+(`cost_type: macs`, otherwise identical) are the matched pair for that
+ablation.
+
 ## Schedule and state machine
 
 1. **Gate warm start (optional, 0-1 epoch):** target sparsity 0; confirm the gated

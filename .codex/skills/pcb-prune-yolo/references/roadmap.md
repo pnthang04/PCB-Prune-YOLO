@@ -115,6 +115,27 @@
   gradients, expected/realized parameter sparsity, physical save/new-process
   load/inference, and validation-only metrics.
 
+- Proposed, not implemented: add multi-depth backbone feature distillation
+  (`model.2/4/6/9`, DiariZen-style `L1 + (1 - cosine)` at several depths
+  instead of only the existing Detect-input native KD) to gated training, as
+  an ablation against today's single-point KD. See
+  `docs/GATED_KD_MULTI_DEPTH_PLAN.md` for the full design, hook-ordering
+  decision, and required verification steps before any full run.
+
+- Implemented and unit-tested, not yet dataset-trained: `GatedGroupRegistry`
+  now supports `cost_type="macs"` alongside the existing `cost_type="params"`
+  (default), so the augmented-Lagrangian sparsity constraint can target
+  expected MAC reduction instead of expected parameter reduction. See
+  `docs/DIARIZEN_GATED_PRUNING_DESIGN.md` ("Cost accounting: parameter vs. MAC
+  target") for why both are worth running — neither DiariZen's own recipe nor
+  the FLOP paper code it is built on actually trains against MACs despite the
+  package name, and this project's own history shows parameter reduction
+  alone has never produced a T4 latency win. Matched configs
+  `configs/prune/gated_p10.yaml` / `gated_p10_macs.yaml` are ready; the
+  required dataset-backed one-epoch smoke (already pending for gated pruning
+  generally) must be run once per `cost_type` before any full 30-epoch run or
+  validation comparison.
+
 - Decide whether P40-A8 KD is added to the main README accuracy-compression
   table as a fourth, more aggressive operating point alongside P10/P20/P30.
   After the 100-epoch re-run this is a much more favorable trade-off (only

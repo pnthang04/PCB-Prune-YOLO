@@ -1,0 +1,2 @@
+epoch,time,train/box_loss,train/cls_loss,train/dfl_loss,train/dis_loss,metrics/precision(B),metrics/recall(B),metrics/mAP50(B),metrics/mAP50-95(B),val/box_loss,val/cls_loss,val/dfl_loss,val/dis_loss,lr/pg0,lr/pg1,lr/pg2,lr/pg3,lr/pg4,gated/target_sparsity,gated/expected_sparsity,gated/sparsity_loss,gated/lambda1,gated/lambda2
+1,20.0381,0.98303,0.6323,0.91669,22.5795,0.95639,0.95507,0.98167,0.72714,0.88477,0.59207,0.90897,0,0.0002,0.0002,0.0002,0.02,-0.02,0.02,0.00401831,0.00194885,-0.139998,0.139991

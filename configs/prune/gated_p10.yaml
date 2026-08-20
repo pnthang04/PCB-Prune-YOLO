@@ -3,14 +3,14 @@ data: configs/data/deeppcb.yaml
 imgsz: 640
 device: 0
 batch: 32
-epochs: 30
+epochs: 100
 optimizer: AdamW
 lr0: 0.0002
 lrf: 0.01
 weight_decay: 0.0
 momentum: 0.9
 workers: 8
-patience: 10
+patience: 20
 seed: 42
 amp: true
 deterministic: true
@@ -25,3 +25,4 @@ gated:
   init_drop_rate: 0.01
   min_channels: 8
   reg_lr: 0.02
+  cost_type: params

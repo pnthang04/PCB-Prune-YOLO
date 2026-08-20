@@ -221,10 +221,15 @@ class YOLODepGraphPruner:
         path.parent.mkdir(parents=True, exist_ok=True)
         saved_model = copy.deepcopy(self.model).cpu().float().eval()
         saved_model.zero_grad(set_to_none=True)
+        train_args = getattr(saved_model, "args", {})
+        if not isinstance(train_args, dict):
+            # Ultralytics attaches an IterableSimpleNamespace after gated/distill
+            # training; YOLO(checkpoint) requires train_args to support **.
+            train_args = vars(train_args)
         torch.save(
             {
                 "model": saved_model,
-                "train_args": getattr(saved_model, "args", {}),
+                "train_args": train_args,
                 "pruning_ratio": self.pruning_ratio,
                 "torch_pruning_version": __import__("torch_pruning").__version__,
             },

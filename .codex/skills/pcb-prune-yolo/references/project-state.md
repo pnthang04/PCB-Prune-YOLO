@@ -108,6 +108,29 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
   forward/deepcopy/one-channel materialization passed. No DeepPCB gated-training
   metric exists yet because the local baseline checkpoint is absent.
 
+- `GatedGroupRegistry` gained a `cost_type` option (`"params"`, default, or
+  `"macs"`) so the sparsity constraint can target expected MAC reduction
+  instead of expected parameter reduction; see
+  `docs/DIARIZEN_GATED_PRUNING_DESIGN.md`. Verified: 5/5 tests in
+  `tests/test_gated_pruning.py` (including exact hand-computed param vs. MAC
+  cost on a 2-conv toy model with a strided layer), full test suite (30/30
+  with `ultralytics` installed), and Ruff clean.
+
+- Running gated pruning end-to-end on the server surfaced three real bugs,
+  all fixed and re-verified with a fresh 1-epoch smoke for both `cost_type`
+  values (train → materialize → new-process load/inference all passed, 4
+  channels physically pruned each): an `expected_sparsity()` unit mismatch
+  for `cost_type="macs"` (6.6x apparent overshoot), Ultralytics'
+  `strip_optimizer` silently replacing the saved checkpoint with an
+  EMA-lagged copy that made one completed 100-epoch run materialize zero
+  channels despite logging 66% expected sparsity, and a `train_args`
+  namespace-vs-dict mismatch that crashed reloading a materialized gated
+  checkpoint. See `docs/PROJECT_MEMORY.md` for the full writeup. The
+  100-epoch runs that predate these fixes were discarded
+  (`outputs/gated_pruning/_stale_discard/`), not trusted. Both 100-epoch
+  runs (`configs/prune/gated_p10.yaml`, `gated_p10_macs.yaml`) still need to
+  be redone with the fixed code before any validation comparison.
+
 - Unit tests: see the latest verification run below; this count is historical.
 - Compileall: passed.
 - Ruff on changed pruning/benchmark code: passed.

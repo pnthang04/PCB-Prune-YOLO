@@ -1,9 +1,9 @@
 torch
-ultralytics
-PyYAML
-Pillow
-numpy
+ultralytics==8.4.115
+opencv-python==4.13.0.92
+PyYAML==6.0.3
+pandas==2.3.3
 
 [dev]
-pytest
+pytest==9.0.3
 ruff

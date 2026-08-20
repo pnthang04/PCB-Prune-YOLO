@@ -35,11 +35,21 @@ class GatedGroupRegistry:
         protected: list[nn.Module] | None = None,
         init_drop_rate: float = 0.01,
         min_channels: int = 8,
+        cost_type: str = "params",
+        example_input: torch.Tensor | None = None,
     ) -> None:
+        if cost_type not in {"params", "macs"}:
+            raise ValueError(f"cost_type không hỗ trợ: {cost_type}")
+        if cost_type == "macs" and example_input is None:
+            raise ValueError("cost_type='macs' cần example_input để đo kích thước không gian")
         self.model = model
         self.graph = graph
-        self.original_parameters = sum(p.numel() for p in model.parameters())
+        self.original_cost = self._total_cost(model, cost_type, example_input)
         self.min_channels = min_channels
+        self.cost_type = cost_type
+        self._spatial_sizes = (
+            _capture_conv_output_sizes(model, example_input) if cost_type == "macs" else {}
+        )
         protected_ids = {id(module) for module in protected or []}
         names = dict(model.named_modules())
         reverse_names = {id(module): name for name, module in names.items()}
@@ -61,13 +71,13 @@ class GatedGroupRegistry:
                 HardConcrete(channels, init_drop_rate=init_drop_rate),
             )
             hook = owner.register_forward_hook(ChannelGateHook())
-            costs = self._parameter_costs(group, channels, root.weight.device)
+            costs = self._channel_costs(group, channels, root.weight.device)
             self.groups.append(GatedGroup(root_name, owner_name, root, owner, group, costs, hook))
         if not self.groups:
             raise RuntimeError("Không tìm thấy DepGraph group phù hợp để gắn gate")
 
-    def _parameter_costs(self, group: Any, channels: int, device: torch.device) -> torch.Tensor:
-        """Estimate unique trainable parameter removal cost for every root channel."""
+    def _channel_costs(self, group: Any, channels: int, device: torch.device) -> torch.Tensor:
+        """Estimate unique removal cost for every root channel, in params or MACs."""
         costs = torch.zeros(channels, device=device)
         seen: set[tuple[int, str, int]] = set()
         for item in group.items:
@@ -80,7 +90,11 @@ class GatedGroupRegistry:
                 if key in seen or not 0 <= int(root_index) < channels:
                     continue
                 seen.add(key)
-                value = self._slice_parameters(module, int(index), is_out)
+                value = (
+                    self._slice_macs(module, int(index), is_out)
+                    if self.cost_type == "macs"
+                    else self._slice_parameters(module, int(index), is_out)
+                )
                 costs[int(root_index)] += value
         return costs.clamp_min(1)
 
@@ -100,16 +114,50 @@ class GatedGroupRegistry:
             return module.weight[:, index].numel()
         return 0
 
+    def _slice_macs(self, module: nn.Module, index: int, is_out: bool) -> int | float:
+        """Multiply-accumulate cost of removing one channel index.
+
+        Reuses the parameter-cost weight count (a conv kernel's weights are
+        applied once per output pixel) and scales it by the module's own
+        output spatial size. BatchNorm is elementwise and contributes
+        negligible MACs next to its owning convolution, so it costs 0 here
+        even though it counts toward parameter cost.
+        """
+        if isinstance(module, nn.BatchNorm2d):
+            return 0
+        weight_count = self._slice_parameters(module, index, is_out)
+        if isinstance(module, nn.Conv2d):
+            weight_count -= int(is_out and module.bias is not None)
+            height, width = self._spatial_sizes[id(module)]
+            return weight_count * height * width
+        return weight_count
+
+    @staticmethod
+    def _total_cost(model: nn.Module, cost_type: str, example_input: torch.Tensor | None) -> float:
+        """Return the whole-model cost that group costs must be a fraction of.
+
+        Group costs and this total must share units, or expected_sparsity()
+        is a meaningless ratio: MAC-cost channels summed against a
+        parameter-count denominator inflated an observed run's expected
+        sparsity to 0.64 against a target of 0.10.
+        """
+        if cost_type == "params":
+            return sum(p.numel() for p in model.parameters())
+        import torch_pruning as tp
+
+        macs, _ = tp.utils.count_ops_and_params(model, example_input)
+        return float(macs)
+
     def gate_parameters(self) -> list[nn.Parameter]:
         return [group.gate.log_alpha for group in self.groups]
 
-    def expected_pruned_parameters(self) -> torch.Tensor:
+    def expected_pruned_cost(self) -> torch.Tensor:
         return sum(
             ((1 - group.gate.expected_mask()) * group.costs).sum() for group in self.groups
         )
 
     def expected_sparsity(self) -> torch.Tensor:
-        return self.expected_pruned_parameters() / self.original_parameters
+        return self.expected_pruned_cost() / self.original_cost
 
     def report(self) -> dict[str, float | int]:
         return {
@@ -143,10 +191,34 @@ class GatedGroupRegistry:
         return selected
 
 
+@torch.no_grad()
+def _capture_conv_output_sizes(model: nn.Module, example_input: torch.Tensor) -> dict[int, tuple[int, int]]:
+    """Run one forward pass and record each Conv2d's output (height, width) for MAC costing."""
+    sizes: dict[int, tuple[int, int]] = {}
+
+    def record(module: nn.Module, _inputs: tuple, output: torch.Tensor) -> None:
+        sizes[id(module)] = (int(output.shape[-2]), int(output.shape[-1]))
+
+    hooks = [
+        module.register_forward_hook(record)
+        for module in model.modules()
+        if isinstance(module, nn.Conv2d)
+    ]
+    was_training = model.training
+    device = next(model.parameters()).device
+    model.eval()
+    model(example_input.to(device))
+    model.train(was_training)
+    for hook in hooks:
+        hook.remove()
+    return sizes
+
+
 def build_gated_registry(
     wrapper: Any,
     init_drop_rate: float = 0.01,
     min_channels: int = 8,
+    cost_type: str = "params",
 ) -> GatedGroupRegistry:
     """Build gates from the project's already configured YOLO DepGraph wrapper."""
     graph = wrapper.build_dependency_graph()
@@ -158,6 +230,8 @@ def build_gated_registry(
         protected=wrapper.ignored_root_modules(),
         init_drop_rate=init_drop_rate,
         min_channels=min_channels,
+        cost_type=cost_type,
+        example_input=wrapper.example_input,
     )
 
 

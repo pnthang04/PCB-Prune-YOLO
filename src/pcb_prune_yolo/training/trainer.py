@@ -139,6 +139,7 @@ def train_gated(config: dict[str, Any]) -> Any:
         wrapper,
         init_drop_rate=float(gated.get("init_drop_rate", 0.01)),
         min_channels=int(gated.get("min_channels", 8)),
+        cost_type=str(gated.get("cost_type", "params")),
     )
     overrides = {**options, "model": model_path, "task": "detect", "mode": "train"}
     trainer = GatedDetectionTrainer(
@@ -380,6 +381,11 @@ class GatedDetectionTrainerMixin:
         for group in self.gated_registry.groups:
             group.costs = group.costs.to(group.gate.log_alpha.device)
 
+    def final_eval(self) -> None:
+        """Skip Ultralytics checkpoint stripping; it swaps the saved model for
+        the EMA shadow copy, which lags log_alpha's hard top-k threshold badly
+        enough that materialize can select zero channels despite real training."""
+
     def build_optimizer(self, *args: Any, **kwargs: Any) -> Any:
         optimizer = super().build_optimizer(*args, **kwargs)
         gate_parameters = self.gated_registry.gate_parameters()
@@ -422,7 +428,7 @@ class GatedDetectionTrainerMixin:
             **metrics,
             "gated/target_sparsity": self._gate_target,
             "gated/expected_sparsity": float(self.gated_registry.expected_sparsity().detach()),
-            "gated/sparsity_loss": float(self._gate_loss.detach()),
+            "gated/sparsity_penalty": float(self._gate_loss.detach()),
             "gated/lambda1": float(self.lambda1.detach()),
             "gated/lambda2": float(self.lambda2.detach()),
         }

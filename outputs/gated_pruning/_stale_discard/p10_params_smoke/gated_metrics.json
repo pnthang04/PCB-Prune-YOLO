@@ -1,0 +1,27 @@
+[
+  {
+    "epoch": 1,
+    "train/box_loss": 0.98277,
+    "train/cls_loss": 0.6319,
+    "train/dfl_loss": 0.9166,
+    "train/dis_loss": 22.57931,
+    "metrics/precision(B)": 0.95435,
+    "metrics/recall(B)": 0.95594,
+    "metrics/mAP50(B)": 0.98184,
+    "metrics/mAP50-95(B)": 0.72622,
+    "val/box_loss": 0.88626,
+    "val/cls_loss": 0.5986,
+    "val/dfl_loss": 0.90923,
+    "val/dis_loss": 0.0,
+    "lr/pg0": 0.0002,
+    "lr/pg1": 0.0002,
+    "lr/pg2": 0.0002,
+    "lr/pg3": 0.02,
+    "lr/pg4": -0.02,
+    "gated/target_sparsity": 0.020000000000000004,
+    "gated/expected_sparsity": 0.004070635419338942,
+    "gated/sparsity_loss": 0.0019423705525696278,
+    "gated/lambda1": -0.1399984359741211,
+    "gated/lambda2": 0.13999149203300476
+  }
+]
