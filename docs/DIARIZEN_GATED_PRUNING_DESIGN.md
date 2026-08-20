@@ -172,13 +172,22 @@ its owning convolution) even though it still counts toward parameter cost.
 This is implemented and unit-tested
 (`tests/test_gated_pruning.py::test_mac_cost_scales_by_spatial_size_unlike_param_cost`
 asserts exact hand-computed param and MAC costs on a 2-conv toy model with a
-strided second layer), but has not been exercised on the real DeepPCB dataset
-or the full YOLOv8n graph — the dataset-backed one-epoch smoke this file
-already requires as the next gate must be run once for each `cost_type`
-before comparing them on validation mAP50-95. `configs/prune/gated_p10.yaml`
-(`cost_type: params`) and `configs/prune/gated_p10_macs.yaml`
-(`cost_type: macs`, otherwise identical) are the matched pair for that
-ablation.
+strided second layer). `configs/prune/gated_p10.yaml` (`cost_type: params`)
+and `configs/prune/gated_p10_macs.yaml` (`cost_type: macs`, otherwise
+identical) are the matched pair for that ablation, and both have now run to
+completion on real DeepPCB data at two target sparsities (P10 and P30): see
+`docs/PROJECT_MEMORY.md` for full numbers. Result: `cost_type="macs"`
+produced essentially the same realized MAC reduction as `cost_type="params"`
+in every run (~3.3% either way). A channel-level diff explains why —
+`expected_sparsity()`'s cost weighting only changes how the aggregate
+sparsity target is measured; it does not change which specific channels
+`L_detect`'s gradient tolerates losing, and that gradient concentrates every
+run's cuts in the same cheap-per-channel C2f `cv1` branches while leaving the
+expensive stem (`model.0`, `model.1`) untouched regardless of cost_type. A
+MAC-aware cost is therefore necessary but not sufficient; redirecting
+*which* channels get cut likely needs a per-group prune-fraction cap or a
+per-layer cost multiplier strong enough to outweigh `L_detect`, neither of
+which is implemented yet.
 
 ## Schedule and state machine
 

@@ -323,5 +323,30 @@
     "gated/sparsity_penalty": 1.3865686655044556,
     "gated/lambda1": -3.5814995765686035,
     "gated/lambda2": 3.864861011505127
+  },
+  {
+    "epoch": 14,
+    "train/box_loss": 0.97117,
+    "train/cls_loss": 0.60734,
+    "train/dfl_loss": 0.92323,
+    "train/dis_loss": 5.06751,
+    "metrics/precision(B)": 0.9675,
+    "metrics/recall(B)": 0.96399,
+    "metrics/mAP50(B)": 0.98338,
+    "metrics/mAP50-95(B)": 0.7636,
+    "val/box_loss": 0.76038,
+    "val/cls_loss": 0.4615,
+    "val/dfl_loss": 0.88137,
+    "val/dis_loss": 0.0,
+    "lr/pg0": 0.00017426,
+    "lr/pg1": 0.00017426,
+    "lr/pg2": 0.00017426,
+    "lr/pg3": 0.017426,
+    "lr/pg4": -0.017426,
+    "gated/target_sparsity": 0.3,
+    "gated/expected_sparsity": 0.0058106426149606705,
+    "gated/sparsity_penalty": 1.4806236028671265,
+    "gated/lambda1": -3.8410394191741943,
+    "gated/lambda2": 4.13195276260376
   }
 ]

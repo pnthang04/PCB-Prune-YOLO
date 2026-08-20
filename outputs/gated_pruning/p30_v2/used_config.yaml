@@ -1,7 +1,7 @@
 checkpoint: outputs/train/baseline/weights/best.pt
 data: configs/data/deeppcb.yaml
 imgsz: 640
-device: 1
+device: 0
 batch: 32
 epochs: 100
 optimizer: AdamW
@@ -15,15 +15,15 @@ seed: 42
 amp: true
 deterministic: true
 project: outputs/gated_pruning
-name: p30_macs_v2
+name: p30_v2
 distill_model: outputs/train/baseline/weights/best.pt
 dis: 6.0
 gated:
-  target_sparsity: 0.30
+  target_sparsity: 0.3
   pretrain_epochs: 0
   sparsity_warmup_epochs: 10
   init_drop_rate: 0.01
   min_channels: 8
   reg_lr: 0.05
   min_hold_epochs: 60
-  cost_type: macs
+  cost_type: params

@@ -368,8 +368,25 @@ python scripts/materialize_gated_pruning.py \
   --output outputs/gated_pruning/p10_physical/pruned.pt
 ```
 
-Do not start the 30-epoch run before a one-epoch smoke. Physical materialization
+Do not start the full-epoch run before a one-epoch smoke. Physical materialization
 must use learned gate indices through DepGraph; do not substitute
 `BasePruner.step()`. Verify `[1,10,8400]`, save/new-process load, finite gate
 gradients, expected versus realized sparsity, and validation metrics. Test is
 not used.
+
+Set `gated.cost_type: macs` (default `params`) to weight the sparsity
+constraint by expected MAC reduction instead of expected parameter reduction;
+see `configs/prune/gated_p10_macs.yaml` and
+`docs/DIARIZEN_GATED_PRUNING_DESIGN.md` ("Cost accounting"). It does not
+change which channels are safe to prune (that is decided by the detection
+loss), only how the aggregate sparsity target is measured — do not expect it
+alone to redirect pruning away from cheap-MAC layers.
+
+`patience` triggers on the validation fitness peak, which in every run so far
+plateaus around epoch 39 regardless of `target_sparsity` — long before the
+sparsity constraint has converged. Set `gated.min_hold_epochs` to forbid
+early stopping before a fixed epoch if a longer hold phase is needed; note
+this does not by itself change which checkpoint `materialize_gated_pruning.py`
+reads, since `weights/best.pt` is still selected by validation fitness, not
+by sparsity convergence — read `weights/last.pt` instead to see the
+higher-sparsity, lower-fitness end-of-run state.

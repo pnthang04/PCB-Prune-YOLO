@@ -15,14 +15,15 @@ seed: 42
 amp: true
 deterministic: true
 project: outputs/gated_pruning
-name: p30
+name: p30_v2
 distill_model: outputs/train/baseline/weights/best.pt
 dis: 6.0
 gated:
   target_sparsity: 0.30
   pretrain_epochs: 0
-  sparsity_warmup_epochs: 5
+  sparsity_warmup_epochs: 10
   init_drop_rate: 0.01
   min_channels: 8
-  reg_lr: 0.02
+  reg_lr: 0.05
+  min_hold_epochs: 60
   cost_type: params

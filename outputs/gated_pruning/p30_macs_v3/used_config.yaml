@@ -15,15 +15,14 @@ seed: 42
 amp: true
 deterministic: true
 project: outputs/gated_pruning
-name: p30_macs_v2
+name: p30_macs_v3
 distill_model: outputs/train/baseline/weights/best.pt
 dis: 6.0
 gated:
-  target_sparsity: 0.30
+  target_sparsity: 0.3
   pretrain_epochs: 0
-  sparsity_warmup_epochs: 10
+  sparsity_warmup_epochs: 5
   init_drop_rate: 0.01
   min_channels: 8
-  reg_lr: 0.05
-  min_hold_epochs: 60
+  reg_lr: 0.02
   cost_type: macs

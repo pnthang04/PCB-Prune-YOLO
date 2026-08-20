@@ -19,7 +19,7 @@ name: p30_macs_v2
 distill_model: outputs/train/baseline/weights/best.pt
 dis: 6.0
 gated:
-  target_sparsity: 0.30
+  target_sparsity: 0.3
   pretrain_epochs: 0
   sparsity_warmup_epochs: 10
   init_drop_rate: 0.01

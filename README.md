@@ -213,6 +213,60 @@ Direct P30 giảm 51.77% tham số và 51.83% MACs. Sau 50 epoch, mAP50-95 đạ
 3.014 MiB, nhưng latency 9.863 ms vẫn chậm hơn baseline 18.99%; vì vậy P30 là
 ứng viên nén mạnh, không phải ứng viên accuracy hoặc latency tốt nhất.
 
+## Gated pruning (Hard-Concrete, kiểu DiariZen)
+
+Nhánh thứ hai, độc lập với DepGraph magnitude/sparse pruning ở trên: một gate
+Hard-Concrete học được gắn vào mỗi group DepGraph, train cùng lúc với
+detection loss và KD gốc của Ultralytics (`distill_model`/`dis`), sau đó mới
+vật lý hóa (xóa channel thật) khi train xong — khác hẳn direct/sparse pruning
+vốn cắt trước rồi mới fine-tune. Thiết kế đầy đủ, ánh xạ từ DiariZen sang
+YOLOv8n, và lịch trình bắt buộc nằm trong
+[`docs/DIARIZEN_GATED_PRUNING_DESIGN.md`](docs/DIARIZEN_GATED_PRUNING_DESIGN.md).
+
+```bash
+python scripts/train_gated_pruning.py --config configs/prune/gated_p10.yaml
+python scripts/materialize_gated_pruning.py \
+  --checkpoint outputs/gated_pruning/p10/weights/best.pt \
+  --output outputs/gated_pruning/p10_physical/pruned.pt \
+  --target-sparsity 0.10
+```
+
+`GatedGroupRegistry` hỗ trợ hai tiêu chí cắt: `cost_type: params` (mặc định,
+theo số tham số) hoặc `cost_type: macs` (theo số phép tính, xem
+`configs/prune/gated_p10_macs.yaml`).
+
+Kết quả validation ngay sau vật lý hóa, **trước khi fine-tune thêm bất kỳ epoch
+nào**:
+
+| Model | Params | MACs | val mAP50-95 | Latency (cùng session) |
+|---|---:|---:|---:|---:|
+| Baseline | 3,012,018 | 4.0733G | 0.78524* | 8.338 ms |
+| Gated P10, `cost_type=params` | 2,679,454 (−11.03%) | 3.9402G (−3.27%) | 0.775 | 9.806 ms |
+| Gated P10, `cost_type=macs` | 2,681,344 (−10.97%) | 3.9410G (−3.25%) | 0.774 | 9.669 ms |
+| Gated P30, `cost_type=params` | 2,677,296 (−11.10%) | 3.9394G (−3.29%) | 0.778 | 10.590 ms |
+| Gated P30, `cost_type=macs` | 2,680,414 (−10.99%) | 3.9406G (−3.26%) | 0.775 | 10.074 ms |
+
+*Baseline mAP50-95 là số lịch sử (không đo lại validation trong session này);
+latency baseline đã đo lại cùng session để so sánh công bằng.
+
+**Điểm mạnh:** khác hẳn direct/sparse P10 (validation gần như bằng 0 trước khi
+fine-tune 50 epoch), gated pruning giữ được accuracy ngang baseline **ngay lập
+tức sau khi cắt vật lý**, không cần fine-tune riêng — vì gate đã học thích nghi
+sẵn với việc mất channel trong lúc train.
+
+**Điểm yếu:** MACs chỉ giảm ~3.3%, gần như giống hệt nhau dù target sparsity là
+10% hay 30%, dù dùng tiêu chí `params` hay `macs` — và latency vẫn chậm hơn
+baseline 16–27%. Soi channel-level cho thấy nguyên nhân: toàn bộ việc cắt dồn
+vào nhánh `cv1` bên trong C2f (`model.2/4/6/8/12/15/18/21.cv1`, mỗi cái −50%)
+và nhánh Detect P5 (`model.22.cv2.2`/`cv3.2`) — những chỗ nằm sâu, độ phân giải
+không gian đã nhỏ nên MAC/channel rẻ. Stem (`model.0`, `model.1`, độ phân giải
+cao nên MAC/channel đắt nhất) có gate nhưng **chưa từng bị cắt kênh nào**, dù
+đổi `cost_type` hay ép train thêm epoch (kể cả khi lambda Lagrangian nổ tới
+±30) — detection loss coi cắt stem là quá rủi ro cho accuracy nên né hoàn
+toàn, bất kể sparsity loss được tính theo đơn vị nào. Quyết định tiếp theo
+(giới hạn % cắt tối đa mỗi group, hay tăng trọng số MAC-cost theo từng layer)
+chưa được thực hiện; xem `docs/PROJECT_MEMORY.md` để biết chi tiết đầy đủ.
+
 ## TensorRT FP16 trên Tesla T4
 
 Bốn engine được build trực tiếp trên cùng Tesla T4 với TensorRT 10.16.1.11,

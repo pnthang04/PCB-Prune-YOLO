@@ -358,6 +358,31 @@ class SparseDetectionTrainerMixin:
         report_path.write_text(json.dumps(history, indent=2), encoding="utf-8")
 
 
+class _MinHoldEpochsStopper:
+    """Wrap Ultralytics' EarlyStopping to forbid stopping before a fixed epoch.
+
+    Patience alone triggers on validation fitness, which plateaus almost
+    immediately in gated training because pruning noise hasn't reached the
+    model yet; the sparsity constraint itself needs many more epochs to
+    converge toward its target. Observed: two P30 runs both stopped at
+    epoch 59 with expected_sparsity only 0.14 and 0.04 against a 0.30 target.
+    The wrapped stopper still runs every epoch so its internal best-fitness
+    bookkeeping (used by close_mosaic/possible_stop) stays correct; only the
+    returned stop decision is suppressed before min_hold_epochs.
+    """
+
+    def __init__(self, stopper: Any, min_hold_epochs: int) -> None:
+        self.stopper = stopper
+        self.min_hold_epochs = min_hold_epochs
+
+    def __call__(self, epoch: int, fitness: float | None) -> bool:
+        stop = self.stopper(epoch, fitness)
+        return stop and epoch >= self.min_hold_epochs
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self.stopper, name)
+
+
 class GatedDetectionTrainerMixin:
     """Add DiariZen's augmented-Lagrangian L0 constraint at optimizer step."""
 
@@ -380,6 +405,9 @@ class GatedDetectionTrainerMixin:
         super()._setup_train()
         for group in self.gated_registry.groups:
             group.costs = group.costs.to(group.gate.log_alpha.device)
+        min_hold_epochs = int(self.gated_config.get("min_hold_epochs", 0))
+        if min_hold_epochs:
+            self.stopper = _MinHoldEpochsStopper(self.stopper, min_hold_epochs)
 
     def final_eval(self) -> None:
         """Skip Ultralytics checkpoint stripping; it swaps the saved model for

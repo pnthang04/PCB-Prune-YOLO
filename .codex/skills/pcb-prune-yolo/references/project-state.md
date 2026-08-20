@@ -117,19 +117,25 @@ Diagnostic P10 without channel rounding: `outputs/pruning_no_round/p10/pruned.pt
   with `ultralytics` installed), and Ruff clean.
 
 - Running gated pruning end-to-end on the server surfaced three real bugs,
-  all fixed and re-verified with a fresh 1-epoch smoke for both `cost_type`
-  values (train → materialize → new-process load/inference all passed, 4
-  channels physically pruned each): an `expected_sparsity()` unit mismatch
-  for `cost_type="macs"` (6.6x apparent overshoot), Ultralytics'
-  `strip_optimizer` silently replacing the saved checkpoint with an
-  EMA-lagged copy that made one completed 100-epoch run materialize zero
-  channels despite logging 66% expected sparsity, and a `train_args`
-  namespace-vs-dict mismatch that crashed reloading a materialized gated
-  checkpoint. See `docs/PROJECT_MEMORY.md` for the full writeup. The
-  100-epoch runs that predate these fixes were discarded
-  (`outputs/gated_pruning/_stale_discard/`), not trusted. Both 100-epoch
-  runs (`configs/prune/gated_p10.yaml`, `gated_p10_macs.yaml`) still need to
-  be redone with the fixed code before any validation comparison.
+  all fixed: an `expected_sparsity()` unit mismatch for `cost_type="macs"`
+  (6.6x apparent overshoot), Ultralytics' `strip_optimizer` silently
+  replacing the saved checkpoint with an EMA-lagged copy that made one
+  completed 100-epoch run materialize zero channels despite logging 66%
+  expected sparsity, and a `train_args` namespace-vs-dict mismatch that
+  crashed reloading a materialized gated checkpoint. A fourth cosmetic bug
+  (results.csv plotting crash from a column-name collision with Ultralytics'
+  "loss" substring match) was also fixed. All fixes were then exercised for
+  real: gated P10 and P30 (both `cost_type` values, 4 runs total) trained to
+  completion, materialized, new-process load/inference verified, and
+  evaluated on validation. Results and the channel-level explanation for why
+  MACs barely drops are in `docs/PROJECT_MEMORY.md`. Early stopping was found
+  to always trigger at the same validation-fitness-peak epoch regardless of
+  `target_sparsity`; a `min_hold_epochs` mechanism
+  (`GatedDetectionTrainerMixin`, unit-tested) was added and confirmed to work
+  mechanically but did not change the realized result, since
+  `weights/best.pt` stays anchored to the fitness peak either way. Stale
+  pre-fix runs were discarded (`outputs/gated_pruning/_stale_discard/`,
+  `*_interrupted_epoch14`, `*_STALE_ema_bug`), not trusted.
 
 - Unit tests: see the latest verification run below; this count is historical.
 - Compileall: passed.

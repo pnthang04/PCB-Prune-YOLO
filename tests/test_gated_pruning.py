@@ -2,9 +2,11 @@ import torch
 from torch import nn
 
 import torch_pruning as tp
+from ultralytics.utils.torch_utils import EarlyStopping
 
 from pcb_prune_yolo.pruning.gated_groups import GatedGroupRegistry
 from pcb_prune_yolo.pruning.hard_concrete import HardConcrete
+from pcb_prune_yolo.training.trainer import _MinHoldEpochsStopper
 
 
 def test_hard_concrete_expected_l0_and_deterministic_mask() -> None:
@@ -110,3 +112,27 @@ def test_gated_group_registry_requires_example_input_for_macs() -> None:
     except ValueError:
         return
     raise AssertionError("cost_type='macs' thiếu example_input phải bị từ chối")
+
+
+def test_min_hold_epochs_stopper_suppresses_stop_before_threshold() -> None:
+    stopper = _MinHoldEpochsStopper(EarlyStopping(patience=5), min_hold_epochs=20)
+    # Fitness never improves past epoch 1, so the wrapped EarlyStopping alone
+    # would signal stop at epoch 7 (patience=5); the wrapper must suppress
+    # that until min_hold_epochs even though it keeps calling the real stopper.
+    for epoch in range(1, 15):
+        assert stopper(epoch, fitness=1.0) is False
+    assert stopper.best_epoch == 1
+    assert stopper.possible_stop is True
+
+
+def test_min_hold_epochs_stopper_allows_stop_after_threshold() -> None:
+    stopper = _MinHoldEpochsStopper(EarlyStopping(patience=5), min_hold_epochs=20)
+    for epoch in range(1, 20):
+        assert stopper(epoch, fitness=1.0) is False
+    assert stopper(20, fitness=1.0) is True
+
+
+def test_min_hold_epochs_stopper_never_stops_while_still_improving() -> None:
+    stopper = _MinHoldEpochsStopper(EarlyStopping(patience=3), min_hold_epochs=5)
+    for epoch in range(1, 10):
+        assert stopper(epoch, fitness=float(epoch)) is False

@@ -180,7 +180,80 @@ All three fixes and their smoke verification landed together; the prior
 100-epoch runs (both `cost_type` values) predate the fixes and were
 discarded (`outputs/gated_pruning/_stale_discard/`) rather than trusted.
 
-Last verified: 2026-08-20 (gated-pruning cost_type + three-bug fix, smoke-verified end-to-end)
+**First real gated-training results (P10 and P30, both `cost_type` values),
+materialized and evaluated on validation, before any post-materialize
+fine-tune.** All four checkpoints passed materialize/new-process-load/
+inference; latency was re-benchmarked against a same-session baseline
+(8.338 ms) for a fair comparison:
+
+| Model | Params | MACs | val mAP50-95 | Latency |
+|---|---:|---:|---:|---:|
+| Baseline (same session) | 3,012,018 | 4.0733G | — | 8.338 ms |
+| Gated P10, `cost_type=params` | 2,679,454 (−11.03%) | 3.9402G (−3.27%) | 0.775 | 9.806 ms |
+| Gated P10, `cost_type=macs` | 2,681,344 (−10.97%) | 3.9410G (−3.25%) | 0.774 | 9.669 ms |
+| Gated P30, `cost_type=params` | 2,677,296 (−11.10%) | 3.9394G (−3.29%) | 0.778 | 10.590 ms |
+| Gated P30, `cost_type=macs` | 2,680,414 (−10.99%) | 3.9406G (−3.26%) | 0.775 | 10.074 ms |
+
+The standout positive result: unlike direct/sparse pruning (validation near
+zero before fine-tuning), every gated checkpoint above holds baseline-level
+validation accuracy **immediately after physical pruning, with zero
+post-materialize fine-tuning epochs** — the jointly-trained gate has already
+adapted the network to its own pruning noise. The standout negative result:
+MACs reduction is small (~3.3%) and essentially identical between P10 and
+P30 targets and between `params`/`macs` cost types; latency is 16-27% worse
+than baseline in every case.
+
+A channel-level diff (`p30_v3_physical/pruned.pt` vs baseline) explains why:
+every changed convolution is either a C2f `cv1` branch cut by exactly 50%
+(`model.2/4/6/8/12/15/18/21.cv1`) or a Detect P5 branch (`model.22.cv2.2`/
+`cv3.2`, 55-87% cut); `model.7.conv` lost one channel (rounding noise). The
+stem (`model.0`, `model.1`) has a gate — it is not excluded, both are in the
+59-root gated set — but was never pruned at all in any of the four runs, even
+though it is exactly where prior HALP LUT profiling found the strongest
+operator-level latency potential
+(`docs/HALP_ADAPTATION_PLAN.md`: "model.0, model.1, model.3, model.4.cv2,
+model.9.cv1"). The mechanism: which channels are safe to remove is decided by
+the detection-loss gradient, not by how the sparsity loss weights cost;
+`cv1`'s channels sit deep in the network at small spatial resolution (cheap
+per-channel MACs, many of them), while the stem sits at full/near-full
+resolution (expensive per-channel MACs, few of them) and evidently costs
+detection accuracy more to touch. Reweighting `L_sparse` by MAC cost does not
+change which channels `L_detect` tolerates losing, so `cost_type="macs"`
+produced almost the same realized MAC reduction as `cost_type="params"`.
+
+**A "just train longer" fix did not solve this.** Two more bugs/gaps were
+found and fixed in this cycle, on top of the three below:
+
+- Ultralytics' `plot_results()` classifies any results.csv column containing
+  the substring "loss" as a loss subplot; the added `gated/sparsity_loss`
+  column made that count odd (9 instead of 8), so `len(columns)//2` subplots
+  were built for 13 total columns and plotting crashed with `index 12 is out
+  of bounds for axis 0 with size 12`. Training itself was unaffected (the
+  exception is caught), only `results.png` failed to render. Fixed by
+  renaming the metric key to `gated/sparsity_penalty`.
+- Training always stopped at the same epoch (patience=20 from the validation
+  fitness peak, epoch 39 in every run) regardless of `target_sparsity`,
+  because fitness plateaus long before the sparsity constraint has had time
+  to converge toward a higher target. Added `_MinHoldEpochsStopper`
+  (`GatedDetectionTrainerMixin._setup_train`, config key
+  `gated.min_hold_epochs`) to forbid early stopping before a configured
+  epoch while still feeding the real `EarlyStopping` every epoch so its
+  bookkeeping stays correct. Unit-tested (3 tests) and confirmed to work
+  mechanically: a P30 rerun with `sparsity_warmup_epochs=10`, `reg_lr=0.05`,
+  `min_hold_epochs=60` did run to epoch 60 instead of 59. It did not fix the
+  underlying problem: `weights/best.pt` is still selected by validation
+  fitness, which peaked at epoch 39 in this run too, so the checkpoint
+  actually used for materialize was unaffected by the extra epochs. Reading
+  the *last* epoch (60) instead showed only a modest sparsity gain (params
+  0.174→0.195, macs 0.046→0.052 expected_sparsity) at a real ~2-point mAP50-95
+  cost, with `lambda1`/`lambda2` climbing to roughly ±30 — the augmented
+  Lagrangian pushing hard without reaching the target, not a training-time
+  shortfall. This confirms the channel-level explanation above: the fix is a
+  structural/loss-weighting change (a per-group max-prune-fraction cap, or a
+  per-layer MAC-cost multiplier strong enough to outweigh `L_detect`'s
+  resistance), not a longer schedule. Not yet decided or implemented.
+
+Last verified: 2026-08-20 (gated-pruning P10/P30 results, min_hold_epochs, plotting fix)
 
 The independent P40-HW latency gate created three FP16 candidates from the
 same baseline without touching HALP/QAT/INT8/test. A8/A16/BLOCK have

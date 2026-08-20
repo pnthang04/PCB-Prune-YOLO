@@ -108,12 +108,27 @@
   compression and a TensorRT speed advantage. Re-published the improved
   checkpoints to the same two Hugging Face repositories.
 
-## Not completed
+- Ran the dataset-backed gated-pruning smoke and then full training for both
+  `cost_type` values at two target sparsities (P10 and P30), materialized,
+  new-process load/inference verified, and evaluated all four on validation
+  before any post-materialize fine-tune. Found and fixed three real bugs
+  along the way (`expected_sparsity` unit mismatch for `cost_type="macs"`,
+  Ultralytics' `strip_optimizer` silently replacing the saved gate state with
+  an EMA-lagged copy that once caused a full run to materialize zero pruned
+  channels, and a `train_args` namespace-vs-dict crash on reload), plus a
+  `results.csv` plotting crash (col name collision) and a
+  `min_hold_epochs` mechanism to stop patience triggering on the validation
+  fitness peak before the sparsity constraint converges. Headline result: all
+  four checkpoints hold baseline-level validation mAP50-95 immediately after
+  physical pruning with no further fine-tuning, but MACs only drop ~3.3% and
+  latency is 16-27% worse than baseline in every case, for both `cost_type`
+  values and both target levels — see `docs/PROJECT_MEMORY.md` for full
+  numbers and the channel-level explanation (pruning concentrates in C2f
+  `cv1` branches and the Detect P5 branch; the stem, `model.0`/`model.1`, has
+  a gate but was never pruned in any run despite being where HALP profiling
+  found the strongest latency potential).
 
-- Restore the baseline/data on a training machine and run the one-epoch gated
-  P10 smoke before authorizing the full 30-epoch schedule. Confirm finite gate
-  gradients, expected/realized parameter sparsity, physical save/new-process
-  load/inference, and validation-only metrics.
+## Not completed
 
 - Proposed, not implemented: add multi-depth backbone feature distillation
   (`model.2/4/6/9`, DiariZen-style `L1 + (1 - cosine)` at several depths
@@ -122,19 +137,23 @@
   `docs/GATED_KD_MULTI_DEPTH_PLAN.md` for the full design, hook-ordering
   decision, and required verification steps before any full run.
 
-- Implemented and unit-tested, not yet dataset-trained: `GatedGroupRegistry`
-  now supports `cost_type="macs"` alongside the existing `cost_type="params"`
-  (default), so the augmented-Lagrangian sparsity constraint can target
-  expected MAC reduction instead of expected parameter reduction. See
-  `docs/DIARIZEN_GATED_PRUNING_DESIGN.md` ("Cost accounting: parameter vs. MAC
-  target") for why both are worth running — neither DiariZen's own recipe nor
-  the FLOP paper code it is built on actually trains against MACs despite the
-  package name, and this project's own history shows parameter reduction
-  alone has never produced a T4 latency win. Matched configs
-  `configs/prune/gated_p10.yaml` / `gated_p10_macs.yaml` are ready; the
-  required dataset-backed one-epoch smoke (already pending for gated pruning
-  generally) must be run once per `cost_type` before any full 30-epoch run or
-  validation comparison.
+- Decide how to make gated pruning actually reduce MACs/latency instead of
+  concentrating cuts in cheap-per-channel C2f `cv1` branches while leaving
+  the expensive stem untouched. Raising `target_sparsity` (0.10 → 0.30) and
+  forcing more training epochs before early stop (`min_hold_epochs`) both
+  failed to change this pattern — the augmented-Lagrangian multipliers
+  climbed to roughly ±30 without meaningfully moving the stem, so this looks
+  structural (the detection-loss gradient judges stem channels unsafe to
+  lose regardless of the sparsity loss's cost weighting or target), not a
+  training-budget shortfall. Candidate fixes, not yet implemented or agreed:
+  a per-group maximum prune fraction (forcing cuts to spread beyond the
+  easiest groups once a cap is hit) or a per-layer MAC-cost multiplier large
+  enough to outweigh `L_detect`'s resistance. An open question raised but not
+  yet tested: whether an even higher target (e.g. 0.50) would eventually
+  exhaust the cheap `cv1`/Detect-P5 capacity and force stem pruning on its
+  own, since `cv1` branches were cut by exactly 50% in every run so far
+  regardless of target level, hinting at a per-group ceiling rather than a
+  global one.
 
 - Decide whether P40-A8 KD is added to the main README accuracy-compression
   table as a fourth, more aggressive operating point alongside P10/P20/P30.
