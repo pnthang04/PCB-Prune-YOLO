@@ -45,6 +45,77 @@ def test_depgraph_gates_receive_gradients_and_materialize() -> None:
     assert output.shape == (1, 12, 16, 16)
 
 
+def _round_to_registry(min_channels: int, round_to: int | None, channels: int = 8) -> GatedGroupRegistry:
+    model = nn.Sequential(
+        nn.Conv2d(3, channels, 3, padding=1, bias=False),
+        nn.BatchNorm2d(channels),
+        nn.SiLU(),
+        nn.Conv2d(channels, channels, 1),
+    )
+    example = torch.randn(1, 3, 16, 16)
+    graph = tp.DependencyGraph().build_dependency(model, example_inputs=example)
+    return GatedGroupRegistry(
+        model, graph, list(graph.get_all_groups()), min_channels=min_channels, round_to=round_to
+    )
+
+
+def test_round_to_rounds_remaining_width_down_and_prefers_low_confidence_channels() -> None:
+    registry = _round_to_registry(min_channels=2, round_to=4)
+    group = registry.groups[0]
+    # Gate drops channels 0-2; among the 5 kept channels, channel 3 has the
+    # lowest log_alpha (closest to the gate's own drop threshold).
+    group.gate.log_alpha.data[:3] = -20
+    for offset, value in enumerate([1.0, 5.0, 10.0, 15.0, 20.0]):
+        group.gate.log_alpha.data[3 + offset] = value
+
+    indices = registry.selected_indices()[group.root_name]
+
+    # Remaining width 5 rounds down to the nearest multiple of 4 -> 4 pruned.
+    assert len(indices) == 4
+    assert set(indices) == {0, 1, 2, 3}
+
+
+def test_round_to_never_restores_a_gate_dropped_channel() -> None:
+    registry = _round_to_registry(min_channels=1, round_to=8)
+    group = registry.groups[0]
+    group.gate.log_alpha.data[0] = -20
+    group.gate.log_alpha.data[1:] = 20
+
+    indices = registry.selected_indices()[group.root_name]
+
+    # round_to=8 forces the remaining width toward a multiple of 8 (clamped
+    # to min_channels=1 here since channels=8), pruning far more than the
+    # gate alone selected, but the originally gate-dropped channel must
+    # still be among them.
+    assert 0 in indices
+    assert len(indices) > 1
+
+
+def test_round_to_respects_min_channels_floor() -> None:
+    registry = _round_to_registry(min_channels=4, round_to=8)
+    group = registry.groups[0]
+    group.gate.log_alpha.data[:3] = -20
+    group.gate.log_alpha.data[3:] = 20
+
+    indices = registry.selected_indices()[group.root_name]
+
+    # Naive rounding of remaining=5 down to a multiple of 8 would go to 0;
+    # the min_channels=4 floor must win instead.
+    assert len(indices) == 4
+    assert group.gate.channels - len(indices) == 4
+
+
+def test_round_to_none_matches_existing_behavior() -> None:
+    registry = _round_to_registry(min_channels=4, round_to=None)
+    group = registry.groups[0]
+    group.gate.log_alpha.data[:4] = -20
+    group.gate.log_alpha.data[4:] = 20
+
+    indices = registry.selected_indices()[group.root_name]
+
+    assert set(indices) == {0, 1, 2, 3}
+
+
 def _small_gated_model() -> nn.Sequential:
     # conv1 stays 16x16 (k=3, pad=1, stride=1); conv2 downsamples to 8x8 (k=1, stride=2).
     return nn.Sequential(

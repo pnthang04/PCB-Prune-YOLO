@@ -28,6 +28,7 @@ def main() -> None:
     parser.add_argument("--imgsz", type=int, default=640)
     parser.add_argument("--target-sparsity", type=float, default=0.10)
     parser.add_argument("--min-channels", type=int, default=8)
+    parser.add_argument("--round-to", type=int, default=None)
     args = parser.parse_args()
 
     model = _student_model(args.checkpoint)
@@ -44,7 +45,9 @@ def main() -> None:
         round_to=None,
         global_pruning=False,
     )
-    registry = build_gated_registry(wrapper, min_channels=args.min_channels)
+    registry = build_gated_registry(
+        wrapper, min_channels=args.min_channels, round_to=args.round_to
+    )
     missing = []
     for group in registry.groups:
         logits = gate_state.get(group.gate_owner_name)

@@ -135,11 +135,13 @@ def train_gated(config: dict[str, Any]) -> Any:
         round_to=None,
         global_pruning=False,
     )
+    round_to = gated.get("round_to")
     registry = build_gated_registry(
         wrapper,
         init_drop_rate=float(gated.get("init_drop_rate", 0.01)),
         min_channels=int(gated.get("min_channels", 8)),
         cost_type=str(gated.get("cost_type", "params")),
+        round_to=int(round_to) if round_to is not None else None,
     )
     overrides = {**options, "model": model_path, "task": "detect", "mode": "train"}
     trainer = GatedDetectionTrainer(

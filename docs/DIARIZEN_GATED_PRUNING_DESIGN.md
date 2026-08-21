@@ -132,8 +132,47 @@ expected parameters per module:
 
 Start with parameter sparsity, matching the released DiariZen S80 recipe. Do not
 mix MAC or latency constraints into the first experiment; measure them after
-physical pruning. A hardware-aligned follow-up may add `round_to=8` only after
-the faithful no-round control works.
+physical pruning.
+
+### Channel alignment: `round_to`
+
+Direct/DepGraph pruning (P10/P20/P30/P40) and sparse-gradient training both
+already pass `round_to` straight into vendored Torch-Pruning's `MetaPruner`
+subclasses (`YOLODepGraphPruner.prune()`/`create_sparse_pruner()` in
+`src/pcb_prune_yolo/pruning/dependency_pruner.py`), which round each pruned
+group's *remaining* width down to the nearest multiple of `round_to` — aimed
+at keeping channel counts Tensor-Core-friendly (multiples of 8/16 for FP16).
+Gated pruning's materialization step never went through `MetaPruner` at all —
+`GatedGroupRegistry.materialize()` calls the raw DepGraph
+`group.group.prune(indices)` primitive directly on the gate's own index list —
+so it had no equivalent mechanism.
+
+`GatedGroupRegistry` now accepts an optional `round_to: int | None` (default
+`None`, no behavior change) that `selected_indices()` applies after the
+existing `min_channels` floor truncation. It mirrors Torch-Pruning's own
+`_round_to` (`src/torch_pruning/pruner/algorithms/base_pruner.py`): remaining
+width is always rounded *down*, so it can only prune more channels than the
+gate selected, never fewer — a channel the gate chose to drop is never
+restored. When rounding requires cutting additional channels beyond what the
+gate selected, the extras are taken from the currently-kept channels with the
+lowest `log_alpha` (closest to the gate's own drop threshold), and the
+`min_channels` floor still bounds how far rounding can go. Threaded through
+`build_gated_registry()`, `train_gated()`'s `gated.round_to` config key, and
+`scripts/materialize_gated_pruning.py --round-to`. Unit-tested in
+`tests/test_gated_pruning.py` (rounds remaining width down and prefers
+low-confidence channels; never restores a gate-dropped channel; respects the
+`min_channels` floor; `round_to=None` is a no-op).
+
+This is a channel-alignment mechanism only — it does not change *which*
+groups get pruned, so on its own it does not address the concentration
+problem described below (cuts landing in cheap C2f `cv1` branches while the
+expensive stem stays untouched). Direct pruning's own history shows
+`round_to=8` alone is not sufficient for a T4 latency win either (P10 direct
+with `round_to=8` was still slower than baseline in
+`references/project-state.md`); only P40-A8's much deeper MAC cut (-72.47%)
+combined with alignment produced a measured win. No gated checkpoint has been
+re-materialized with `round_to` and latency-benchmarked yet — that is a
+follow-up experiment, not a claim made here.
 
 ### Cost accounting: parameter vs. MAC target
 

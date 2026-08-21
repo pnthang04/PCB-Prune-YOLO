@@ -37,16 +37,20 @@ class GatedGroupRegistry:
         min_channels: int = 8,
         cost_type: str = "params",
         example_input: torch.Tensor | None = None,
+        round_to: int | None = None,
     ) -> None:
         if cost_type not in {"params", "macs"}:
             raise ValueError(f"cost_type không hỗ trợ: {cost_type}")
         if cost_type == "macs" and example_input is None:
             raise ValueError("cost_type='macs' cần example_input để đo kích thước không gian")
+        if round_to is not None and round_to < 1:
+            raise ValueError(f"round_to phải là số nguyên dương: {round_to}")
         self.model = model
         self.graph = graph
         self.original_cost = self._total_cost(model, cost_type, example_input)
         self.min_channels = min_channels
         self.cost_type = cost_type
+        self.round_to = round_to
         self._spatial_sizes = (
             _capture_conv_output_sizes(model, example_input) if cost_type == "macs" else {}
         )
@@ -172,8 +176,32 @@ class GatedGroupRegistry:
             mask = group.gate.deterministic_mask()
             indices = mask.eq(0).nonzero().flatten().tolist()
             maximum = group.gate.channels - self.min_channels
-            selected[group.root_name] = indices[:maximum]
+            indices = indices[:maximum]
+            if self.round_to:
+                indices = self._apply_round_to(group, indices)
+            selected[group.root_name] = indices
         return selected
+
+    def _apply_round_to(self, group: GatedGroup, indices: list[int]) -> list[int]:
+        """Round the retained channel count down to the nearest multiple of round_to.
+
+        Mirrors Torch-Pruning's own `_round_to` (base_pruner.py): remaining
+        width is always rounded down, so this can only prune more channels
+        than the gate selected, never fewer. When more channels must go,
+        prefer the kept channels with the lowest log_alpha (closest to the
+        gate's own drop threshold) so the extra cut still respects what the
+        gate learned.
+        """
+        channels = group.gate.channels
+        remaining = channels - len(indices)
+        rounded_remaining = max(remaining - remaining % self.round_to, self.min_channels)
+        n_pruned = channels - rounded_remaining
+        if n_pruned <= len(indices):
+            return indices[:n_pruned]
+        dropped = set(indices)
+        kept = [i for i in range(channels) if i not in dropped]
+        kept.sort(key=lambda i: group.gate.log_alpha[i].item())
+        return indices + kept[: n_pruned - len(indices)]
 
     def remove_gates(self) -> None:
         for group in self.groups:
@@ -219,6 +247,7 @@ def build_gated_registry(
     init_drop_rate: float = 0.01,
     min_channels: int = 8,
     cost_type: str = "params",
+    round_to: int | None = None,
 ) -> GatedGroupRegistry:
     """Build gates from the project's already configured YOLO DepGraph wrapper."""
     graph = wrapper.build_dependency_graph()
@@ -232,6 +261,7 @@ def build_gated_registry(
         min_channels=min_channels,
         cost_type=cost_type,
         example_input=wrapper.example_input,
+        round_to=round_to,
     )
 
 
